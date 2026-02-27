@@ -4,10 +4,63 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>IRIS｜AI 整合實作</title>
+  <style>
+    body {
+      font-family: -apple-system, system-ui, sans-serif;
+      padding: 40px;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1 { margin-bottom: 40px; }
+    .card {
+      border: 1px solid #eee;
+      padding: 20px;
+      margin-bottom: 24px;
+      border-radius: 12px;
+    }
+    .tags span {
+      background: #f3f3f3;
+      padding: 4px 8px;
+      margin-right: 6px;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+    .meta {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
 </head>
-<body style="font-family:-apple-system,system-ui,sans-serif;padding:40px;">
+<body>
   <h1>IRIS｜AI 整合實作作品集</h1>
-  <p>網站骨架已建立。</p>
-  <p>下一步：導入 AI 自動更新流程。</p>
+  <div id="projects"></div>
+
+  <script>
+    fetch("projects.json")
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("projects");
+
+        data.projects.forEach(project => {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          card.innerHTML = `
+            <h2>${project.name}</h2>
+            <p><strong>驗證目標：</strong>${project.goal}</p>
+            <p><strong>產出成果：</strong>${project.outcome}</p>
+            <div class="tags">
+              ${project.tags.map(tag => `<span>#${tag}</span>`).join("")}
+            </div>
+            <div class="meta">
+              ${project.status} · Updated ${project.updated}
+            </div>
+          `;
+
+          container.appendChild(card);
+        });
+      });
+  </script>
 </body>
 </html>
