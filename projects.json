@@ -1,0 +1,15 @@
+{
+  "projects": [
+    {
+      "id": "littlehq",
+      "name": "LittleHQ（小總部）— AI 輔助 iOS App 開發",
+      "goal": "驗證 AI 是否能協助從零完成可部署的 iOS App。",
+      "outcome": "完成可部署至 iPad 的版本並進行實測。",
+      "tags": ["SwiftUI", "iOS", "AI-Assisted-Dev"],
+      "status": "Validated",
+      "updated": "2026.02",
+      "demo_url": "",
+      "image": ""
+    }
+  ]
+}
