@@ -5,9 +5,31 @@
       "name": "LittleHQ（小總部）— AI 輔助 iOS App 開發",
       "goal": "驗證 AI 是否能協助從零完成可部署的 iOS App。",
       "outcome": "完成可部署至 iPad 的版本並進行實測。",
-      "tags": ["SwiftUI", "iOS", "AI-Assisted-Dev"],
+      "tags": [
+        "SwiftUI",
+        "iOS",
+        "AI-Assisted-Dev"
+      ],
       "status": "Validated",
       "updated": "2026.02",
+      "demo_url": "",
+      "image": ""
+    },
+    {
+      "id": "1",
+      "name": "AI 整合實作作品頁",
+      "goal": "建立一個一頁式作品集網站，並將內容資料化",
+      "outcome": "網站已成功部署到 Vercel，首頁專案卡由 projects.json 驅動",
+      "tags": [
+        "HTML",
+        "Vercel",
+        "GitHubActions",
+        "OpenAIAPI",
+        "Automation",
+        "JSON"
+      ],
+      "status": "Validated",
+      "updated": "2023.10",
       "demo_url": "",
       "image": ""
     }
