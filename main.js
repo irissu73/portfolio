@@ -125,12 +125,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const title = document.getElementById("project-count");
     if (!list || !title) return;
 
-    const filtered = allProjects.filter(p => {
-      if (filterState.status && p.status !== filterState.status) return false;
-      for (const t of filterState.direction) if (!(p.directionTags || []).includes(t)) return false;
-      for (const t of filterState.tech) if (!(p.techTags || []).includes(t)) return false;
-      return true;
-    });
+const filtered = allProjects.filter(p => {
+  if (filterState.status && p.status !== filterState.status) return false;
+
+  // direction OR
+  if (filterState.direction.size > 0) {
+    const hasAnyDirection =
+      (p.directionTags || []).some(t => filterState.direction.has(t));
+    if (!hasAnyDirection) return false;
+  }
+
+  // tech OR
+  if (filterState.tech.size > 0) {
+    const hasAnyTech =
+      (p.techTags || []).some(t => filterState.tech.has(t));
+    if (!hasAnyTech) return false;
+  }
+
+  return true;
+});
 
     title.textContent = "實驗狀態";
 
