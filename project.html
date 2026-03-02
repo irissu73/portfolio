@@ -158,9 +158,10 @@
 
           <h1 class="project-title">${escapeHtml(title)}</h1>
 
+          ${output ? `<div class="project-output">產出：<strong>${escapeHtml(output)}</strong></div>` : ""}
+          
           ${summary ? `<p class="project-lead">${escapeHtml(summary)}</p>` : ""}
 
-          ${output ? `<div class="project-output">產出：<strong>${escapeHtml(output)}</strong></div>` : ""}
         </div>
 
         <section class="section">
