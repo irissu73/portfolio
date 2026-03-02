@@ -142,8 +142,8 @@ document.addEventListener("DOMContentLoaded", () => {
   ? `<img class="card-cover" src="${p.cover}" onerror="this.remove()">`
   : "";
 
-const detailHtml = p.detailUrl
-  ? `<a class="detail-link" href="${p.detailUrl}">查看完整內容 →</a>`
+const detailHtml = p.id
+  ? `<a class="detail-link" href="./project.html?id=${encodeURIComponent(p.id)}">查看完整內容 →</a>`
   : "";
 
 list.innerHTML += `
