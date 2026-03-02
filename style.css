@@ -155,3 +155,41 @@ body{
   padding:4px 8px;font-size:13px;
   background:#fafafa;
 }
+
+/* ===== Back To Top ===== */
+.back-to-top{
+  position: fixed;
+  right: 16px;
+  bottom: 24px;
+
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+
+  border: none;
+  background: #111;
+  color: #fff;
+
+  font-size: 20px;
+  font-weight: 700;
+
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  cursor: pointer;
+
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.25s ease;
+
+  z-index: 200;
+}
+
+/* 顯示狀態 */
+.back-to-top.show{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 點擊時微縮（App 手感） */
+.back-to-top:active{
+  transform: scale(0.95);
+}
