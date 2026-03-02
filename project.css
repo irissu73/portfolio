@@ -1,0 +1,158 @@
+/* =======================================================
+   PROJECT DETAIL PAGE (覆蓋 / 延伸 style.css)
+   ======================================================= */
+
+.project-page{
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 20px 16px 80px;
+}
+
+/* 封面在最上方 */
+.project-cover{
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  object-fit: cover;
+  border-radius: 24px;
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 12px 32px rgba(0,0,0,.06);
+  margin-bottom: 18px;
+}
+
+/* Hero 區（更像產品頁） */
+.project-hero{
+  background:#fff;
+  border:1px solid rgba(0,0,0,.06);
+  border-radius: 24px;
+  padding: 20px 22px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.05);
+  margin-bottom: 18px;
+}
+
+.project-meta{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:700;
+  font-size:14px;
+  color:#444;
+}
+
+.project-title{
+  font-size: 30px;
+  font-weight: 900;
+  margin: 12px 0 10px;
+  line-height: 1.2;
+}
+
+.project-lead{
+  font-size:16px;
+  line-height:1.6;
+  color:#333;
+  margin: 0 0 10px;
+}
+
+.project-output{
+  font-size:14px;
+  color:#555;
+}
+
+/* Sections */
+.section{
+  background:#fff;
+  border:1px solid rgba(0,0,0,.06);
+  border-radius: 24px;
+  padding: 18px 22px;
+  margin-bottom:18px;
+  box-shadow: 0 8px 26px rgba(0,0,0,.04);
+}
+
+.section-title{
+  font-size:16px;
+  font-weight:900;
+  margin: 0 0 12px;
+  letter-spacing:.4px;
+}
+
+.prose{
+  font-size:15px;
+  line-height:1.8;
+  color:#333;
+}
+
+.muted{ color:#777; }
+
+/* Pills（如果 style.css 已有 pill，就會沿用；這裡是明細頁補強） */
+.pill-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.pill{
+  display:inline-flex;
+  align-items:center;
+  padding:8px 14px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.10);
+  background:rgba(0,0,0,.03);
+  font-size:13px;
+  font-weight:800;
+}
+
+/* Gallery */
+.gallery{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:12px;
+  margin-top: 10px;
+}
+
+.gallery-img{
+  width:100%;
+  border-radius:16px;
+  border:1px solid rgba(0,0,0,.06);
+  object-fit:cover;
+}
+
+/* Timeline（簡潔版） */
+.timeline{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.timeline-item{
+  display:grid;
+  grid-template-columns:110px 1fr;
+  gap:12px;
+  padding-top:10px;
+  border-top:1px solid rgba(0,0,0,.06);
+}
+
+.timeline-item:first-child{ border-top:none; }
+
+.timeline-date{
+  font-weight:900;
+  font-size:13px;
+  color:#222;
+}
+
+.timeline-text{
+  font-size:14px;
+  line-height:1.6;
+  color:#333;
+}
+
+/* 底部按鈕區 */
+.bottom-actions{
+  display:flex;
+  justify-content:center;
+  margin-top: 8px;
+}
+
+/* Mobile tweaks */
+@media (max-width:420px){
+  .project-title{ font-size:24px; }
+  .timeline-item{ grid-template-columns:80px 1fr; }
+}
