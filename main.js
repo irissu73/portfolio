@@ -1,33 +1,73 @@
+let allProjects = [];
+let filteredProjects = [];
+
+const filterState = {
+  status: null,               // 單選
+  directionTags: new Set(),   // 多選
+  techTags: new Set()         // 多選
+};
+
 fetch("./projects.json")
   .then(res => res.json())
   .then(data => {
-    let projects = data.projects;
+    allProjects = data.projects || [];
 
-    // ===== 排序 =====
-    const statusPriority = {
-      expanding: 4,
-      testing: 3,
-      validated: 2,
-      concept: 1
-    };
+    applySort(allProjects);
+    renderCounts(allProjects);
+    renderStatusFilters(allProjects);
+    renderTagFilters(allProjects);
 
-    projects.sort((a, b) => {
-      // 1. featured
-      if (a.featured && !b.featured) return -1;
-      if (!a.featured && b.featured) return 1;
+    filteredProjects = allProjects.slice();
+    renderProjects(filteredProjects);
 
-      // 2. updatedAt
-      if (a.updatedAt > b.updatedAt) return -1;
-      if (a.updatedAt < b.updatedAt) return 1;
-
-      // 3. status priority
-      return statusPriority[b.status] - statusPriority[a.status];
+    const clearBtn = document.getElementById("clearFilters");
+    if (clearBtn) clearBtn.addEventListener("click", () => {
+      filterState.status = null;
+      filterState.directionTags.clear();
+      filterState.techTags.clear();
+      refreshUI();
     });
-
-    renderProjects(projects);
-    renderCounts(projects);
-    renderTags(projects);
   });
+
+function applySort(projects){
+  const statusPriority = { expanding:4, testing:3, validated:2, concept:1 };
+  projects.sort((a,b)=>{
+    if (a.featured && !b.featured) return -1;
+    if (!a.featured && b.featured) return 1;
+    if ((a.updatedAt||"") > (b.updatedAt||"")) return -1;
+    if ((a.updatedAt||"") < (b.updatedAt||"")) return 1;
+    return (statusPriority[b.status]||0) - (statusPriority[a.status]||0);
+  });
+}
+
+function refreshUI(){
+  // 依條件篩選
+  filteredProjects = allProjects.filter(p => {
+    if (filterState.status && p.status !== filterState.status) return false;
+
+    if (filterState.directionTags.size > 0) {
+      const tags = new Set(p.directionTags || []);
+      for (const t of filterState.directionTags) if (!tags.has(t)) return false;
+    }
+
+    if (filterState.techTags.size > 0) {
+      const tags = new Set(p.techTags || []);
+      for (const t of filterState.techTags) if (!tags.has(t)) return false;
+    }
+
+    return true;
+  });
+
+  renderCounts(filteredProjects, allProjects.length);
+  renderProjects(filteredProjects);
+  syncActiveButtons();
+}
+
+function renderCounts(projectsShown, total){
+  const totalCount = typeof total === "number" ? total : projectsShown.length;
+  const el = document.getElementById("project-count");
+  if (el) el.innerText = `Projects（共 ${totalCount}）`;
+}
 
 function renderProjects(projects) {
   const container = document.getElementById("project-list");
@@ -108,3 +148,30 @@ function renderTags(projects) {
   // 初始化箭頭
   toggleBtn.textContent = sidebar.classList.contains("collapsed") ? "⟩" : "⟨";
 })();
+
+// ===== Drawer open/close =====
+(function setupDrawer(){
+  const drawer = document.getElementById("drawer");
+  const overlay = document.getElementById("overlay");
+  const menuBtn = document.getElementById("menuBtn");
+  const closeBtn = document.getElementById("closeBtn");
+
+  if (!drawer || !overlay || !menuBtn || !closeBtn) return;
+
+  const open = () => {
+    drawer.classList.add("open");
+    overlay.classList.remove("hidden");
+    drawer.setAttribute("aria-hidden", "false");
+  };
+
+  const close = () => {
+    drawer.classList.remove("open");
+    overlay.classList.add("hidden");
+    drawer.setAttribute("aria-hidden", "true");
+  };
+
+  menuBtn.addEventListener("click", open);
+  closeBtn.addEventListener("click", close);
+  overlay.addEventListener("click", close);
+})();
+
