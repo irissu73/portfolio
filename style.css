@@ -249,3 +249,49 @@ body:not(.js-loaded) #project-list::before{
 .detail-link:active{
   transform: scale(.99);
 }
+
+/*明細頁樣式*/
+/* ===== Detail page ===== */
+.detail-wrap{max-width:900px;margin:0 auto;}
+.detail-card{
+  border:1px solid var(--border);
+  border-radius:18px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 8px 20px rgba(0,0,0,.06);
+}
+
+.detail-loading{padding:16px;color:#666;}
+
+.detail-cover{
+  width:100%;
+  aspect-ratio: 2 / 1;
+  object-fit: cover;
+  display:block;
+  border-bottom:1px solid var(--border);
+}
+
+.detail-section{padding:14px;}
+.detail-section h2{margin:0 0 8px;font-size:18px;}
+.muted{color:#666;font-size:14px;}
+
+.detail-kv{
+  display:flex;justify-content:space-between;gap:12px;
+  padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06);
+}
+.detail-k{color:#666;font-size:14px;}
+.detail-v{font-weight:700;font-size:14px;}
+
+/* timeline */
+.timeline{display:flex;flex-direction:column;gap:12px;}
+.timeline-item{
+  display:flex;gap:12px;
+  border:1px solid rgba(0,0,0,.08);
+  background:#fafafa;
+  border-radius:14px;
+  padding:12px;
+}
+.timeline-date{min-width:72px;font-weight:800;font-size:13px;color:#333;}
+.timeline-title{font-weight:800;margin-bottom:4px;}
+.timeline-note{color:#333;font-size:14px;}
+
