@@ -391,3 +391,14 @@ body{
 .timeline-title{font-weight:800;margin-bottom:4px;}
 .timeline-note{color:#333;font-size:14px;}
 
+/* ===== Output line (shared) ===== */
+.output-line{
+  margin-top: 6px;
+  font-size: 14px;
+  color: #555;
+}
+
+.output-line strong{
+  color: #111;
+  font-weight: 900;
+}
