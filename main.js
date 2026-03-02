@@ -1,3 +1,5 @@
+document.body.classList.add("js-loaded");
+
 let allProjects = [];
 const filterState = { status: null, direction: new Set(), tech: new Set() };
 
