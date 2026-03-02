@@ -384,3 +384,8 @@
 
   .project-card .tags span{ font-size: 13px; }
 }
+
+/* DEBUG: force 1 column everywhere */
+#project-list{
+  grid-template-columns: 1fr !important;
+}
