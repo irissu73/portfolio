@@ -7,47 +7,50 @@
 </head>
 <body>
 
-<!-- Header 保留你的 -->
-<header>
-  <h1>IRIS ｜ AI 實驗場</h1>
-  <p>用專案實驗 AI 的各種可能性</p>
-  <p>Build. Test. Expand with AI.</p>
+<header class="topbar">
+  <button id="menuBtn" class="icon-btn" aria-label="open menu">☰</button>
+
+  <div class="brand">
+    <h1>IRIS ｜ AI 實驗場</h1>
+    <p>用專案實驗 AI 的各種可能性</p>
+    <p>Build. Test. Expand with AI.</p>
+  </div>
 </header>
 
-<div class="layout">
-  <!-- Sidebar -->
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-title">篩選</div>
-      <button id="sidebarToggle" class="sidebar-toggle" aria-label="toggle sidebar">
-        ⟨
-      </button>
-    </div>
+<!-- Drawer overlay -->
+<div id="overlay" class="overlay hidden"></div>
 
+<!-- Left Drawer -->
+<aside id="drawer" class="drawer" aria-hidden="true">
+  <div class="drawer-header">
+    <div class="drawer-title">篩選</div>
+    <button id="closeBtn" class="icon-btn" aria-label="close menu">✕</button>
+  </div>
+
+  <div class="drawer-section">
+    <div class="drawer-section-title">實驗方向</div>
+    <div id="direction-filters" class="drawer-list"></div>
+  </div>
+
+  <div class="drawer-section">
+    <div class="drawer-section-title">技術</div>
+    <div id="tech-filters" class="drawer-list"></div>
+  </div>
+
+  <div class="drawer-footer">
+    <button id="clearFilters" class="ghost-btn">清除篩選</button>
+  </div>
+</aside>
+
+<main class="page">
+  <div class="status-row">
     <h2 id="project-count" class="project-count"></h2>
+    <div id="status-filters" class="status-chips"></div>
+  </div>
 
-    <div class="filter-block">
-      <div class="filter-title">狀態</div>
-      <div id="status-filters" class="filter-chips"></div>
-    </div>
+  <section id="project-list" class="project-grid"></section>
+</main>
 
-    <div class="filter-block">
-      <div class="filter-title">實驗方向</div>
-      <div id="direction-filters" class="filter-chips"></div>
-    </div>
-
-    <div class="filter-block">
-      <div class="filter-title">技術</div>
-      <div id="tech-filters" class="filter-chips"></div>
-    </div>
-  </aside>
-
-  <!-- Main -->
-  <main class="main">
-    <section id="project-list" class="project-grid"></section>
-  </main>
-</div>
-
-  <script src="./main.js"></script>
+<script src="./main.js"></script>
 </body>
 </html>
