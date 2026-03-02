@@ -89,3 +89,22 @@ function renderTags(projects) {
   document.getElementById("tech-filters").innerHTML =
     [...techSet].map(tag => `<button>${tag}</button>`).join("");
 }
+
+// ===== Sidebar collapse =====
+(function setupSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const toggleBtn = document.getElementById("sidebarToggle");
+  if (!sidebar || !toggleBtn) return;
+
+  const saved = localStorage.getItem("sidebarCollapsed");
+  if (saved === "1") sidebar.classList.add("collapsed");
+
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("collapsed");
+    localStorage.setItem("sidebarCollapsed", sidebar.classList.contains("collapsed") ? "1" : "0");
+    toggleBtn.textContent = sidebar.classList.contains("collapsed") ? "⟩" : "⟨";
+  });
+
+  // 初始化箭頭
+  toggleBtn.textContent = sidebar.classList.contains("collapsed") ? "⟩" : "⟨";
+})();
