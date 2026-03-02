@@ -1,22 +1,17 @@
-/* Base */
 :root{
   --border:#eaeaea;
-  --text:#111;
-  --muted:#666;
 }
 
 body{
   margin:0;
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC",Arial,sans-serif;
-  font-size:18px; /* 手機字直接變大 */
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif;
+  font-size:18px;
   background:#fff;
 }
 
-/* Topbar */
+/* Top */
 .topbar{
   display:flex;
-  align-items:flex-start;
   gap:12px;
   padding:12px 14px;
   border-bottom:1px solid var(--border);
@@ -26,166 +21,137 @@ body{
   z-index:50;
 }
 
-.brand h1{ margin:0; font-size:28px; letter-spacing:0.5px; }
-.brand p{ margin:4px 0 0 0; font-size:15px; color:#333; }
+.brand h1{margin:0;font-size:28px;}
+.brand p{margin:4px 0 0;font-size:15px;color:#333;}
 
 .icon-btn{
-  border:0;
-  background:transparent;
-  font-size:26px;
-  padding:8px;
-  cursor:pointer;
+  border:0;background:transparent;font-size:26px;padding:8px;cursor:pointer;
 }
 
 /* Drawer */
 .overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.35);
-  z-index:80;
+  position:fixed;inset:0;background:rgba(0,0,0,0.28);z-index:80;
 }
-.hidden{ display:none; }
+.hidden{display:none;}
 
 .drawer{
-  position:fixed;
-  top:0; left:0;
-  height:100vh;
-  width:78%;
-  max-width:320px;
-  background:#fff;
-  border-right:1px solid var(--border);
-  z-index:90;
-
+  position:fixed;top:0;left:0;height:100vh;
+  width:84%;max-width:360px;
   transform:translateX(-105%);
-  transition:transform 220ms ease;
-  display:flex;
-  flex-direction:column;
+  transition:transform .25s ease;
+  display:flex;flex-direction:column;
+  z-index:90;
 }
 
-.drawer.open{ transform:translateX(0); }
+.drawer.open{transform:translateX(0);}
 
-.drawer-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:14px 12px;
-  border-bottom:1px solid var(--border);
-}
-.drawer-title{ font-weight:800; font-size:16px; }
+.ios-drawer{background:#f7f7f7;}
 
-.drawer-section{ padding:12px; border-bottom:1px solid #f2f2f2; }
-.drawer-section-title{ font-size:13px; color:#555; margin-bottom:10px; }
-
-.drawer-list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.drawer-list button{
-  width:100%;
-  text-align:left;
-  border:1px solid var(--border);
-  background:#fff;
-  border-radius:12px;
-  padding:10px 12px;
-  cursor:pointer;
-  font-size:15px;
-}
-.drawer-list button.active{ border-color:#111; }
-
-.drawer-footer{ margin-top:auto; padding:12px; }
-.ghost-btn{
-  width:100%;
-  border:1px solid var(--border);
-  background:#fafafa;
-  border-radius:12px;
-  padding:10px 12px;
-  cursor:pointer;
-  font-size:15px;
+.ios-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px;border-bottom:1px solid rgba(0,0,0,.08);
+  background:rgba(247,247,247,.92);
+  backdrop-filter:blur(10px);
 }
 
-/* Page */
-.page{
-  max-width:1100px;
-  margin:0 auto;
-  padding:14px;
+.drawer-header-actions{display:flex;gap:10px;}
+
+.ios-clear,.ios-close{
+  border:1px solid rgba(0,0,0,.12);
+  background:#fff;border-radius:12px;
+  padding:8px 10px;font-size:13px;cursor:pointer;
 }
 
-/* 狀態區（主頁固定位置） */
-.status-row{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin:8px 0 14px 0;
+.ios-close{width:36px;height:36px;}
+
+.drawer-scroll{
+  flex:1;overflow:auto;padding:12px;
 }
+
+.ios-section{margin-bottom:18px;}
+.ios-section-title{
+  font-size:12px;color:rgba(0,0,0,.55);
+  margin:0 0 8px 6px;
+}
+
+.ios-list{
+  display:flex;flex-direction:column;gap:10px;
+  background:#fff;border-radius:16px;
+  padding:10px;border:1px solid rgba(0,0,0,.08);
+}
+
+.ios-list button{
+  width:100%;text-align:left;
+  border:1px solid rgba(0,0,0,.08);
+  background:#fafafa;border-radius:14px;
+  padding:12px;font-size:15px;cursor:pointer;
+  transition:transform .05s ease;
+}
+
+.ios-list button:active{transform:scale(.99);}
+.ios-list button.active{
+  background:#eaf2ff;font-weight:700;
+}
+
+/* Main */
+.page{padding:14px;max-width:1100px;margin:auto;}
+
+.status-row{display:flex;flex-direction:column;gap:10px;margin:8px 0 14px;}
 
 .project-count{
-  margin:0;
-  font-size:18px;
-  font-weight:800;
+  font-size:20px;font-weight:800;margin:0;
 }
 
+/* 狀態同列 */
 .status-chips{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
+  display:flex;flex-wrap:wrap;gap:8px;
 }
-.status-chips button{
-  border:1px solid var(--border);
-  background:#fff;
-  border-radius:999px;
-  padding:10px 12px;
-  cursor:pointer;
-  font-size:14px;
-}
-.status-chips button.active{ border-color:#111; }
 
-/* ✅ 專案列表：手機永遠一欄 */
+.status-chips button{
+  flex:1 1 calc(50% - 8px);
+  border:1px solid var(--border);
+  background:#fff;border-radius:999px;
+  padding:8px 10px;font-size:13px;cursor:pointer;
+  text-align:center;
+}
+
+.status-chips button.active{border-color:#000;font-weight:700;}
+
+/* 卡片 */
 #project-list{
   display:grid;
   grid-template-columns:1fr;
   gap:14px;
 }
 
-/* 平板/桌機再變多欄 */
-@media (min-width: 768px){
-  #project-list{ grid-template-columns:repeat(2, minmax(0,1fr)); }
-}
-@media (min-width: 1100px){
-  #project-list{ grid-template-columns:repeat(3, minmax(0,1fr)); }
+@media(min-width:768px){
+  #project-list{grid-template-columns:repeat(2,1fr);}
 }
 
-/* Cards */
 .project-card{
   border:1px solid var(--border);
-  border-radius:16px;
-  overflow:hidden;
+  border-radius:18px;overflow:hidden;
   background:#fff;
-  box-shadow:0 6px 18px rgba(0,0,0,0.06);
+  box-shadow:0 8px 20px rgba(0,0,0,.06);
 }
 
 .project-card img{
-  width:100%;
-  aspect-ratio:16/9;
-  object-fit:cover;
-  display:block;
-  background:#f3f3f3;
+  width:100%;aspect-ratio:16/9;
+  object-fit:cover;background:#f3f3f3;
 }
 
-.project-card .content{ padding:12px 12px 14px; }
-.project-card .meta{ font-size:13px; color:var(--muted); margin-bottom:8px; }
-.project-card h3{ margin:0 0 6px 0; font-size:20px; }
-.project-card p{ margin:0 0 8px 0; font-size:16px; line-height:1.35; }
+.project-card .content{padding:14px;}
+.project-card .meta{font-size:13px;color:#666;margin-bottom:8px;}
+.project-card h3{margin:0 0 6px;font-size:20px;}
+.project-card p{margin:0 0 8px;font-size:16px;}
 
 .project-card .tags{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
+  display:flex;flex-wrap:wrap;gap:6px;
 }
+
 .project-card .tags span{
-  font-size:13px;
   border:1px solid var(--border);
-  background:#fafafa;
   border-radius:999px;
-  padding:4px 8px;
+  padding:4px 8px;font-size:13px;
+  background:#fafafa;
 }
