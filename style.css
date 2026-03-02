@@ -88,10 +88,25 @@
 }
 
 /* ===== Project Cards ===== */
+/* 預設（手機）永遠 1 欄 */
 .project-grid{
   display:grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 14px;
+}
+
+/* 平板以上 2 欄 */
+@media (min-width: 768px){
+  .project-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 桌機以上 3 欄 */
+@media (min-width: 1100px){
+  .project-grid{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .project-card{
