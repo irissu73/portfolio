@@ -222,3 +222,30 @@ body:not(.js-loaded) #project-list::before{
   padding:14px;
   color:#b00020;
 }
+
+/* 卡片下方主圖 */
+.project-card .card-cover{
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  display: block;
+  border-top: 1px solid var(--border);
+}
+
+/* 查看完整內容 */
+.detail-link{
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+
+  border: 1px solid rgba(0,0,0,.08);
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.detail-link:active{
+  transform: scale(.99);
+}
