@@ -4,54 +4,53 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>IRIS ｜ AI 實驗場</title>
-  <link rel="stylesheet" href="./style.css?v=fix01" />
+  <link rel="stylesheet" href="./style.css?v=app02" />
 </head>
 <body>
 
-  <header class="topbar">
-    <button id="menuBtn" class="icon-btn" aria-label="open menu">☰</button>
-    <div class="brand">
-      <h1>IRIS ｜ AI 實驗場</h1>
-      <p>用專案實驗 AI 的各種可能性</p>
-      <p>Build. Test. Expand with AI.</p>
+<header class="topbar">
+  <button id="menuBtn" class="icon-btn">☰</button>
+  <div class="brand">
+    <h1>IRIS ｜ AI 實驗場</h1>
+    <p>用專案實驗 AI 的各種可能性</p>
+    <p>Build. Test. Expand with AI.</p>
+  </div>
+</header>
+
+<div id="overlay" class="overlay hidden"></div>
+
+<!-- Drawer -->
+<aside id="drawer" class="drawer ios-drawer" aria-hidden="true">
+  <div class="drawer-header ios-header">
+    <div class="drawer-title ios-title">篩選</div>
+    <div class="drawer-header-actions">
+      <button id="clearFilters" class="ios-clear">清除</button>
+      <button id="closeBtn" class="ios-close">✕</button>
     </div>
-  </header>
+  </div>
 
-  <!-- Drawer -->
-  <div id="overlay" class="overlay hidden"></div>
-
-  <aside id="drawer" class="drawer" aria-hidden="true">
-    <div class="drawer-header">
-      <div class="drawer-title">篩選</div>
-      <button id="closeBtn" class="icon-btn" aria-label="close menu">✕</button>
-    </div>
-
-    <div class="drawer-section">
-      <div class="drawer-section-title">實驗方向</div>
-      <div id="direction-filters" class="drawer-list"></div>
-    </div>
-
-    <div class="drawer-section">
-      <div class="drawer-section-title">技術</div>
-      <div id="tech-filters" class="drawer-list"></div>
-    </div>
-
-    <div class="drawer-footer">
-      <button id="clearFilters" class="ghost-btn">清除篩選</button>
-    </div>
-  </aside>
-
-  <main class="page">
-    <!-- 狀態固定在主頁 -->
-    <div class="status-row">
-      <h2 id="project-count" class="project-count">Projects</h2>
-      <div id="status-filters" class="status-chips"></div>
+  <div class="drawer-scroll ios-scroll">
+    <div class="ios-section">
+      <div class="ios-section-title">實驗方向</div>
+      <div id="direction-filters" class="ios-list"></div>
     </div>
 
-    <!-- 專案卡列表 -->
-    <section id="project-list"></section>
-  </main>
+    <div class="ios-section">
+      <div class="ios-section-title">技術</div>
+      <div id="tech-filters" class="ios-list"></div>
+    </div>
+  </div>
+</aside>
 
-  <script src="./main.js?v=fix01"></script>
+<main class="page">
+  <div class="status-row">
+    <h2 id="project-count" class="project-count"></h2>
+    <div id="status-filters" class="status-chips"></div>
+  </div>
+
+  <section id="project-list"></section>
+</main>
+
+<script src="./main.js?v=app02"></script>
 </body>
 </html>
