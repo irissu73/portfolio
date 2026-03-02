@@ -1,4 +1,4 @@
-fetch("/projects.json")
+fetch("./projects.json")
   .then(res => res.json())
   .then(data => {
     let projects = data.projects;
