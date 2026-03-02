@@ -14,9 +14,9 @@ fetch("./projects.json")
 /* ===== helpers ===== */
 function statusLabel(status) {
   return ({
-    validated: "🟢 已驗證",
+    concept: "🟡 構想中",
     testing: "🟠 驗證中",
-    concept: "🟡 構想",
+    validated: "🟢 已驗證",
     expanding: "🔵 延伸中"
   })[status] || status;
 }
@@ -74,12 +74,12 @@ function renderStatus() {
 
   // 1) 固定四個都顯示，即便是 0
   // 3) 筆數前後加（）
-  const items = [
-    { key: "validated", text: `🟢 已驗證（${counts.validated}）` },
-    { key: "testing",   text: `🟠 驗證中（${counts.testing}）` },
-    { key: "concept",   text: `🟡 構想（${counts.concept}）` },
-    { key: "expanding", text: `🔵 延伸中（${counts.expanding}）` }
-  ];
+const items = [
+  { key: "concept",   text: `🟡 構想中（${counts.concept}）` },
+  { key: "testing",   text: `🟠 驗證中（${counts.testing}）` },
+  { key: "validated", text: `🟢 已驗證（${counts.validated}）` },
+  { key: "expanding", text: `🔵 延伸中（${counts.expanding}）` }
+];];
 
   el.innerHTML = items
     .map(i => `<button data-status="${i.key}">${i.text}</button>`)
