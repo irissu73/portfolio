@@ -138,17 +138,26 @@ document.addEventListener("DOMContentLoaded", () => {
     filtered.forEach(p => {
       const statusText = statusLabel(p.status);
       const updated = (p.updatedAt || "").replace("-", ".");
-      list.innerHTML += `
-        <div class="project-card">
-          <img src="${p.cover || ""}" onerror="this.onerror=null;this.style.display='none';">
-          <div class="content">
-            <div class="meta">${statusText} ｜ 更新 ${updated}</div>
-            <h3>${p.title || ""}</h3>
-            <p>產出：${p.output || ""}</p>
-            <p>${p.summary || ""}</p>
-          </div>
-        </div>
-      `;
+      const coverHtml = p.cover
+  ? `<img class="card-cover" src="${p.cover}" onerror="this.remove()">`
+  : "";
+
+const detailHtml = p.detailUrl
+  ? `<a class="detail-link" href="${p.detailUrl}">查看完整內容 →</a>`
+  : "";
+
+list.innerHTML += `
+  <div class="project-card">
+    <div class="content">
+      <div class="meta">${statusText} ｜ 更新 ${updated}</div>
+      <h3>${p.title || ""}</h3>
+      <p>產出：${p.output || ""}</p>
+      <p>${p.summary || ""}</p>
+      ${detailHtml}
+    </div>
+    ${coverHtml}
+  </div>
+`;
     });
 
     syncActiveUI();
