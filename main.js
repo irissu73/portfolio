@@ -202,3 +202,82 @@ function renderStatusFilters(projects){
     });
   });
 }
+
+function renderTagFilters(projects){
+  const dirEl = document.getElementById("direction-filters");
+  const techEl = document.getElementById("tech-filters");
+  if (!dirEl || !techEl) return;
+
+  const dirSet = new Set();
+  const techSet = new Set();
+  projects.forEach(p => {
+    (p.directionTags||[]).forEach(t => dirSet.add(t));
+    (p.techTags||[]).forEach(t => techSet.add(t));
+  });
+
+  dirEl.innerHTML = [...dirSet].sort().map(t => `<button data-dir="${t}">${t}</button>`).join("");
+  techEl.innerHTML = [...techSet].sort().map(t => `<button data-tech="${t}">${t}</button>`).join("");
+
+  dirEl.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const t = btn.getAttribute("data-dir");
+      filterState.directionTags.has(t) ? filterState.directionTags.delete(t) : filterState.directionTags.add(t);
+      refreshUI();
+    });
+  });
+
+  techEl.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const t = btn.getAttribute("data-tech");
+      filterState.techTags.has(t) ? filterState.techTags.delete(t) : filterState.techTags.add(t);
+      refreshUI();
+    });
+  });
+}
+
+function syncActiveButtons(){
+  document.querySelectorAll("[data-status]").forEach(b=>{
+    b.classList.toggle("active", b.getAttribute("data-status") === filterState.status);
+  });
+  document.querySelectorAll("[data-dir]").forEach(b=>{
+    b.classList.toggle("active", filterState.directionTags.has(b.getAttribute("data-dir")));
+  });
+  document.querySelectorAll("[data-tech]").forEach(b=>{
+    b.classList.toggle("active", filterState.techTags.has(b.getAttribute("data-tech")));
+  });
+}
+
+function renderProjects(projects){
+  const container = document.getElementById("project-list");
+  if (!container) return;
+  container.innerHTML = "";
+
+  projects.forEach(p=>{
+    const card = document.createElement("div");
+    card.className = "project-card";
+    card.innerHTML = `
+      <img src="${p.cover}" alt="${p.title}">
+      <div class="content">
+        <div class="meta">${formatStatus(p.status)} ｜ 更新 ${formatDate(p.updatedAt)}</div>
+        <h3>${p.title}</h3>
+        <p>產出：${p.output}</p>
+        <p>${p.summary || ""}</p>
+        <div class="tags">
+          ${(p.directionTags||[]).slice(0,2).map(t=>`<span>${t}</span>`).join("")}
+          ${(p.techTags||[]).slice(0,2).map(t=>`<span>${t}</span>`).join("")}
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function formatStatus(status){
+  return ({
+    concept:"🟡 構想",
+    testing:"🟠 驗證中",
+    validated:"🟢 已驗證",
+    expanding:"🔵 延伸中"
+  })[status] || status;
+}
+function formatDate(s){ return (s||"").replace("-", "."); }
