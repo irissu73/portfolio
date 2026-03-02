@@ -155,3 +155,190 @@
   .sidebar.collapsed{ width: 100%; flex-basis:auto; }
   .project-grid{ grid-template-columns: 1fr; }
 }
+
+/* ===== Topbar ===== */
+.topbar{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:12px 14px;
+  border-bottom:1px solid #eee;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 50;
+}
+
+.brand h1{ margin:0; font-size:28px; }
+.brand p{ margin:4px 0 0 0; color:#333; }
+.icon-btn{
+  border:0;
+  background:transparent;
+  font-size:24px;
+  line-height:1;
+  padding:8px;
+  cursor:pointer;
+}
+
+/* ===== Overlay + Drawer ===== */
+.overlay{
+  position:fixed;
+  inset:0;
+  background: rgba(0,0,0,0.35);
+  z-index: 80;
+}
+.hidden{ display:none; }
+
+.drawer{
+  position:fixed;
+  top:0;
+  left:0;
+  height:100%;
+  width: 78%;
+  max-width: 320px;
+  background:#fff;
+  border-right:1px solid #eee;
+  z-index: 90;
+  transform: translateX(-105%);
+  transition: transform 220ms ease;
+  display:flex;
+  flex-direction:column;
+}
+
+.drawer.open{ transform: translateX(0); }
+
+.drawer-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 12px;
+  border-bottom:1px solid #eee;
+}
+.drawer-title{ font-weight:700; font-size:16px; }
+
+.drawer-section{
+  padding: 12px;
+  border-bottom: 1px solid #f2f2f2;
+}
+.drawer-section-title{
+  font-size:13px;
+  color:#555;
+  margin-bottom:10px;
+}
+
+/* Tag 直式列表 */
+.drawer-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.drawer-list button{
+  text-align:left;
+  width:100%;
+  border:1px solid #eaeaea;
+  background:#fff;
+  border-radius:12px;
+  padding:10px 12px;
+  cursor:pointer;
+}
+
+/* 選中狀態 */
+.drawer-list button.active,
+.status-chips button.active{
+  border-color:#333;
+}
+
+/* footer */
+.drawer-footer{
+  margin-top:auto;
+  padding:12px;
+}
+.ghost-btn{
+  width:100%;
+  border:1px solid #eaeaea;
+  background:#fafafa;
+  border-radius:12px;
+  padding:10px 12px;
+}
+
+/* ===== Main page ===== */
+.page{
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 14px;
+}
+
+/* 狀態列固定在主頁：在內容區頂部一行 */
+.status-row{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin: 8px 0 14px 0;
+}
+
+.project-count{
+  margin:0;
+  font-size: 16px;
+}
+
+.status-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.status-chips button{
+  border: 1px solid #eaeaea;
+  background: #fff;
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor:pointer;
+}
+
+/* Cards */
+.project-grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.project-card{
+  border: 1px solid #eaeaea;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.project-card img{
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display:block;
+}
+
+.project-card .content{ padding: 12px 12px 14px; }
+.project-card .meta{ font-size: 12px; color: #666; margin-bottom: 8px; }
+.project-card h3{ margin:0 0 6px; font-size:16px; }
+.project-card p{ margin:0 0 8px; line-height:1.35; }
+
+.project-card .tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.project-card .tags span{
+  font-size: 12px;
+  border: 1px solid #eaeaea;
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: #fafafa;
+}
+
+/* tablet/desktop */
+@media (min-width: 680px){
+  .project-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (min-width: 980px){
+  .project-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
