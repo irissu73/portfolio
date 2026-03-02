@@ -10,7 +10,7 @@
       "summary": "測試 AI 是否能協作完成一個可用的 iOS App。",
       "directionTags": ["協作開發"],
       "techTags": ["SwiftUI", "OpenAI API"],
-      "cover": "/images/littlehq-cover.jpg"
+      "cover": "./assets/littlehq-cover-2026.jpg"
     },
     {
       "id": "ai-auto-publish",
