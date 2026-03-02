@@ -153,10 +153,15 @@ list.innerHTML += `
       <h3>${p.title || ""}</h3>
       <p>產出：${p.output || ""}</p>
       <p>${p.summary || ""}</p>
+    </div>
+
+    ${coverHtml}
+
+    <div class="card-footer">
       ${detailHtml}
     </div>
-    ${coverHtml}
   </div>
+`;
 `;
     });
 
