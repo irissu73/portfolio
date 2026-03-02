@@ -250,6 +250,25 @@ body:not(.js-loaded) #project-list::before{
   transform: scale(.99);
 }
 
+
+/*專案卡片底色*/
+.card-footer{
+  display:flex;
+  justify-content:flex-end;
+  padding:12px 16px 16px;
+}
+
+.project-card{
+  background:#fff;
+  border-radius:20px;
+  border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 6px 18px rgba(0,0,0,.05);
+  overflow:hidden;
+}
+
+
+
+
 /*明細頁樣式*/
 /* ===== Detail page ===== */
 .detail-wrap{max-width:900px;margin:0 auto;}
