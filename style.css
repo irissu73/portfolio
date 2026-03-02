@@ -357,3 +357,30 @@
 @media (min-width: 980px){
   .project-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
 }
+
+/* ===== Mobile override (put at END of file) ===== */
+@media (max-width: 767px){
+  .project-grid{
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 767px){
+  body{ font-size: 16px; }
+
+  .brand h1{ font-size: 28px; }
+  .brand p{ font-size: 15px; }
+
+  .project-count{ font-size: 16px; }
+
+  .status-chips button{
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .project-card .meta{ font-size: 13px; }
+  .project-card h3{ font-size: 18px; }
+  .project-card p{ font-size: 15px; }
+
+  .project-card .tags span{ font-size: 13px; }
+}
