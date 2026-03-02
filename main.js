@@ -164,8 +164,10 @@ list.innerHTML += `
     <div class="content">
       <div class="meta">${statusText} ｜ 更新 ${updated}</div>
       <h3>${p.title || ""}</h3>
-      <p>產出：${p.output || ""}</p>
+  
+    
       <p>${p.summary || ""}</p>
+      ${p.output ? `<div class="output-line">產出：<strong>${escapeHtml(p.output)}</strong></div>` : ""}
     </div>
 
     ${coverHtml}
