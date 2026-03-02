@@ -97,8 +97,8 @@
       const updated = (p.updatedAt || "").replace("-", ".");
       const cover = p.cover || "";
       const title = p.title || "";
-      const output = p.output || "";
       const summary = p.summary || "";
+      const output = p.output || "";
       const description = p.description || ""; // 你想寫完整內容就放這欄（可多段落換行）
 
       const directionTags = p.directionTags || [];
@@ -158,10 +158,9 @@
 
           <h1 class="project-title">${escapeHtml(title)}</h1>
 
-          ${output ? `<div class="project-output">產出：<strong>${escapeHtml(output)}</strong></div>` : ""}
-          
           ${summary ? `<p class="project-lead">${escapeHtml(summary)}</p>` : ""}
 
+          ${output ? `<div class="project-output">產出：<strong>${escapeHtml(output)}</strong></div>` : ""}
         </div>
 
         <section class="section">
