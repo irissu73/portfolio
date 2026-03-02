@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return true;
     });
 
-    title.textContent = "實驗清單";
+    title.textContent = "實驗狀態";
 
     list.innerHTML = "";
     filtered.forEach(p => {
