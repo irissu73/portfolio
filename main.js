@@ -1,212 +1,143 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // ✅ 一進來就標記：JS 有跑（你的紅字就會消失）
-  document.body.classList.add("js-loaded");
+// ===============================
+// IRIS AI Lab - main.js
+// ===============================
 
-  let allProjects = [];
-  const filterState = { status: null, direction: new Set(), tech: new Set() };
+const statusOrder = ["concept", "testing", "validated", "expanding"];
 
-  fetch("./projects.json")
-    .then(r => r.json())
-    .then(data => {
-      allProjects = data.projects || [];
-      renderStatus();
-      renderTags();
-      render();
-      setupDrawer();
-      setupBackToTop();
-    })
-    .catch(err => {
-      // 就算 JSON 壞掉，也至少讓你知道原因
-      const list = document.getElementById("project-list");
-      if (list) {
-        list.innerHTML = `<div style="padding:14px;color:#b00020">⚠️ projects.json 讀取失敗：${String(err)}</div>`;
-      }
-      console.error(err);
-    });
+const statusMap = {
+  concept:   { dot: "🟡", zh: "構想期" },
+  testing:   { dot: "🟠", zh: "驗證中" },
+  validated: { dot: "🟢", zh: "已驗證" },
+  expanding: { dot: "🔵", zh: "延伸中" }
+};
 
-  function statusLabel(status) {
-    return ({
-      concept: "🟡 構想中",
-      testing: "🟠 驗證中",
-      validated: "🟢 已驗證",
-      expanding: "🔵 延伸中",
-    })[status] || status;
+let allProjects = [];
+let selectedStatuses = new Set();
+
+// ---------- utils ----------
+function escapeHtml(s) {
+  return String(s ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+// ---------- init ----------
+async function init() {
+  try {
+    const res = await fetch("./projects.json?v=" + Date.now());
+    const data = await res.json();
+    allProjects = Array.isArray(data) ? data : (data.projects || []);
+  } catch (e) {
+    console.error("載入 projects.json 失敗", e);
+    return;
   }
 
-  function renderStatus() {
-    const el = document.getElementById("status-filters");
-    if (!el) return;
+  renderStatusBar();
+  renderProjects();
+}
 
-    const counts = { concept: 0, testing: 0, validated: 0, expanding: 0 };
-    allProjects.forEach(p => { if (counts[p.status] != null) counts[p.status]++; });
+init();
 
-    // ✅ 固定順序：構想中 → 驗證中 → 已驗證 → 延伸中（即使 0 也顯示）
-    const items = [
-      { key: "concept",   text: `🟡 構想中（${counts.concept}）` },
-      { key: "testing",   text: `🟠 驗證中（${counts.testing}）` },
-      { key: "validated", text: `🟢 已驗證（${counts.validated}）` },
-      { key: "expanding", text: `🔵 延伸中（${counts.expanding}）` },
-    ];
+// ===============================
+// 狀態區
+// ===============================
 
-    el.innerHTML = items.map(i => `<button data-status="${i.key}">${i.text}</button>`).join("");
+function renderStatusBar() {
+  const container = document.getElementById("statusBar");
+  if (!container) return;
 
-    el.querySelectorAll("button").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const s = btn.getAttribute("data-status");
-        filterState.status = (filterState.status === s) ? null : s;
-        render();
-        syncActiveUI();
-      });
-    });
+  container.innerHTML = statusOrder.map(status => {
+    const count = allProjects.filter(p => p.status === status).length;
+    const meta = statusMap[status];
 
-    syncActiveUI();
+    return `
+      <button 
+        class="status-pill ${selectedStatuses.has(status) ? "active" : ""}"
+        onclick="toggleStatus('${status}')">
+        <span class="dot">${meta.dot}</span>
+        ${meta.zh}（${count}）
+      </button>
+    `;
+  }).join("");
+}
+
+function toggleStatus(status) {
+  if (selectedStatuses.has(status)) {
+    selectedStatuses.delete(status);
+  } else {
+    selectedStatuses.add(status);
   }
 
-  function renderTags() {
-    const dirEl = document.getElementById("direction-filters");
-    const techEl = document.getElementById("tech-filters");
-    if (!dirEl || !techEl) return;
+  renderStatusBar();
+  renderProjects();
+}
 
-    const dirs = new Set(), techs = new Set();
-    allProjects.forEach(p => {
-      (p.directionTags || []).forEach(t => dirs.add(t));
-      (p.techTags || []).forEach(t => techs.add(t));
-    });
+// ===============================
+// 專案卡
+// ===============================
 
-    dirEl.innerHTML = [...dirs].sort().map(t => `<button data-dir="${t}">${t}</button>`).join("");
-    techEl.innerHTML = [...techs].sort().map(t => `<button data-tech="${t}">${t}</button>`).join("");
+function renderProjects() {
+  const list = document.getElementById("projectList");
+  if (!list) return;
 
-    dirEl.querySelectorAll("button").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const t = btn.getAttribute("data-dir");
-        filterState.direction.has(t) ? filterState.direction.delete(t) : filterState.direction.add(t);
-        render(); syncActiveUI();
-      });
-    });
+  let filtered = allProjects;
 
-    techEl.querySelectorAll("button").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const t = btn.getAttribute("data-tech");
-        filterState.tech.has(t) ? filterState.tech.delete(t) : filterState.tech.add(t);
-        render(); syncActiveUI();
-      });
-    });
-
-    const clearBtn = document.getElementById("clearFilters");
-    if (clearBtn) {
-      clearBtn.addEventListener("click", () => {
-        filterState.status = null;
-        filterState.direction.clear();
-        filterState.tech.clear();
-        render(); syncActiveUI();
-      });
-    }
-
-    syncActiveUI();
+  // OR 篩選
+  if (selectedStatuses.size > 0) {
+    filtered = allProjects.filter(p => selectedStatuses.has(p.status));
   }
 
-  function syncActiveUI() {
-    document.querySelectorAll('#status-filters button[data-status]').forEach(btn => {
-      const s = btn.getAttribute("data-status");
-      btn.classList.toggle("active", filterState.status === s);
-    });
-    document.querySelectorAll('#direction-filters button[data-dir]').forEach(btn => {
-      const t = btn.getAttribute("data-dir");
-      btn.classList.toggle("active", filterState.direction.has(t));
-    });
-    document.querySelectorAll('#tech-filters button[data-tech]').forEach(btn => {
-      const t = btn.getAttribute("data-tech");
-      btn.classList.toggle("active", filterState.tech.has(t));
-    });
-  }
+  list.innerHTML = filtered.map(p => renderCard(p)).join("");
+}
 
-  function render() {
-    const list = document.getElementById("project-list");
-    const title = document.getElementById("project-count");
-    if (!list || !title) return;
+function renderCard(p) {
+  const meta = statusMap[p.status] || { dot: "⚪️", zh: "未分類" };
 
-const filtered = allProjects.filter(p => {
-  if (filterState.status && p.status !== filterState.status) return false;
+  return `
+    <div class="card">
 
-  // direction OR
-  if (filterState.direction.size > 0) {
-    const hasAnyDirection =
-      (p.directionTags || []).some(t => filterState.direction.has(t));
-    if (!hasAnyDirection) return false;
-  }
+      <div class="card-body">
 
-  // tech OR
-  if (filterState.tech.size > 0) {
-    const hasAnyTech =
-      (p.techTags || []).some(t => filterState.tech.has(t));
-    if (!hasAnyTech) return false;
-  }
+        <div class="card-meta">
+          <span class="dot">${meta.dot}</span>
+          ${meta.zh} ｜ 更新 ${escapeHtml(p.updatedAt || "")}
+        </div>
 
-  return true;
-});
+        <h3 class="card-title">
+          ${escapeHtml(p.title)}
+        </h3>
 
-    title.textContent = "實驗狀態";
+        <p class="card-summary">
+          ${escapeHtml(p.summary || "")}
+        </p>
 
-    list.innerHTML = "";
-    filtered.forEach(p => {
-      const statusText = statusLabel(p.status);
-      const updated = (p.updatedAt || "").replace("-", ".");
-      const coverHtml = p.cover
-  ? `<img class="card-cover" src="${p.cover}" onerror="this.remove()">`
-  : "";
+        ${p.output ? `
+          <div class="output-line">
+            產出：<strong>${escapeHtml(p.output)}</strong>
+          </div>
+        ` : ""}
 
-const detailHtml = p.id
-  ? `<a class="detail-link" href="./project.html?id=${encodeURIComponent(p.id)}">查看完整內容 →</a>`
-  : "";
+      </div>
 
-list.innerHTML += `
-  <div class="project-card">
-    <div class="content">
-      <div class="meta">${statusText} ｜ 更新 ${updated}</div>
-      <h3>${p.title || ""}</h3>
-  
-    
-      <p>${p.summary || ""}</p>
-      ${p.output ? `<div class="output-line">產出：<strong>${escapeHtml(p.output)}</strong></div>` : ""}
+      ${p.cover ? `
+        <div class="card-cover-wrap">
+          <img src="${escapeHtml(p.cover)}" 
+               alt="${escapeHtml(p.title)}"
+               class="card-cover"
+               onerror="this.remove()">
+        </div>
+      ` : ""}
+
+      <div class="card-footer">
+        <a href="./project.html?id=${encodeURIComponent(p.id)}" 
+           class="btn primary">
+          查看完整內容 →
+        </a>
+      </div>
+
     </div>
-
-    ${coverHtml}
-
-    <div class="card-footer">
-      ${detailHtml}
-    </div>
-  </div>
-`;
-    });
-
-    syncActiveUI();
-  }
-
-  function setupDrawer() {
-    const drawer = document.getElementById("drawer");
-    const overlay = document.getElementById("overlay");
-    const menuBtn = document.getElementById("menuBtn");
-    const closeBtn = document.getElementById("closeBtn");
-    if (!drawer || !overlay || !menuBtn || !closeBtn) return;
-
-    const open = () => { drawer.classList.add("open"); overlay.classList.remove("hidden"); };
-    const close = () => { drawer.classList.remove("open"); overlay.classList.add("hidden"); };
-
-    menuBtn.addEventListener("click", open);
-    closeBtn.addEventListener("click", close);
-    overlay.addEventListener("click", close);
-  }
-
-  function setupBackToTop() {
-    const btn = document.getElementById("backToTop");
-    if (!btn) return;
-
-    window.addEventListener("scroll", () => {
-      btn.classList.toggle("show", window.scrollY > 300);
-    });
-
-    btn.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  }
-});
+  `;
+}
