@@ -162,7 +162,6 @@ list.innerHTML += `
     </div>
   </div>
 `;
-`;
     });
 
     syncActiveUI();
