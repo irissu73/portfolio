@@ -175,3 +175,30 @@ function renderTags(projects) {
   overlay.addEventListener("click", close);
 })();
 
+function renderStatusFilters(projects){
+  const el = document.getElementById("status-filters");
+  if (!el) return;
+
+  const counts = { concept:0, testing:0, validated:0, expanding:0 };
+  projects.forEach(p => { if (counts[p.status] != null) counts[p.status]++; });
+
+  const items = [
+    {key:"validated", label:`🟢 已驗證 ${counts.validated}`},
+    {key:"testing", label:`🟠 驗證中 ${counts.testing}`},
+    {key:"concept", label:`🟡 構想 ${counts.concept}`},
+    {key:"expanding", label:`🔵 延伸中 ${counts.expanding}`}
+  ];
+
+  el.innerHTML = items
+    .filter(i => counts[i.key] > 0) // 只顯示有用到的
+    .map(i => `<button data-status="${i.key}">${i.label}</button>`)
+    .join("");
+
+  el.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const s = btn.getAttribute("data-status");
+      filterState.status = (filterState.status === s) ? null : s; // 再點一次取消
+      refreshUI();
+    });
+  });
+}
