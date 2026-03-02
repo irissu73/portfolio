@@ -266,6 +266,83 @@ body:not(.js-loaded) #project-list::before{
   overflow:hidden;
 }
 
+/* ====== Page Background ====== */
+body{
+  background: linear-gradient(180deg,#f7f8fb 0%,#eef1f6 100%);
+}
+
+/* ====== Product Card Style ====== */
+.project-card{
+  background:#ffffff;
+  border-radius:24px;
+  border:1px solid rgba(0,0,0,.04);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.06),
+    0 2px 6px rgba(0,0,0,.04);
+  overflow:hidden;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+/* Hover 效果（桌面會有，手機不影響） */
+.project-card:hover{
+  transform: translateY(-4px);
+  box-shadow:
+    0 18px 40px rgba(0,0,0,.08),
+    0 4px 10px rgba(0,0,0,.06);
+}
+
+/* 內容留白 */
+.project-card .content{
+  padding:20px 20px 12px;
+}
+
+.project-card h3{
+  font-size:20px;
+  margin:6px 0 10px;
+  letter-spacing:.5px;
+}
+
+.project-card p{
+  color:#444;
+  line-height:1.5;
+}
+
+/* 主圖 */
+.project-card .card-cover{
+  width:100%;
+  aspect-ratio: 2/1;
+  object-fit: cover;
+  display:block;
+  border-top:1px solid rgba(0,0,0,.05);
+}
+
+/* ====== 操作區 ====== */
+.card-footer{
+  display:flex;
+  justify-content:flex-end;
+  padding:14px 20px 18px;
+}
+
+/* 讓「查看完整內容」像產品按鈕 */
+.detail-link{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:10px 16px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:14px;
+  text-decoration:none;
+
+  background:#111;
+  color:#fff;
+  transition: all .2s ease;
+}
+
+.detail-link:hover{
+  background:#000;
+  transform:translateY(-1px);
+}
 
 
 
