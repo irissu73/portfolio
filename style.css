@@ -102,20 +102,41 @@ body{
   font-size:20px;font-weight:800;margin:0;
 }
 
-/* 狀態同列 */
+
+/* ===== Status buttons: match Tag style ===== */
 .status-chips{
-  display:flex;flex-wrap:wrap;gap:8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
+/* 兩欄排列（手機一排兩個） */
 .status-chips button{
-  flex:1 1 calc(50% - 8px);
-  border:1px solid var(--border);
-  background:#fff;border-radius:999px;
-  padding:8px 10px;font-size:13px;cursor:pointer;
-  text-align:center;
+  flex: 1 1 calc(50% - 10px);
+  text-align: left;
+
+  /* 跟 .ios-list button 一樣的視覺 */
+  border: 1px solid rgba(0,0,0,.08);
+  background: #fafafa;
+  border-radius: 14px;
+  padding: 12px 12px;
+  font-size: 15px;
+  cursor: pointer;
+
+  transition: transform 0.05s ease;
 }
 
-.status-chips button.active{border-color:#000;font-weight:700;}
+/* 按下去手感 */
+.status-chips button:active{
+  transform: scale(0.99);
+}
+
+/* 選中效果跟 tag 一樣 */
+.status-chips button.active{
+  background: #eaf2ff;
+  font-weight: 700;
+  border-color: rgba(0,0,0,.18);
+}
 
 /* 卡片 */
 #project-list{
