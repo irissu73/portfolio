@@ -1,37 +1,27 @@
 {
   "projects": [
     {
-      "id": "littlehq",
-      "name": "LittleHQ（小總部）— AI 輔助 iOS App 開發",
-      "goal": "驗證 AI 是否能協助從零完成可部署的 iOS App。",
-      "outcome": "完成可部署至 iPad 的版本並進行實測。",
-      "tags": [
-        "SwiftUI",
-        "iOS",
-        "AI-Assisted-Dev"
-      ],
-      "status": "Validated",
-      "updated": "2026.02",
-      "demo_url": "",
-      "image": ""
+      "id": "ai-collab-dev",
+      "title": "AI × 協作開發實驗",
+      "output": "LittleHQ 小總部",
+      "status": "validated",
+      "featured": true,
+      "updatedAt": "2026-03",
+      "summary": "測試 AI 是否能協作完成一個可用的 iOS App。",
+      "directionTags": ["協作開發"],
+      "techTags": ["SwiftUI", "OpenAI API"],
+      "cover": "/images/littlehq-cover.jpg"
     },
     {
-      "id": "1",
-      "name": "AI 整合實作作品頁",
-      "goal": "建立一個一頁式作品集網站，並將內容資料化",
-      "outcome": "網站已成功部署到 Vercel，首頁專案卡由 projects.json 驅動",
-      "tags": [
-        "HTML",
-        "Vercel",
-        "GitHubActions",
-        "OpenAIAPI",
-        "Automation",
-        "JSON"
-      ],
-      "status": "Validated",
-      "updated": "2023.10",
-      "demo_url": "",
-      "image": ""
+      "id": "ai-auto-publish",
+      "title": "AI × 自動化發布實驗",
+      "output": "IRIS ｜ AI 實驗場",
+      "status": "testing",
+      "updatedAt": "2026-03",
+      "summary": "測試專案資料是否能透過 AI 自動生成並發佈。",
+      "directionTags": ["自動化發布"],
+      "techTags": ["GitHub Actions", "Vercel", "JSON", "OpenAI API"],
+      "cover": "/images/site-cover.jpg"
     }
   ]
 }
