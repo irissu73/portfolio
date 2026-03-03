@@ -1,60 +1,73 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>IRIS ｜ AI 實驗場</title>
-  <link rel="icon" type="image/png" href="/favicon.png" />
-  <link rel="shortcut icon" href="/favicon.png">
-  <link rel="apple-touch-icon" href="/favicon.png" />
-  <link rel="stylesheet" href="./style.css?v=app03" />
+
+  <link rel="icon" href="./favicon.png" />
+  <link rel="stylesheet" href="./style.css?v=base09" />
 </head>
+
 <body>
+  <!-- Top bar -->
+  <header class="topbar">
+    <button id="menuBtn" class="icon-btn" aria-label="打開篩選">☰</button>
 
-<header class="topbar">
-  <button id="menuBtn" class="icon-btn">☰</button>
-  <div class="brand">
-    <h1>IRIS ｜ AI 實驗場</h1>
-    <p>用專案實驗 AI 的各種可能性</p>
-    <p>Build. Test. Expand with AI.</p>
-  </div>
-</header>
-
-<div id="overlay" class="overlay hidden"></div>
-
-<!-- Drawer -->
-<aside id="drawer" class="drawer ios-drawer" aria-hidden="true">
-  <div class="drawer-header ios-header">
-    <div class="drawer-title ios-title">篩選</div>
-    <div class="drawer-header-actions">
-      <button id="clearFilters" class="ios-clear">清除</button>
-      <button id="closeBtn" class="ios-close">✕</button>
+    <div class="brand">
+      <div class="brand-title">IRIS ｜ AI 實驗場</div>
+      <div class="brand-sub">用專案實驗 AI 的各種可能性</div>
+      <div class="brand-sub en">Build. Test. Expand with AI.</div>
     </div>
-  </div>
+  </header>
 
-  <div class="drawer-scroll ios-scroll">
-    <div class="ios-section">
-      <div class="ios-section-title">實驗方向</div>
-      <div id="direction-filters" class="ios-list"></div>
+  <!-- Drawer + overlay -->
+  <div id="overlay" class="overlay"></div>
+
+  <aside id="drawer" class="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <div class="drawer-title">篩選</div>
+      <div class="drawer-actions">
+        <button id="clearFiltersBtn" class="tag ghost">清除</button>
+        <button id="closeDrawerBtn" class="tag ghost">✕</button>
+      </div>
     </div>
 
-    <div class="ios-section">
-      <div class="ios-section-title">技術</div>
-      <div id="tech-filters" class="ios-list"></div>
+    <div class="drawer-body">
+      <div class="drawer-section">
+        <div class="drawer-section-title">實驗方向</div>
+        <div id="directionTags" class="tag-list"></div>
+      </div>
+
+      <div class="drawer-section">
+        <div class="drawer-section-title">技術</div>
+        <div id="techTags" class="tag-list"></div>
+      </div>
     </div>
-  </div>
-</aside>
 
-<main class="page">
-  <div class="status-row">
-    <h2 id="project-count" class="project-count"></h2>
-    <div id="status-filters" class="status-chips"></div>
-  </div>
+    <!-- footer 不固定（你選 B），內容多會自然捲動 -->
+  </aside>
 
-  <section id="project-list"></section>
-</main>
+  <!-- Page -->
+  <main class="page">
+    <!-- 狀態列（固定在主頁） -->
+    <section class="status-row">
+      <h2 id="project-count" class="project-count">Projects</h2>
+      <div id="status-filters" class="status-chips"></div>
+    </section>
 
-<script src="./main.js?v=app02"></script>
-<button id="backToTop" class="back-to-top">↑</button>
+    <!-- 若 JS 沒跑才會看到；JS 成功後會自動移除 -->
+    <div id="js-warning" class="warn">
+      ⚠️ JS 尚未載入或執行失敗（請檢查 main.js / projects.json 路徑與格式）
+    </div>
+
+    <!-- 卡片列表 -->
+    <section id="project-list" class="project-grid"></section>
+  </main>
+
+  <!-- to top -->
+  <button id="toTopBtn" class="to-top" aria-label="回到頂部">↑</button>
+
+  <script src="./main.js?v=home09"></script>
 </body>
 </html>
