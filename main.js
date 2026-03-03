@@ -17,6 +17,9 @@ const statusMap = {
 
 let allProjects = [];
 let selectedStatuses = new Set();
+let selectedDirections = new Set();
+let selectedTech = new Set();
+
 
 // ---------- utils ----------
 function escapeHtml(s) {
@@ -45,6 +48,25 @@ function showFatal(msg) {
     "padding:14px;margin:12px 0;border:1px solid rgba(176,0,32,.25);background:rgba(176,0,32,.06);color:#b00020;font-weight:900;border-radius:14px;line-height:1.5;";
   box.textContent = msg;
   host.prepend(box);
+}
+
+function asArray(v) {
+  if (!v) return [];
+  return Array.isArray(v) ? v : [v];
+}
+
+// 允許 projects.json 用 direction / directions 都可
+function getDirections(p) {
+  return asArray(p.direction ?? p.directions).map(String);
+}
+
+// 允許 projects.json 用 tech / techTags / techs 都可
+function getTech(p) {
+  return asArray(p.tech ?? p.techTags ?? p.techs).map(String);
+}
+
+function uniqSorted(arr) {
+  return Array.from(new Set(arr.filter(Boolean))).sort((a, b) => a.localeCompare(b, "zh-Hant"));
 }
 
 /** clear fatal message */
@@ -125,6 +147,51 @@ function renderStatusFilters() {
   });
 }
 
+function renderDrawerFilters() {
+  const dirEl = $("direction-filters");
+  const techEl = $("tech-filters");
+  if (!dirEl || !techEl) return;
+
+  const allDirs = uniqSorted(allProjects.flatMap(getDirections));
+  const allTech = uniqSorted(allProjects.flatMap(getTech));
+
+  dirEl.innerHTML = allDirs.length
+    ? allDirs.map((t) => {
+        const active = selectedDirections.has(t) ? "active" : "";
+        return `<button class="tag ${active}" data-dir="${escapeHtml(t)}">${escapeHtml(t)}</button>`;
+      }).join("")
+    : `<div style="opacity:.6;font-size:14px;">（尚無實驗方向）</div>`;
+
+  techEl.innerHTML = allTech.length
+    ? allTech.map((t) => {
+        const active = selectedTech.has(t) ? "active" : "";
+        return `<button class="tag ${active}" data-tech="${escapeHtml(t)}">${escapeHtml(t)}</button>`;
+      }).join("")
+    : `<div style="opacity:.6;font-size:14px;">（尚無技術標籤）</div>`;
+
+  dirEl.querySelectorAll("[data-dir]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const v = btn.getAttribute("data-dir");
+      if (!v) return;
+      if (selectedDirections.has(v)) selectedDirections.delete(v);
+      else selectedDirections.add(v);
+      renderDrawerFilters();
+      renderProjects();
+    });
+  });
+
+  techEl.querySelectorAll("[data-tech]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const v = btn.getAttribute("data-tech");
+      if (!v) return;
+      if (selectedTech.has(v)) selectedTech.delete(v);
+      else selectedTech.add(v);
+      renderDrawerFilters();
+      renderProjects();
+    });
+  });
+}
+
 function renderProjects() {
   const listEl = $("project-list");
   if (!listEl) return;
@@ -134,6 +201,22 @@ function renderProjects() {
   // OR 多選
   if (selectedStatuses.size > 0) {
     filtered = allProjects.filter((p) => selectedStatuses.has(p.status));
+  }
+  
+    // OR 多選：實驗方向
+  if (selectedDirections.size > 0) {
+    filtered = filtered.filter((p) => {
+      const dirs = getDirections(p);
+      return dirs.some((d) => selectedDirections.has(d));
+    });
+  }
+
+  // OR 多選：技術
+  if (selectedTech.size > 0) {
+    filtered = filtered.filter((p) => {
+      const techs = getTech(p);
+      return techs.some((t) => selectedTech.has(t));
+    });
   }
 
   // pinned 置頂 + updatedAt 新到舊
@@ -227,3 +310,4 @@ function setupDrawer() {
 // start
 init();
 setupDrawer();
+renderDrawerFilters();
