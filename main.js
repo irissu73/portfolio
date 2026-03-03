@@ -336,7 +336,7 @@ function renderCard(p) {
 
   const outputHtml = p.output ? `
     <div class="output-line">
-      產出：${escapeHtml(p.output)}
+        產出：<strong>${escapeHtml(p.output)}</strong>
     </div>
   ` : "";
 
