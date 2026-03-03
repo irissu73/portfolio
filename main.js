@@ -139,26 +139,33 @@ function setupDrawer() {
 function setupBackToTop() {
   const btn = document.getElementById("backToTop");
   if (!btn) return;
-  
-  // 先強制顯示測試
-  btn.classList.add("show");
 
-  // 滾動顯示/隱藏
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 40) {
+  function refresh() {
+    // 內容短：直接顯示（方便現在資料少測試）
+    const canScroll = document.documentElement.scrollHeight > window.innerHeight + 10;
+    if (!canScroll) {
       btn.classList.add("show");
-    } else {
-      btn.classList.remove("show");
+      return;
     }
+
+    // 有滾動就顯示
+    if (window.scrollY > 1) btn.classList.add("show");
+    else btn.classList.remove("show");
+  }
+
+  window.addEventListener("scroll", refresh, { passive: true });
+  window.addEventListener("resize", refresh);
+  window.addEventListener("load", refresh);
+
+  btn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  // 點擊回頂部
-  btn.addEventListener("click", () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-  });
+  // 給 renderProjects 呼叫（篩選後高度變動）
+  window.__updateBackToTop = refresh;
+
+  // 初始判斷
+  refresh();
 }
 
 // ---------- init ----------
