@@ -166,7 +166,7 @@ function setupBackToTop() {
   window.__updateBackToTop = refresh;
 
   // 初始判斷
-  refresh();t
+  refresh();
 }
 
 // ---------- init ----------
