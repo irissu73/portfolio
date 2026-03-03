@@ -1,6 +1,9 @@
 // ===============================
 // IRIS ｜ AI 實驗場 - main.js
-// (fits your current index.html ids)
+// Works with your current index.html ids:
+// - #status-filters
+// - #project-list
+// - #project-count
 // ===============================
 
 const statusOrder = ["concept", "testing", "validated", "expanding"];
@@ -40,7 +43,6 @@ function showFatal(msg) {
 
 async function init() {
   try {
-    // containers
     const statusEl = $("status-filters");
     const listEl = $("project-list");
     const countEl = $("project-count");
@@ -49,13 +51,9 @@ async function init() {
     if (!listEl) showFatal("⚠️ 找不到 #project-list（index.html 需要 <section id='project-list'></section>）");
     if (!statusEl || !listEl) return;
 
-    // load json
     const url = "./projects.json?v=" + Date.now();
     const res = await fetch(url);
-
-    if (!res.ok) {
-      throw new Error(`projects.json 讀取失敗：HTTP ${res.status} ${res.statusText}`);
-    }
+    if (!res.ok) throw new Error(`projects.json 讀取失敗：HTTP ${res.status} ${res.statusText}`);
 
     const text = await res.text();
     let data;
@@ -68,13 +66,10 @@ async function init() {
     allProjects = Array.isArray(data) ? data : (data.projects || []);
     if (!Array.isArray(allProjects)) allProjects = [];
 
+    if (countEl) countEl.textContent = `Projects（共 ${allProjects.length}）`;
+
     renderStatusFilters();
     renderProjects();
-
-    // count
-    if (countEl) {
-      countEl.textContent = `Projects（共 ${allProjects.length}）`;
-    }
   } catch (e) {
     console.error(e);
     showFatal("⚠️ JS 載入失敗：" + (e?.message || String(e)));
@@ -85,24 +80,17 @@ function renderStatusFilters() {
   const statusEl = $("status-filters");
   if (!statusEl) return;
 
-  // 固定四個都顯示（即使 0）
-  statusEl.innerHTML = statusOrder
-    .map((status) => {
-      const meta = statusMap[status];
-      const count = allProjects.filter((p) => p.status === status).length;
-      const active = selectedStatuses.has(status) ? "active" : "";
+  statusEl.innerHTML = statusOrder.map((status) => {
+    const meta = statusMap[status];
+    const count = allProjects.filter((p) => p.status === status).length;
+    const active = selectedStatuses.has(status) ? "active" : "";
+    return `
+      <button class="tag status-tag ${active}" data-status="${status}">
+        ${meta.dot} ${meta.zh}（${count}）
+      </button>
+    `;
+  }).join("");
 
-      // 讓按鈕風格跟 tag 一樣：沿用你現有 .tag / .chip 也行
-      // 這裡先用 class="tag"，你若是用別的 class，告訴我我幫你對齊
-      return `
-        <button class="tag status-tag ${active}" data-status="${status}">
-          ${meta.dot} ${meta.zh}（${count}）
-        </button>
-      `;
-    })
-    .join("");
-
-  // bind click
   statusEl.querySelectorAll("[data-status]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const s = btn.getAttribute("data-status");
@@ -123,21 +111,17 @@ function renderProjects() {
 
   let filtered = allProjects;
 
-  // 狀態 OR 多選
+  // OR 多選
   if (selectedStatuses.size > 0) {
     filtered = allProjects.filter((p) => selectedStatuses.has(p.status));
   }
 
-  // 如果你有置頂 pinned: true，讓它先排
+  // pinned 置頂 + updatedAt 新到舊
   filtered = filtered.slice().sort((a, b) => {
     const ap = a.pinned ? 1 : 0;
     const bp = b.pinned ? 1 : 0;
     if (ap !== bp) return bp - ap;
-
-    // 預設用 updatedAt 新到舊
-    const ad = String(a.updatedAt || "");
-    const bd = String(b.updatedAt || "");
-    return bd.localeCompare(ad);
+    return String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""));
   });
 
   listEl.innerHTML = filtered.map(renderCard).join("");
@@ -145,16 +129,22 @@ function renderProjects() {
 
 function renderCard(p) {
   const meta = statusMap[p.status] || { dot: "⚪️", zh: "未分類" };
-
-  const coverHtml = p.cover
-    ? `
-      <div class="card-cover-wrap">
-        <img class="card-cover" src="${escapeHtml(p.cover)}" alt="${escapeHtml(p.title || "")}" onerror="this.remove()">
-      </div>
-    `
-    : "";
-
   const detailHref = p.id ? `./project.html?id=${encodeURIComponent(p.id)}` : "./project.html";
+
+  const coverHtml = p.cover ? `
+    <div class="card-cover-wrap">
+      <img class="card-cover"
+           src="${escapeHtml(p.cover)}"
+           alt="${escapeHtml(p.title || "")}"
+           onerror="this.remove()">
+    </div>
+  ` : "";
+
+  const outputHtml = p.output ? `
+    <div class="output-line">
+      產出：<strong>${escapeHtml(p.output)}</strong>
+    </div>
+  ` : "";
 
   return `
     <article class="project-card card">
@@ -166,4 +156,19 @@ function renderCard(p) {
 
         <h3 class="card-title">${escapeHtml(p.title || "")}</h3>
 
-        ${p.summary ? `<p class="card-summary">${escape
+        ${p.summary ? `<p class="card-summary">${escapeHtml(p.summary)}</p>` : ""}
+
+        ${outputHtml}
+      </div>
+
+      ${coverHtml}
+
+      <div class="card-footer">
+        <a class="btn primary" href="${detailHref}">查看完整內容 →</a>
+      </div>
+    </article>
+  `;
+}
+
+// start
+init();
