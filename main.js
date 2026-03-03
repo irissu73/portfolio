@@ -92,6 +92,7 @@ async function init() {
 
     renderStatusFilters();
     renderProjects();
+    hideJsWarning();
   } catch (e) {
     console.error(e);
     showFatal("⚠️ JS 載入失敗：" + (e?.message || String(e)));
