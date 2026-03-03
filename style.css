@@ -371,11 +371,3 @@ body{
 .back-to-top:active{
   transform: scale(0.95);
 }
-
-/* ===== Debug ===== */
-body:not(.js-loaded) #project-list::before{
-  content:"⚠️ JS 尚未載入或執行失敗（請檢查 main.js / projects.json 路徑與格式）";
-  display:block;
-  padding:14px;
-  color:#b00020;
-}
