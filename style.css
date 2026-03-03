@@ -425,25 +425,30 @@ body{
 }
 
 /*回頂*/
-.back-to-top {
+/* ===== Back to Top ===== */
+.back-to-top{
   position: fixed;
-  right: 20px;
-  bottom: 20px;
+  right: 18px;
+  bottom: 18px;
   width: 44px;
   height: 44px;
-  border-radius: 50%;
+  border-radius: 999px;
   border: none;
   background: #000;
   color: #fff;
   font-size: 18px;
+  font-weight: 900;
   cursor: pointer;
+  z-index: 999999;
+
   opacity: 0;
   pointer-events: none;
-  transition: 0.2s ease;
-  z-index: 999;
+  transform: translateY(6px);
+  transition: opacity .2s ease, transform .2s ease;
 }
 
-.back-to-top.show {
+.back-to-top.show{
   opacity: 1;
   pointer-events: auto;
+  transform: translateY(0);
 }
