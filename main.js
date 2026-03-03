@@ -134,6 +134,30 @@ function setupDrawer() {
   }
 }
 
+//回最頂
+// 回到上方按鈕
+function setupBackToTop() {
+  const btn = document.getElementById("backToTop");
+  if (!btn) return;
+
+  // 滾動顯示/隱藏
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 300) {
+      btn.classList.add("show");
+    } else {
+      btn.classList.remove("show");
+    }
+  });
+
+  // 點擊回頂部
+  btn.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
+}
+
 // ---------- init ----------
 async function init() {
   try {
