@@ -359,3 +359,4 @@ function renderCard(p) {
 setupDrawer();
 setupBackToTop();
 init();
+document.getElementById("backToTop")?.classList.add("show");
