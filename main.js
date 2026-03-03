@@ -129,7 +129,6 @@ function setupDrawer() {
       renderStatusFilters();
       renderDrawerFilters();
       renderProjects();
-      document.body.classList.add("js-loaded");
       nukeLegacyWarning();
     });
   }
@@ -162,6 +161,7 @@ async function init() {
     renderStatusFilters();
     renderDrawerFilters();   // ✅ must be after allProjects loaded
     renderProjects();
+    document.body.classList.add("js-loaded");
 
     clearFatal();
   } catch (e) {
