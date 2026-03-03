@@ -335,10 +335,6 @@ async function init() {
       brand.innerHTML = `
   <h1 class="brand-title">${escapeHtml(p.title || "")}</h1>
   ${p.summary ? `<p class="brand-summary">${escapeHtml(p.summary)}</p>` : ""}
-  <p class="brand-status">
-    <span class="status-dot ${escapeHtml(p.status || "")}"></span>
-    ${escapeHtml(meta.zh)} · ${escapeHtml(p.updatedAt || "")}
-  </p>
 `;
     }
 
