@@ -165,7 +165,7 @@ function setupBackToTop() {
   window.__updateBackToTop = refresh;
 
   // 初始判斷
-  refresh();
+  refresh();t
 }
 
 // ---------- init ----------
@@ -317,6 +317,7 @@ function renderProjects() {
   });
 
   listEl.innerHTML = filtered.map(renderCard).join("");
+  window.__updateBackToTop?.();
 }
 
 function renderCard(p) {
