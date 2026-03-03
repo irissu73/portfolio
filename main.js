@@ -93,38 +93,7 @@ async function init() {
     showFatal("⚠️ JS 載入失敗：" + (e?.message || String(e)));
   }
   
-  //左側篩選Drawer
-function setupDrawer() {
-  const menuBtn = document.getElementById("menuBtn");
-  const closeBtn = document.getElementById("closeBtn");
-  const overlay = document.getElementById("overlay");
-  const drawer = document.getElementById("drawer");
 
-  if (!menuBtn || !closeBtn || !overlay || !drawer) return;
-
-  function openDrawer() {
-    drawer.classList.add("open");
-    overlay.classList.remove("hidden");
-    drawer.setAttribute("aria-hidden", "false");
-    document.body.classList.add("no-scroll");
-  }
-
-  function closeDrawer() {
-    drawer.classList.remove("open");
-    overlay.classList.add("hidden");
-    drawer.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("no-scroll");
-  }
-
-  menuBtn.addEventListener("click", openDrawer);
-  closeBtn.addEventListener("click", closeDrawer);
-  overlay.addEventListener("click", closeDrawer);
-
-  // ESC 關閉（桌機）
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeDrawer();
-  });
-}
 }
 
 function renderStatusFilters() {
@@ -220,6 +189,40 @@ function renderCard(p) {
     </article>
   `;
 }
+
+  //左側篩選Drawer
+function setupDrawer() {
+  const menuBtn = document.getElementById("menuBtn");
+  const closeBtn = document.getElementById("closeBtn");
+  const overlay = document.getElementById("overlay");
+  const drawer = document.getElementById("drawer");
+
+  if (!menuBtn || !closeBtn || !overlay || !drawer) return;
+
+  function openDrawer() {
+    drawer.classList.add("open");
+    overlay.classList.remove("hidden");
+    drawer.setAttribute("aria-hidden", "false");
+    document.body.classList.add("no-scroll");
+  }
+
+  function closeDrawer() {
+    drawer.classList.remove("open");
+    overlay.classList.add("hidden");
+    drawer.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("no-scroll");
+  }
+
+  menuBtn.addEventListener("click", openDrawer);
+  closeBtn.addEventListener("click", closeDrawer);
+  overlay.addEventListener("click", closeDrawer);
+
+  // ESC 關閉（桌機）
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeDrawer();
+  });
+}
+
 
 // start
 init();
