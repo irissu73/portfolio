@@ -139,6 +139,9 @@ function setupDrawer() {
 function setupBackToTop() {
   const btn = document.getElementById("backToTop");
   if (!btn) return;
+  
+  // 先強制顯示測試
+  btn.classList.add("show");
 
   // 滾動顯示/隱藏
   window.addEventListener("scroll", () => {
