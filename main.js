@@ -201,7 +201,7 @@ async function init() {
     clearFatal();
   } catch (e) {
     console.error(e);
-    showFatal("⚠️ JS 載入失敗：" + (e?.message || String(e)));
+    //showFatal("⚠️ JS 載入失敗：" + (e?.message || String(e)));
   }
 }
 
@@ -336,7 +336,6 @@ function renderCard(p) {
 
   const outputHtml = p.output ? `
     <div class="output-line">
-      //產出：<strong>${escapeHtml(p.output)}</strong>
       產出：${escapeHtml(p.output)}
     </div>
   ` : "";
