@@ -354,4 +354,5 @@ function renderCard(p) {
 
 // start
 setupDrawer();
+setupBackToTop();
 init();
