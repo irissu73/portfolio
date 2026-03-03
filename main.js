@@ -56,6 +56,25 @@ function clearFatal() {
   document.getElementById("fatalBox")?.remove();
 }
 
+//強制清除函式
+function nukeLegacyWarning() {
+  const needle1 = "JS 尚未載入";
+  const needle2 = "main.js / projects.json";
+
+  // 刪掉我們自己的 fatal
+  document.getElementById("fatalBox")?.remove();
+
+  // 掃描整頁：只要元素文字包含關鍵字就移除
+  document.querySelectorAll("body *").forEach(el => {
+    if (el.children.length === 0) {
+      const t = (el.textContent || "").trim();
+      if (t.includes(needle1) || t.includes(needle2)) {
+        el.remove();
+      }
+    }
+  });
+}
+
 function uniqSorted(arr) {
   return Array.from(new Set((arr || []).filter(Boolean).map(String)))
     .sort((a, b) => a.localeCompare(b, "zh-Hant"));
@@ -110,6 +129,7 @@ function setupDrawer() {
       renderStatusFilters();
       renderDrawerFilters();
       renderProjects();
+      nukeLegacyWarning();
     });
   }
 }
