@@ -1,9 +1,12 @@
 // ===============================
-// IRIS ｜ AI 實驗場 - main.js (stable)
+// IRIS ｜ AI 實驗場 - main.js (fixed full)
 // Works with your current index.html ids:
 // - #status-filters
 // - #project-list
 // - #project-count
+// - #direction-filters
+// - #tech-filters
+// - #menuBtn #closeBtn #overlay #drawer #clearFilters
 // ===============================
 
 const statusOrder = ["concept", "testing", "validated", "expanding"];
@@ -19,7 +22,6 @@ let allProjects = [];
 let selectedStatuses = new Set();
 let selectedDirections = new Set();
 let selectedTech = new Set();
-
 
 // ---------- utils ----------
 function escapeHtml(s) {
@@ -39,7 +41,6 @@ function $(id) {
 function showFatal(msg) {
   const host = $("project-list") || document.body;
 
-  // remove previous fatal box if exists
   document.getElementById("fatalBox")?.remove();
 
   const box = document.createElement("div");
@@ -50,37 +51,76 @@ function showFatal(msg) {
   host.prepend(box);
 }
 
-function asArray(v) {
-  if (!v) return [];
-  return Array.isArray(v) ? v : [v];
-}
-
-// 允許 projects.json 用 direction / directions 都可
-function getDirections(p) {
-  return asArray(p.direction ?? p.directions).map(String);
-}
-
-// 允許 projects.json 用 tech / techTags / techs 都可
-function getTech(p) {
-  return asArray(p.tech ?? p.techTags ?? p.techs).map(String);
-}
-
-function uniqSorted(arr) {
-  return Array.from(new Set(arr.filter(Boolean))).sort((a, b) => a.localeCompare(b, "zh-Hant"));
-}
-
 /** clear fatal message */
 function clearFatal() {
   document.getElementById("fatalBox")?.remove();
 }
 
+function uniqSorted(arr) {
+  return Array.from(new Set((arr || []).filter(Boolean).map(String)))
+    .sort((a, b) => a.localeCompare(b, "zh-Hant"));
+}
+
+// ✅ align to your JSON fields: directionTags / techTags
+function getDirections(p) {
+  return Array.isArray(p?.directionTags) ? p.directionTags.map(String) : [];
+}
+function getTech(p) {
+  return Array.isArray(p?.techTags) ? p.techTags.map(String) : [];
+}
+
+// ---------- Drawer ----------
+function setupDrawer() {
+  const menuBtn = $("menuBtn");
+  const closeBtn = $("closeBtn");
+  const overlay = $("overlay");
+  const drawer = $("drawer");
+  const clearBtn = $("clearFilters");
+
+  if (!menuBtn || !closeBtn || !overlay || !drawer) return;
+
+  function openDrawer() {
+    drawer.classList.add("open");
+    overlay.classList.remove("hidden");
+    drawer.setAttribute("aria-hidden", "false");
+    document.body.classList.add("no-scroll");
+  }
+
+  function closeDrawer() {
+    drawer.classList.remove("open");
+    overlay.classList.add("hidden");
+    drawer.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("no-scroll");
+  }
+
+  menuBtn.addEventListener("click", openDrawer);
+  closeBtn.addEventListener("click", closeDrawer);
+  overlay.addEventListener("click", closeDrawer);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeDrawer();
+  });
+
+  // ✅ 清除所有篩選（狀態+方向+技術）
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      selectedStatuses.clear();
+      selectedDirections.clear();
+      selectedTech.clear();
+      renderStatusFilters();
+      renderDrawerFilters();
+      renderProjects();
+    });
+  }
+}
+
+// ---------- init ----------
 async function init() {
   try {
     const statusEl = $("status-filters");
     const listEl = $("project-list");
     const countEl = $("project-count");
 
-    // If layout missing, show and stop
     if (!statusEl || !listEl) {
       if (!statusEl) showFatal("⚠️ 找不到 #status-filters（index.html 需要 <div id='status-filters'></div>）");
       if (!listEl) showFatal("⚠️ 找不到 #project-list（index.html 需要 <section id='project-list'></section>）");
@@ -92,32 +132,24 @@ async function init() {
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) throw new Error(`projects.json 讀取失敗：HTTP ${res.status} ${res.statusText}`);
 
-    const text = await res.text();
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch {
-      throw new Error(`projects.json 不是合法 JSON（前 120 字：${text.slice(0, 120)}）`);
-    }
-
+    const data = await res.json();
     allProjects = Array.isArray(data) ? data : (data.projects || []);
     if (!Array.isArray(allProjects)) allProjects = [];
 
     if (countEl) countEl.textContent = `實驗清單（共 ${allProjects.length}）`;
 
     renderStatusFilters();
+    renderDrawerFilters();   // ✅ must be after allProjects loaded
     renderProjects();
 
-    // ✅ If we reached here, JS is working — remove any previous warning
     clearFatal();
   } catch (e) {
     console.error(e);
     showFatal("⚠️ JS 載入失敗：" + (e?.message || String(e)));
   }
-  
-
 }
 
+// ---------- Status Filters ----------
 function renderStatusFilters() {
   const statusEl = $("status-filters");
   if (!statusEl) return;
@@ -147,6 +179,7 @@ function renderStatusFilters() {
   });
 }
 
+// ---------- Drawer Filters ----------
 function renderDrawerFilters() {
   const dirEl = $("direction-filters");
   const techEl = $("tech-filters");
@@ -192,18 +225,19 @@ function renderDrawerFilters() {
   });
 }
 
+// ---------- Projects ----------
 function renderProjects() {
   const listEl = $("project-list");
   if (!listEl) return;
 
-  let filtered = allProjects;
+  let filtered = allProjects.slice();
 
-  // OR 多選
+  // OR 多選：狀態
   if (selectedStatuses.size > 0) {
-    filtered = allProjects.filter((p) => selectedStatuses.has(p.status));
+    filtered = filtered.filter((p) => selectedStatuses.has(p.status));
   }
-  
-    // OR 多選：實驗方向
+
+  // OR 多選：實驗方向
   if (selectedDirections.size > 0) {
     filtered = filtered.filter((p) => {
       const dirs = getDirections(p);
@@ -219,10 +253,10 @@ function renderProjects() {
     });
   }
 
-  // pinned 置頂 + updatedAt 新到舊
-  filtered = filtered.slice().sort((a, b) => {
-    const ap = a.pinned ? 1 : 0;
-    const bp = b.pinned ? 1 : 0;
+  // ✅ featured / pinned 置頂 + updatedAt 新到舊
+  filtered.sort((a, b) => {
+    const ap = (a.featured || a.pinned) ? 1 : 0;
+    const bp = (b.featured || b.pinned) ? 1 : 0;
     if (ap !== bp) return bp - ap;
     return String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""));
   });
@@ -273,41 +307,6 @@ function renderCard(p) {
   `;
 }
 
-  //左側篩選Drawer
-function setupDrawer() {
-  const menuBtn = document.getElementById("menuBtn");
-  const closeBtn = document.getElementById("closeBtn");
-  const overlay = document.getElementById("overlay");
-  const drawer = document.getElementById("drawer");
-
-  if (!menuBtn || !closeBtn || !overlay || !drawer) return;
-
-  function openDrawer() {
-    drawer.classList.add("open");
-    overlay.classList.remove("hidden");
-    drawer.setAttribute("aria-hidden", "false");
-    document.body.classList.add("no-scroll");
-  }
-
-  function closeDrawer() {
-    drawer.classList.remove("open");
-    overlay.classList.add("hidden");
-    drawer.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("no-scroll");
-  }
-
-  menuBtn.addEventListener("click", openDrawer);
-  closeBtn.addEventListener("click", closeDrawer);
-  overlay.addEventListener("click", closeDrawer);
-
-  // ESC 關閉（桌機）
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeDrawer();
-  });
-}
-
-
 // start
-init();
 setupDrawer();
-renderDrawerFilters();
+init();
