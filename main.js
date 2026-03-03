@@ -226,3 +226,4 @@ function setupDrawer() {
 
 // start
 init();
+setupDrawer();
