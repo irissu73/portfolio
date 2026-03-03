@@ -9,7 +9,7 @@
 const statusOrder = ["concept", "testing", "validated", "expanding"];
 
 const statusMap = {
-  concept:   { dot: "🟡", zh: "構想中" },
+  concept:   { dot: "🟡", zh: "構想期" },
   testing:   { dot: "🟠", zh: "驗證中" },
   validated: { dot: "🟢", zh: "已驗證" },
   expanding: { dot: "🔵", zh: "延伸中" },
@@ -17,28 +17,6 @@ const statusMap = {
 
 let allProjects = [];
 let selectedStatuses = new Set();
-
-//成功載入後自動隱藏載入失敗
-function hideJsWarning() {
-  // 常見幾種寫法都一起處理
-  const candidates = [
-    document.getElementById("js-warning"),
-    document.querySelector(".js-warning"),
-    document.querySelector("[data-js-warning]"),
-  ].filter(Boolean);
-
-  candidates.forEach(el => el.remove());
-
-  // 保底：如果你那段警告是純文字寫在某個區塊裡，含關鍵字就隱藏
-  document.querySelectorAll("body *").forEach(el => {
-    if (el.children.length === 0) {
-      const t = (el.textContent || "").trim();
-      if (t.includes("JS 尚未載入") || t.includes("main.js / projects.json")) {
-        el.style.display = "none";
-      }
-    }
-  });
-}
 
 // ---------- utils ----------
 function escapeHtml(s) {
@@ -92,7 +70,6 @@ async function init() {
 
     renderStatusFilters();
     renderProjects();
-    hideJsWarning();
   } catch (e) {
     console.error(e);
     showFatal("⚠️ JS 載入失敗：" + (e?.message || String(e)));
