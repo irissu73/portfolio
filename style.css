@@ -369,7 +369,7 @@ body{
 }
 
 .output-line strong,
-.detail-output strong {
+.project-output strong {
   display: inline-block;
   padding: 4px 10px;
   border-radius: 999px;
