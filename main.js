@@ -29,7 +29,7 @@ function $(id) {
 }
 
 function showFatal(msg) {
-  const host = $("projectList") || $("content") || document.body;
+  const host = $("project-list") || $("content") || document.body;
   const box = document.createElement("div");
   box.style.cssText = "padding:16px;margin:12px 16px;border:1px solid rgba(176,0,32,.25);background:rgba(176,0,32,.06);color:#b00020;font-weight:900;border-radius:14px;line-height:1.5;";
   box.textContent = msg;
@@ -40,8 +40,8 @@ function showFatal(msg) {
 async function init() {
   try {
     // 1) 檢查 main 容器是否存在
-    if (!$("statusBar")) showFatal("⚠️ 找不到 #statusBar（請確認 index.html 有 <div id='statusBar'></div>）");
-    if (!$("projectList")) showFatal("⚠️ 找不到 #projectList（請確認 index.html 有 <div id='projectList'></div>）");
+    if (!$("status-filters")) showFatal("⚠️ 找不到 #statusBar（請確認 index.html 有 <div id='statusBar'></div>）");
+    if (!$("project-list")) showFatal("⚠️ 找不到 #projectList（請確認 index.html 有 <div id='projectList'></div>）");
 
     // 2) 載入 JSON（抓不到/格式錯會直接顯示原因）
     const jsonUrl = "./projects.json?v=" + Date.now();
@@ -71,7 +71,7 @@ async function init() {
 }
 
 function renderStatusBar() {
-  const container = $("statusBar");
+  const container = $("status-filters");
   if (!container) return;
 
   container.innerHTML = statusOrder.map((status) => {
