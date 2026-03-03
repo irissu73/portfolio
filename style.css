@@ -368,10 +368,20 @@ body{
   color: #555;
 }
 
+.output-line strong,
+.detail-output strong {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #f3f0ff;
+  color: #6b4eff;
+  font-weight: 700;
+}
+/*
 .output-line strong{
   color: #111;
   font-weight: 900;
-}
+}*/
 
 /* 查看完整內容按鈕 */
 .btn{
