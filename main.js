@@ -72,7 +72,7 @@ async function init() {
     renderProjects();
   } catch (e) {
     console.error(e);
-    showFatal("⚠️ JS 載入失敗：" + (e?.message || String(e)));
+    //showFatal("⚠️ JS 載入失敗：" + (e?.message || String(e)));
   }
 }
 
