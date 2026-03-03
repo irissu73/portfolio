@@ -768,41 +768,42 @@ body{
 
 .no-scroll{overflow:hidden;}
 
-/* ===== Header A版（穩重極簡） ===== */
+/* ===== Header A版 精修 ===== */
 
 .brand-title{
   margin:0;
-  font-size:26px;   /* 原本如果更大，現在降一點 */
-  font-weight:900;
-  letter-spacing:.3px;
+  font-size:22px;      /* 再降一階 */
+  font-weight:800;     /* 不要 900，改 800 */
+  letter-spacing:.2px;
+  line-height:1.25;
 }
 
 .brand-summary{
   margin-top:6px;
-  font-size:15px;
-  color:#444;
+  font-size:14px;      /* 再小一點 */
+  color:#555;
   line-height:1.5;
 }
 
 .brand-status{
-  margin-top:6px;
-  font-size:12.5px;
-  color:rgba(0,0,0,.55);
+  margin-top:8px;
+  font-size:12px;      /* 更小 */
+  color:rgba(0,0,0,.45); /* 更淡 */
   display:flex;
   align-items:center;
   gap:6px;
 }
 
-/* 狀態燈號（小顆、淡一點） */
+/* 更小、更柔和的燈號 */
 .status-dot{
-  width:10px;
-  height:10px;
+  width:8px;           /* 變小 */
+  height:8px;
   border-radius:999px;
-  display:inline-block;
+  opacity:.7;          /* 降飽和感 */
 }
 
-/* 對應狀態顏色 */
-.status-dot.concept{ background:#f5c542; }
-.status-dot.testing{ background:#f29e32; }
-.status-dot.validated{ background:#4caf50; }
-.status-dot.expanding{ background:#3b82f6; }
+/* 顏色微降飽和 */
+.status-dot.concept{ background:#e8c14a; }
+.status-dot.testing{ background:#e08d2a; }
+.status-dot.validated{ background:#57a05c; }
+.status-dot.expanding{ background:#4a79d8; }
