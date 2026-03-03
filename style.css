@@ -326,19 +326,78 @@ body{
 .detail-k{color:#666;font-size:14px;}
 .detail-v{font-weight:700;font-size:14px;}
 
-/* timeline */
-.timeline{display:flex;flex-direction:column;gap:12px;}
-.timeline-item{
+/* ===== Timeline (fix alignment) ===== */
+.timeline{
   display:flex;
-  gap:12px;
+  flex-direction:column;
+  gap:14px;
+}
+
+.timeline-item{
+  display:grid;
+  grid-template-columns: 44px 1fr;  /* 左：點+線 / 右：內容 */
+  column-gap: 12px;
+  align-items:start;
+
   border:1px solid rgba(0,0,0,.08);
   background:#fafafa;
   border-radius:14px;
-  padding:12px;
+  padding:14px;
 }
-.timeline-date{min-width:72px;font-weight:800;font-size:13px;color:#333;}
-.timeline-title{font-weight:800;margin-bottom:4px;}
-.timeline-note{color:#333;font-size:14px;}
+
+/* 左側欄：點與線的容器 */
+.timeline-left{
+  position:relative;
+  display:flex;
+  justify-content:center; /* 點置中 */
+  padding-top: 6px;       /* 微調點跟右側日期對齊 */
+}
+
+/* 直線（從點下方延伸到底） */
+.timeline-left::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top: 34px;              /* 從點下方開始 */
+  bottom: 6px;
+  width:2px;
+  transform:translateX(-50%);
+  background: rgba(0,0,0,.12);
+  border-radius: 2px;
+}
+
+/* 最後一筆不要畫到底線 */
+.timeline-item:last-child .timeline-left::before{
+  display:none;
+}
+
+/* 點點 */
+.timeline-dot{
+  width:22px;
+  height:22px;
+  border-radius:999px;
+  border:2px solid rgba(0,0,0,.12);
+  background:#fff;
+}
+
+/* 右側內容 */
+.timeline-right .timeline-date{
+  font-weight:900;
+  font-size:18px;     /* 你現在畫面是大日期，這樣穩 */
+  line-height:1.1;
+  margin-bottom:6px;
+}
+
+.timeline-right .timeline-title{
+  font-weight:900;
+  margin-bottom:4px;
+}
+
+.timeline-right .timeline-note{
+  color:#333;
+  font-size:16px;
+  line-height:1.55;
+}
 
 /* ===== Back to Top ===== */
 .back-to-top{
