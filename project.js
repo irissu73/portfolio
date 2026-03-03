@@ -333,10 +333,13 @@ async function init() {
     const brand = document.querySelector(".brand");
     if (brand) {
       brand.innerHTML = `
-        <h1>${escapeHtml(p.title || "")}</h1>
-        ${p.summary ? `<p class="brand-summary">${escapeHtml(p.summary)}</p>` : ""}
-        <p class="brand-meta">${meta.dot} ${escapeHtml(meta.zh)} ｜ 更新 ${escapeHtml(p.updatedAt || "")}</p>
-      `;
+  <h1 class="brand-title">${escapeHtml(p.title || "")}</h1>
+  ${p.summary ? `<p class="brand-summary">${escapeHtml(p.summary)}</p>` : ""}
+  <p class="brand-status">
+    <span class="status-dot ${escapeHtml(p.status || "")}"></span>
+    ${escapeHtml(meta.zh)} · ${escapeHtml(p.updatedAt || "")}
+  </p>
+`;
     }
 
     const coverHtml = p.cover
