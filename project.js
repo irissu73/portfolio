@@ -144,6 +144,15 @@ async function init(){
     }
 
     formatTitle(p);
+    
+    // 更新 header 內容為專案資訊
+const brand = document.querySelector(".brand");
+if (brand) {
+  brand.innerHTML = `
+    <h1>${escapeHtml(p.title || "")}</h1>
+    ${p.summary ? `<p>${escapeHtml(p.summary)}</p>` : ""}
+  `;
+}
 
     const meta = statusMap[p.status] || { dot: "⚪️", zh: "未分類" };
     const cover = p.cover ? String(p.cover) : "";
