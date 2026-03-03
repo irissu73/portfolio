@@ -368,10 +368,3 @@ function renderCard(p) {
 setupDrawer();
 setupBackToTop();
 init();
-
-const __btt = document.getElementById("backToTop");
-if (__btt) {
-  __btt.style.cssText =
-    "position:fixed;right:20px;bottom:20px;z-index:999999;background:red;color:#fff;border:none;border-radius:999px;width:44px;height:44px;";
-  __btt.textContent = "↑";
-}
