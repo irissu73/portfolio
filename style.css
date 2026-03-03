@@ -767,3 +767,42 @@ body{
 .lb-next{right:18px;}
 
 .no-scroll{overflow:hidden;}
+
+/* ===== Header A版（穩重極簡） ===== */
+
+.brand-title{
+  margin:0;
+  font-size:26px;   /* 原本如果更大，現在降一點 */
+  font-weight:900;
+  letter-spacing:.3px;
+}
+
+.brand-summary{
+  margin-top:6px;
+  font-size:15px;
+  color:#444;
+  line-height:1.5;
+}
+
+.brand-status{
+  margin-top:6px;
+  font-size:12.5px;
+  color:rgba(0,0,0,.55);
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+/* 狀態燈號（小顆、淡一點） */
+.status-dot{
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  display:inline-block;
+}
+
+/* 對應狀態顏色 */
+.status-dot.concept{ background:#f5c542; }
+.status-dot.testing{ background:#f29e32; }
+.status-dot.validated{ background:#4caf50; }
+.status-dot.expanding{ background:#3b82f6; }
