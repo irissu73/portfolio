@@ -129,6 +129,7 @@ function setupDrawer() {
       renderStatusFilters();
       renderDrawerFilters();
       renderProjects();
+      document.body.classList.add("js-loaded");
       nukeLegacyWarning();
     });
   }
