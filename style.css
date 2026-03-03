@@ -2,14 +2,18 @@
   --border:#eaeaea;
 }
 
+/* ===== Base ===== */
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif;
   font-size:18px;
-  background:#fff;
+  background: linear-gradient(180deg,#f7f8fb 0%,#eef1f6 100%);
 }
 
-/* Top */
+.hidden{display:none;}
+.no-scroll{overflow:hidden;}
+
+/* ===== Topbar ===== */
 .topbar{
   display:flex;
   gap:12px;
@@ -25,21 +29,31 @@ body{
 .brand p{margin:4px 0 0;font-size:15px;color:#333;}
 
 .icon-btn{
-  border:0;background:transparent;font-size:26px;padding:8px;cursor:pointer;
+  border:0;
+  background:transparent;
+  font-size:26px;
+  padding:8px;
+  cursor:pointer;
 }
 
-/* Drawer */
+/* ===== Drawer ===== */
 .overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,0.28);z-index:80;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.28);
+  z-index:80;
 }
-.hidden{display:none;}
 
 .drawer{
-  position:fixed;top:0;left:0;height:100vh;
-  width:84%;max-width:360px;
+  position:fixed;
+  top:0;left:0;
+  height:100vh;
+  width:84%;
+  max-width:360px;
   transform:translateX(-105%);
   transition:transform .25s ease;
-  display:flex;flex-direction:column;
+  display:flex;
+  flex-direction:column;
   z-index:90;
 }
 
@@ -48,8 +62,11 @@ body{
 .ios-drawer{background:#f7f7f7;}
 
 .ios-header{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:12px;border-bottom:1px solid rgba(0,0,0,.08);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px;
+  border-bottom:1px solid rgba(0,0,0,.08);
   background:rgba(247,247,247,.92);
   backdrop-filter:blur(10px);
 }
@@ -58,89 +75,110 @@ body{
 
 .ios-clear,.ios-close{
   border:1px solid rgba(0,0,0,.12);
-  background:#fff;border-radius:12px;
-  padding:8px 10px;font-size:13px;cursor:pointer;
+  background:#fff;
+  border-radius:12px;
+  padding:8px 10px;
+  font-size:13px;
+  cursor:pointer;
 }
 
-.ios-close{width:36px;height:36px;}
+.ios-close{
+  width:36px;
+  height:36px;
+}
 
 .drawer-scroll{
-  flex:1;overflow:auto;padding:12px;
+  flex:1;
+  overflow:auto;
+  padding:12px;
 }
 
 .ios-section{margin-bottom:18px;}
 .ios-section-title{
-  font-size:12px;color:rgba(0,0,0,.55);
+  font-size:12px;
+  color:rgba(0,0,0,.55);
   margin:0 0 8px 6px;
 }
 
 .ios-list{
-  display:flex;flex-direction:column;gap:10px;
-  background:#fff;border-radius:16px;
-  padding:10px;border:1px solid rgba(0,0,0,.08);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  background:#fff;
+  border-radius:16px;
+  padding:10px;
+  border:1px solid rgba(0,0,0,.08);
 }
 
 .ios-list button{
-  width:100%;text-align:left;
+  width:100%;
+  text-align:left;
   border:1px solid rgba(0,0,0,.08);
-  background:#fafafa;border-radius:14px;
-  padding:12px;font-size:15px;cursor:pointer;
+  background:#fafafa;
+  border-radius:14px;
+  padding:12px;
+  font-size:15px;
+  cursor:pointer;
   transition:transform .05s ease;
 }
 
 .ios-list button:active{transform:scale(.99);}
 .ios-list button.active{
-  background:#eaf2ff;font-weight:700;
+  background:#eaf2ff;
+  font-weight:700;
+  border-color:rgba(0,0,0,.18);
 }
 
-.no-scroll { overflow: hidden; }
+/* ===== Main layout ===== */
+.page{
+  padding:14px;
+  max-width:1100px;
+  margin:auto;
+}
 
-/* Main */
-.page{padding:14px;max-width:1100px;margin:auto;}
-
-.status-row{display:flex;flex-direction:column;gap:10px;margin:8px 0 14px;}
+.status-row{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin:8px 0 14px;
+}
 
 .project-count{
-  font-size:20px;font-weight:800;margin:0;
+  font-size:20px;
+  font-weight:800;
+  margin:0;
 }
 
-
-/* ===== Status buttons: match Tag style ===== */
+/* Status buttons */
 .status-chips{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
 }
 
-/* 兩欄排列（手機一排兩個） */
+/* 手機兩欄（1 排 2 個） */
 .status-chips button{
-  flex: 1 1 calc(50% - 10px);
-  text-align: left;
+  flex:1 1 calc(50% - 10px);
+  text-align:left;
 
-  /* 跟 .ios-list button 一樣的視覺 */
-  border: 1px solid rgba(0,0,0,.08);
-  background: #fafafa;
-  border-radius: 14px;
-  padding: 12px 12px;
-  font-size: 15px;
-  cursor: pointer;
+  border:1px solid rgba(0,0,0,.08);
+  background:#fafafa;
+  border-radius:14px;
+  padding:12px 12px;
+  font-size:15px;
+  cursor:pointer;
 
-  transition: transform 0.05s ease;
+  transition:transform .05s ease;
 }
 
-/* 按下去手感 */
-.status-chips button:active{
-  transform: scale(0.99);
-}
-
-/* 選中效果跟 tag 一樣 */
+.status-chips button:active{transform:scale(.99);}
 .status-chips button.active{
-  background: #eaf2ff;
-  font-weight: 700;
-  border-color: rgba(0,0,0,.18);
+  background:#eaf2ff;
+  font-weight:700;
+  border-color:rgba(0,0,0,.18);
 }
 
-/* 卡片 */
+/* Cards grid */
 #project-list{
   display:grid;
   grid-template-columns:1fr;
@@ -151,97 +189,7 @@ body{
   #project-list{grid-template-columns:repeat(2,1fr);}
 }
 
-.project-card{
-  border:1px solid var(--border);
-  border-radius:18px;overflow:hidden;
-  background:#fff;
-  box-shadow:0 8px 20px rgba(0,0,0,.06);
-}
-
-.project-card img{
-  width:100%;aspect-ratio:16/9;
-  object-fit:cover;background:#f3f3f3;
-}
-
-.project-card .content{padding:14px;}
-.project-card .meta{font-size:13px;color:#666;margin-bottom:8px;}
-.project-card h3{margin:0 0 6px;font-size:20px;}
-.project-card p{margin:0 0 8px;font-size:16px;}
-
-.project-card .tags{
-  display:flex;flex-wrap:wrap;gap:6px;
-}
-
-.project-card .tags span{
-  border:1px solid var(--border);
-  border-radius:999px;
-  padding:4px 8px;font-size:13px;
-  background:#fafafa;
-}
-
-
-/* 點擊時微縮（App 手感） */
-.back-to-top:active{
-  transform: scale(0.95);
-}
-
-/*Debug*/
-body:not(.js-loaded) #project-list::before{
-  content:"⚠️ JS 尚未載入或執行失敗（請檢查 main.js / projects.json 路徑與格式）";
-  display:block;
-  padding:14px;
-  color:#b00020;
-}
-
-/* 卡片下方主圖 */
-.project-card .card-cover{
-  width: 100%;
-  aspect-ratio: 16/9;
-  object-fit: cover;
-  display: block;
-  border-top: 1px solid var(--border);
-}
-
-/* 查看完整內容 */
-.detail-link{
-  display: inline-block;
-  margin-top: 10px;
-  font-size: 15px;
-  font-weight: 700;
-  text-decoration: none;
-
-  border: 1px solid rgba(0,0,0,.08);
-  background: #fafafa;
-  border-radius: 12px;
-  padding: 10px 12px;
-}
-
-.detail-link:active{
-  transform: scale(.99);
-}
-
-
-/*專案卡片底色*/
-.card-footer{
-  display:flex;
-  justify-content:flex-end;
-  padding:12px 16px 16px;
-}
-
-.project-card{
-  background:#fff;
-  border-radius:20px;
-  border:1px solid rgba(0,0,0,.06);
-  box-shadow:0 6px 18px rgba(0,0,0,.05);
-  overflow:hidden;
-}
-
-/* ====== Page Background ====== */
-body{
-  background: linear-gradient(180deg,#f7f8fb 0%,#eef1f6 100%);
-}
-
-/* ====== Product Card Style ====== */
+/* ===== Product card style ===== */
 .project-card{
   background:#ffffff;
   border-radius:24px;
@@ -253,7 +201,6 @@ body{
   transition: transform .2s ease, box-shadow .2s ease;
 }
 
-/* Hover 效果（桌面會有，手機不影響） */
 .project-card:hover{
   transform: translateY(-4px);
   box-shadow:
@@ -261,9 +208,14 @@ body{
     0 4px 10px rgba(0,0,0,.06);
 }
 
-/* 內容留白 */
 .project-card .content{
   padding:20px 20px 12px;
+}
+
+.project-card .meta{
+  font-size:13px;
+  color:#666;
+  margin-bottom:8px;
 }
 
 .project-card h3{
@@ -273,28 +225,31 @@ body{
 }
 
 .project-card p{
+  margin:0 0 8px;
+  font-size:16px;
   color:#444;
   line-height:1.5;
 }
 
-/* 主圖 */
+/* Card cover image (below content) */
 .project-card .card-cover{
   width:100%;
-  aspect-ratio: 2/1;
-  object-fit: cover;
+  aspect-ratio:2 / 1;
+  object-fit:cover;
   display:block;
   border-top:1px solid rgba(0,0,0,.05);
+  background:#f3f3f3;
 }
 
-/* ====== 操作區 ====== */
+/* Footer action */
 .card-footer{
   display:flex;
   justify-content:flex-end;
   padding:14px 20px 18px;
 }
 
-/* 讓「查看完整內容」像產品按鈕 */
-.detail-link{
+/* Primary button (你目前用在「查看完整內容」) */
+.btn{
   display:inline-flex;
   align-items:center;
   gap:6px;
@@ -309,16 +264,35 @@ body{
   transition: all .2s ease;
 }
 
-.detail-link:hover{
+.btn:hover{
   background:#000;
   transform:translateY(-1px);
 }
 
+.btn:active{
+  transform:scale(.99);
+}
 
+/* ===== Output badge (shared: card + detail) ===== */
+.output-line{
+  margin-top:6px;
+  font-size:14px;
+  color:#555;
+}
 
-/*明細頁樣式*/
-/* ===== Detail page ===== */
+.output-line strong,
+.project-output strong{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  background:#f3f0ff;
+  color:#6b4eff;
+  font-weight:700;
+}
+
+/* ===== Detail page styles (used by project.html) ===== */
 .detail-wrap{max-width:900px;margin:0 auto;}
+
 .detail-card{
   border:1px solid var(--border);
   border-radius:18px;
@@ -331,8 +305,8 @@ body{
 
 .detail-cover{
   width:100%;
-  aspect-ratio: 2 / 1;
-  object-fit: cover;
+  aspect-ratio:2 / 1;
+  object-fit:cover;
   display:block;
   border-bottom:1px solid var(--border);
 }
@@ -342,16 +316,21 @@ body{
 .muted{color:#666;font-size:14px;}
 
 .detail-kv{
-  display:flex;justify-content:space-between;gap:12px;
-  padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06);
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:8px 0;
+  border-bottom:1px solid rgba(0,0,0,.06);
 }
+
 .detail-k{color:#666;font-size:14px;}
 .detail-v{font-weight:700;font-size:14px;}
 
 /* timeline */
 .timeline{display:flex;flex-direction:column;gap:12px;}
 .timeline-item{
-  display:flex;gap:12px;
+  display:flex;
+  gap:12px;
   border:1px solid rgba(0,0,0,.08);
   background:#fafafa;
   border-radius:14px;
@@ -361,50 +340,6 @@ body{
 .timeline-title{font-weight:800;margin-bottom:4px;}
 .timeline-note{color:#333;font-size:14px;}
 
-/* ===== Output line (shared) ===== */
-.output-line{
-  margin-top: 6px;
-  font-size: 14px;
-  color: #555;
-}
-
-.output-line strong,
-.project-output strong {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: #f3f0ff;
-  color: #6b4eff;
-  font-weight: 700;
-}
-/*
-.output-line strong{
-  color: #111;
-  font-weight: 900;
-}*/
-
-/* 查看完整內容按鈕 */
-.btn{
-  display:inline-block;
-  padding:10px 18px;
-  background:#000;
-  color:#fff;
-  border-radius:999px;
-  text-decoration:none;
-  font-weight:700;
-  transition:0.2s ease;
-}
-
-.btn:hover{
-  opacity:0.85;
-}
-
-.card-footer{
-  padding:16px;
-  text-align:right;
-}
-
-/*回頂*/
 /* ===== Back to Top ===== */
 .back-to-top{
   position: fixed;
@@ -431,4 +366,16 @@ body{
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
+}
+
+.back-to-top:active{
+  transform: scale(0.95);
+}
+
+/* ===== Debug ===== */
+body:not(.js-loaded) #project-list::before{
+  content:"⚠️ JS 尚未載入或執行失敗（請檢查 main.js / projects.json 路徑與格式）";
+  display:block;
+  padding:14px;
+  color:#b00020;
 }
