@@ -3,20 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Project | IRIS ｜ AI 實驗場</title>
-
+  <title>IRIS ｜ AI 實驗場</title>
   <link rel="icon" type="image/png" href="/favicon.png" />
-  <link rel="shortcut icon" href="/favicon.png" />
+  <link rel="shortcut icon" href="/favicon.png">
   <link rel="apple-touch-icon" href="/favicon.png" />
-
-  <link rel="stylesheet" href="./style.css?v=detail01" />
+  <link rel="stylesheet" href="/style.css?v=base04" />
 </head>
-
-<body class="project-detail">
+<body>
 
 <header class="topbar">
-  <a class="back-btn" href="./index.html" aria-label="返回首頁">←</a>
-
+  <button id="menuBtn" class="icon-btn">☰</button>
   <div class="brand">
     <h1>IRIS ｜ AI 實驗場</h1>
     <p>用專案實驗 AI 的各種可能性</p>
@@ -24,13 +20,43 @@
   </div>
 </header>
 
-<main class="page project-page">
-  <div id="detail" class="detail-wrap">
-    <div class="detail-loading">載入中…</div>
+<div id="overlay" class="overlay hidden"></div>
+
+<!-- Drawer -->
+<aside id="drawer" class="drawer ios-drawer" aria-hidden="true">
+  <div class="drawer-header ios-header">
+    <div class="drawer-title ios-title">篩選</div>
+    <div class="drawer-header-actions">
+      <button id="clearFilters" class="ios-clear">清除</button>
+      <button id="closeBtn" class="ios-close">✕</button>
+    </div>
   </div>
+
+  <div class="drawer-scroll ios-scroll">
+    <div class="ios-section">
+      <div class="ios-section-title">實驗方向</div>
+      <div id="direction-filters" class="ios-list"></div>
+    </div>
+
+    <div class="ios-section">
+      <div class="ios-section-title">技術</div>
+      <div id="tech-filters" class="ios-list"></div>
+    </div>
+  </div>
+</aside>
+
+<main class="page">
+  <div class="status-row">
+    <h2 id="project-count" class="project-count"></h2>
+    <div id="status-filters" class="status-chips"></div>
+  </div>
+
+  <section id="project-list"></section>
 </main>
 
+
 <button id="backToTop" class="back-to-top">↑</button>
-<script src="./project.js?v=detail01"></script>
+<script src="/main.js?v=009" defer></script>
+
 </body>
 </html>
