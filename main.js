@@ -142,7 +142,7 @@ function setupBackToTop() {
 
   // 滾動顯示/隱藏
   window.addEventListener("scroll", () => {
-    if (window.scrollY > 300) {
+    if (window.scrollY > 40) {
       btn.classList.add("show");
     } else {
       btn.classList.remove("show");
