@@ -1,5 +1,5 @@
 // ===============================
-// IRIS ｜ AI 實驗場 - main.js
+// IRIS ｜ AI 實驗場 - main.js (stable)
 // Works with your current index.html ids:
 // - #status-filters
 // - #project-list
@@ -32,13 +32,24 @@ function $(id) {
   return document.getElementById(id);
 }
 
+/** show a single fatal message (replace previous) */
 function showFatal(msg) {
   const host = $("project-list") || document.body;
+
+  // remove previous fatal box if exists
+  document.getElementById("fatalBox")?.remove();
+
   const box = document.createElement("div");
+  box.id = "fatalBox";
   box.style.cssText =
     "padding:14px;margin:12px 0;border:1px solid rgba(176,0,32,.25);background:rgba(176,0,32,.06);color:#b00020;font-weight:900;border-radius:14px;line-height:1.5;";
   box.textContent = msg;
   host.prepend(box);
+}
+
+/** clear fatal message */
+function clearFatal() {
+  document.getElementById("fatalBox")?.remove();
 }
 
 async function init() {
@@ -47,12 +58,16 @@ async function init() {
     const listEl = $("project-list");
     const countEl = $("project-count");
 
-    if (!statusEl) showFatal("⚠️ 找不到 #status-filters（index.html 需要 <div id='status-filters'></div>）");
-    if (!listEl) showFatal("⚠️ 找不到 #project-list（index.html 需要 <section id='project-list'></section>）");
-    if (!statusEl || !listEl) return;
+    // If layout missing, show and stop
+    if (!statusEl || !listEl) {
+      if (!statusEl) showFatal("⚠️ 找不到 #status-filters（index.html 需要 <div id='status-filters'></div>）");
+      if (!listEl) showFatal("⚠️ 找不到 #project-list（index.html 需要 <section id='project-list'></section>）");
+      return;
+    }
 
+    // Fetch JSON (cache-bust)
     const url = "./projects.json?v=" + Date.now();
-    const res = await fetch(url);
+    const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) throw new Error(`projects.json 讀取失敗：HTTP ${res.status} ${res.statusText}`);
 
     const text = await res.text();
@@ -66,13 +81,16 @@ async function init() {
     allProjects = Array.isArray(data) ? data : (data.projects || []);
     if (!Array.isArray(allProjects)) allProjects = [];
 
-    if (countEl) countEl.textContent = `Projects（共 ${allProjects.length}）`;
+    if (countEl) countEl.textContent = `實驗清單（共 ${allProjects.length}）`;
 
     renderStatusFilters();
     renderProjects();
+
+    // ✅ If we reached here, JS is working — remove any previous warning
+    clearFatal();
   } catch (e) {
     console.error(e);
-    //showFatal("⚠️ JS 載入失敗：" + (e?.message || String(e)));
+    showFatal("⚠️ JS 載入失敗：" + (e?.message || String(e)));
   }
 }
 
