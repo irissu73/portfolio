@@ -772,7 +772,7 @@ body{
 
 .brand-title{
   margin:0;
-  font-size:22px;      /* 再降一階 */
+  font-size:20px;      /* 再降一階 */
   font-weight:800;     /* 不要 900，改 800 */
   letter-spacing:.2px;
   line-height:1.25;
@@ -784,26 +784,5 @@ body{
   color:#555;
   line-height:1.5;
 }
-
-.brand-status{
-  margin-top:8px;
-  font-size:12px;      /* 更小 */
-  color:rgba(0,0,0,.45); /* 更淡 */
-  display:flex;
-  align-items:center;
-  gap:6px;
 }
 
-/* 更小、更柔和的燈號 */
-.status-dot{
-  width:8px;           /* 變小 */
-  height:8px;
-  border-radius:999px;
-  opacity:.7;          /* 降飽和感 */
-}
-
-/* 顏色微降飽和 */
-.status-dot.concept{ background:#e8c14a; }
-.status-dot.testing{ background:#e08d2a; }
-.status-dot.validated{ background:#57a05c; }
-.status-dot.expanding{ background:#4a79d8; }
