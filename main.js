@@ -1,5 +1,6 @@
 // ===============================
-// IRIS AI Lab - main.js (debug-safe)
+// IRIS ｜ AI 實驗場 - main.js
+// (fits your current index.html ids)
 // ===============================
 
 const statusOrder = ["concept", "testing", "validated", "expanding"];
@@ -29,65 +30,80 @@ function $(id) {
 }
 
 function showFatal(msg) {
-  const host = $("project-list") || $("content") || document.body;
+  const host = $("project-list") || document.body;
   const box = document.createElement("div");
-  box.style.cssText = "padding:16px;margin:12px 16px;border:1px solid rgba(176,0,32,.25);background:rgba(176,0,32,.06);color:#b00020;font-weight:900;border-radius:14px;line-height:1.5;";
+  box.style.cssText =
+    "padding:14px;margin:12px 0;border:1px solid rgba(176,0,32,.25);background:rgba(176,0,32,.06);color:#b00020;font-weight:900;border-radius:14px;line-height:1.5;";
   box.textContent = msg;
   host.prepend(box);
 }
 
-// ---------- core ----------
 async function init() {
   try {
-    // 1) 檢查 main 容器是否存在
-    if (!$("status-filters")) showFatal("⚠️ 找不到 #statusBar（請確認 index.html 有 <div id='statusBar'></div>）");
-    if (!$("project-list")) showFatal("⚠️ 找不到 #projectList（請確認 index.html 有 <div id='projectList'></div>）");
+    // containers
+    const statusEl = $("status-filters");
+    const listEl = $("project-list");
+    const countEl = $("project-count");
 
-    // 2) 載入 JSON（抓不到/格式錯會直接顯示原因）
-    const jsonUrl = "./projects.json?v=" + Date.now();
-    const res = await fetch(jsonUrl);
+    if (!statusEl) showFatal("⚠️ 找不到 #status-filters（index.html 需要 <div id='status-filters'></div>）");
+    if (!listEl) showFatal("⚠️ 找不到 #project-list（index.html 需要 <section id='project-list'></section>）");
+    if (!statusEl || !listEl) return;
+
+    // load json
+    const url = "./projects.json?v=" + Date.now();
+    const res = await fetch(url);
 
     if (!res.ok) {
-      throw new Error(`projects.json 讀取失敗：HTTP ${res.status} ${res.statusText}（${jsonUrl}）`);
+      throw new Error(`projects.json 讀取失敗：HTTP ${res.status} ${res.statusText}`);
     }
 
     const text = await res.text();
     let data;
     try {
       data = JSON.parse(text);
-    } catch (e) {
+    } catch {
       throw new Error(`projects.json 不是合法 JSON（前 120 字：${text.slice(0, 120)}）`);
     }
 
     allProjects = Array.isArray(data) ? data : (data.projects || []);
     if (!Array.isArray(allProjects)) allProjects = [];
 
-    renderStatusBar();
+    renderStatusFilters();
     renderProjects();
+
+    // count
+    if (countEl) {
+      countEl.textContent = `Projects（共 ${allProjects.length}）`;
+    }
   } catch (e) {
     console.error(e);
-    showFatal("⚠️ JS 執行失敗：" + (e?.message || String(e)));
+    showFatal("⚠️ JS 載入失敗：" + (e?.message || String(e)));
   }
 }
 
-function renderStatusBar() {
-  const container = $("status-filters");
-  if (!container) return;
+function renderStatusFilters() {
+  const statusEl = $("status-filters");
+  if (!statusEl) return;
 
-  container.innerHTML = statusOrder.map((status) => {
-    const count = allProjects.filter((p) => p.status === status).length;
-    const meta = statusMap[status];
+  // 固定四個都顯示（即使 0）
+  statusEl.innerHTML = statusOrder
+    .map((status) => {
+      const meta = statusMap[status];
+      const count = allProjects.filter((p) => p.status === status).length;
+      const active = selectedStatuses.has(status) ? "active" : "";
 
-    const active = selectedStatuses.has(status) ? "active" : "";
-    return `
-      <button class="status-pill ${active}" data-status="${status}">
-        <span class="dot">${meta.dot}</span>${meta.zh}（${count}）
-      </button>
-    `;
-  }).join("");
+      // 讓按鈕風格跟 tag 一樣：沿用你現有 .tag / .chip 也行
+      // 這裡先用 class="tag"，你若是用別的 class，告訴我我幫你對齊
+      return `
+        <button class="tag status-tag ${active}" data-status="${status}">
+          ${meta.dot} ${meta.zh}（${count}）
+        </button>
+      `;
+    })
+    .join("");
 
-  // 點擊事件（OR 多選）
-  container.querySelectorAll(".status-pill").forEach((btn) => {
+  // bind click
+  statusEl.querySelectorAll("[data-status]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const s = btn.getAttribute("data-status");
       if (!s) return;
@@ -95,15 +111,15 @@ function renderStatusBar() {
       if (selectedStatuses.has(s)) selectedStatuses.delete(s);
       else selectedStatuses.add(s);
 
-      renderStatusBar();
+      renderStatusFilters();
       renderProjects();
     });
   });
 }
 
 function renderProjects() {
-  const list = $("projectList");
-  if (!list) return;
+  const listEl = $("project-list");
+  if (!listEl) return;
 
   let filtered = allProjects;
 
@@ -112,45 +128,42 @@ function renderProjects() {
     filtered = allProjects.filter((p) => selectedStatuses.has(p.status));
   }
 
-  list.innerHTML = filtered.map(renderCard).join("");
+  // 如果你有置頂 pinned: true，讓它先排
+  filtered = filtered.slice().sort((a, b) => {
+    const ap = a.pinned ? 1 : 0;
+    const bp = b.pinned ? 1 : 0;
+    if (ap !== bp) return bp - ap;
+
+    // 預設用 updatedAt 新到舊
+    const ad = String(a.updatedAt || "");
+    const bd = String(b.updatedAt || "");
+    return bd.localeCompare(ad);
+  });
+
+  listEl.innerHTML = filtered.map(renderCard).join("");
 }
 
 function renderCard(p) {
   const meta = statusMap[p.status] || { dot: "⚪️", zh: "未分類" };
-  const updated = escapeHtml(p.updatedAt || "");
+
+  const coverHtml = p.cover
+    ? `
+      <div class="card-cover-wrap">
+        <img class="card-cover" src="${escapeHtml(p.cover)}" alt="${escapeHtml(p.title || "")}" onerror="this.remove()">
+      </div>
+    `
+    : "";
+
+  const detailHref = p.id ? `./project.html?id=${encodeURIComponent(p.id)}` : "./project.html";
 
   return `
-    <div class="card">
-      <div class="card-body">
-        <div class="card-meta">
+    <article class="project-card card">
+      <div class="card-body content">
+        <div class="card-meta meta">
           <span class="dot">${meta.dot}</span>
-          ${meta.zh} ｜ 更新 ${updated}
+          ${meta.zh} ｜ 更新 ${escapeHtml(p.updatedAt || "")}
         </div>
 
         <h3 class="card-title">${escapeHtml(p.title || "")}</h3>
 
-        ${p.summary ? `<p class="card-summary">${escapeHtml(p.summary)}</p>` : ""}
-
-        ${p.output ? `
-          <div class="output-line">產出：<strong>${escapeHtml(p.output)}</strong></div>
-        ` : ""}
-      </div>
-
-      ${p.cover ? `
-        <div class="card-cover-wrap">
-          <img class="card-cover"
-               src="${escapeHtml(p.cover)}"
-               alt="${escapeHtml(p.title || "")}"
-               onerror="this.remove()">
-        </div>
-      ` : ""}
-
-      <div class="card-footer">
-        <a class="btn primary" href="./project.html?id=${encodeURIComponent(p.id)}">查看完整內容 →</a>
-      </div>
-    </div>
-  `;
-}
-
-// 啟動
-init();
+        ${p.summary ? `<p class="card-summary">${escape
