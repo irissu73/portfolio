@@ -371,3 +371,155 @@ body{
 .back-to-top:active{
   transform: scale(0.95);
 }
+
+
+/*明細專用 CSS*/
+/* ===== Detail page (project.html) ===== */
+.back-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:42px;height:42px;
+  border-radius:12px;
+  border:1px solid rgba(0,0,0,.08);
+  background:#fafafa;
+  color:#111;
+  text-decoration:none;
+  font-weight:900;
+}
+
+.project-page{ padding-top: 14px; }
+.detail-wrap{ max-width: 900px; margin: 0 auto; }
+
+.detail-card{
+  background:#ffffff;
+  border-radius:24px;
+  border:1px solid rgba(0,0,0,.04);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.06),
+    0 2px 6px rgba(0,0,0,.04);
+  overflow:hidden;
+}
+
+.detail-cover{
+  width:100%;
+  aspect-ratio: 2 / 1;
+  object-fit: cover;
+  display:block;
+  background:#f3f3f3;
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+
+.detail-loading{ padding:16px; color:#666; }
+
+.detail-section{ padding:18px 20px; }
+.detail-section + .detail-section{ border-top:1px solid rgba(0,0,0,.06); }
+
+.detail-meta{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:14px;
+  color:#555;
+}
+
+.detail-meta .sep{ opacity:.5; }
+
+.detail-title{
+  margin:10px 0 8px;
+  font-size:28px;
+  letter-spacing:.2px;
+}
+
+.detail-summary{
+  font-size:16px;
+  color:#333;
+  line-height:1.6;
+}
+
+.detail-h{
+  margin:0 0 10px;
+  font-size:18px;
+}
+
+.detail-rich p{
+  margin:0 0 10px;
+  color:#333;
+  line-height:1.7;
+}
+
+.chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
+.chip{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.08);
+  background:#fafafa;
+  font-size:14px;
+  color:#222;
+}
+
+.output-line{ margin-top:10px; font-size:14px; color:#555; }
+.pill{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  background:#f3f0ff;
+  color:#6b4eff;
+  font-weight:800;
+}
+
+.timeline{ display:flex; flex-direction:column; gap:12px; }
+.timeline-item{
+  display:flex; gap:12px;
+  border:1px solid rgba(0,0,0,.08);
+  background:#fafafa;
+  border-radius:14px;
+  padding:12px;
+}
+.timeline-date{
+  min-width:78px;
+  font-weight:900;
+  font-size:13px;
+  color:#333;
+}
+.timeline-title{ font-weight:900; margin-bottom:4px; }
+.timeline-note{ color:#333; font-size:14px; line-height:1.5; }
+
+.detail-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.fatal{
+  padding:14px;
+  border:1px solid rgba(176,0,32,.25);
+  background:rgba(176,0,32,.06);
+  color:#b00020;
+  font-weight:900;
+  border-radius:14px;
+  line-height:1.5;
+}
+
+/* 明細頁按鈕（跟你首頁的 detail-link 風格一致） */
+.detail-link{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:10px 16px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:14px;
+  text-decoration:none;
+  border:1px solid rgba(0,0,0,.08);
+  background:#fafafa;
+  color:#111;
+}
+
+.detail-link.primary{
+  background:#111;
+  color:#fff;
+  border-color:rgba(0,0,0,.06);
+}
