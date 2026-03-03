@@ -9,7 +9,7 @@
 const statusOrder = ["concept", "testing", "validated", "expanding"];
 
 const statusMap = {
-  concept:   { dot: "🟡", zh: "構想期" },
+  concept:   { dot: "🟡", zh: "構想中" },
   testing:   { dot: "🟠", zh: "驗證中" },
   validated: { dot: "🟢", zh: "已驗證" },
   expanding: { dot: "🔵", zh: "延伸中" },
