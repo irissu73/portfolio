@@ -8,6 +8,7 @@
 // - #tech-filters
 // - #menuBtn #closeBtn #overlay #drawer #clearFilters
 // ===============================
+console.log("✅ main.js loaded: base008");
 
 const statusOrder = ["concept", "testing", "validated", "expanding"];
 
