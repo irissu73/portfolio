@@ -93,6 +93,8 @@ body{
   background:#eaf2ff;font-weight:700;
 }
 
+.no-scroll { overflow: hidden; }
+
 /* Main */
 .page{padding:14px;max-width:1100px;margin:auto;}
 
