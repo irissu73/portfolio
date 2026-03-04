@@ -56,7 +56,9 @@
   "gallery": [
     { "src": "./assets/littlehq-screen-01.jpg", "alt": "主頁畫面" },
     { "src": "./assets/littlehq-screen-02.jpg", "alt": "錢包功能" },
-    { "src": "./assets/littlehq-screen-03.jpg", "alt": "買東西遊戲" }
+    { "src": "./assets/littlehq-screen-03.jpg", "alt": "集點功能" },
+    { "src": "./assets/littlehq-screen-04.jpg", "alt": "遊戲功能：買東西" },
+    { "src": "./assets/littlehq-screen-05.jpg", "alt": "家長專區" }
   ]
 }
     ,
