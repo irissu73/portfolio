@@ -100,7 +100,7 @@ function renderTimeline(p) {
                   <div class="tl-item">
                     <div class="tl-left">
                       <div class="tl-dot" data-status="${escapeHtml(it.status || "")}" aria-label="${escapeHtml(meta.zh)}">${meta.dot}</div>
-                      <div class="tl-line"></div>
+                      
                     </div>
                     <div class="tl-right">
                       <div class="tl-date">${escapeHtml(it.date || "")}</div>
