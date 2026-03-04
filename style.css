@@ -866,13 +866,12 @@ body{
 .tl-left::after{
   content:"";
   position:absolute;
-  top: 28px;            /* 點的下緣附近開始 */
-  bottom: -22px;        /* 延伸到下一筆的距離 */
-  left: 50%;
-  width: 3px;           /* 舊版那種「淡灰柱」感 */
-  transform: translateX(-50%);
-  background: rgba(0,0,0,.10);
-  border-radius: 999px;
+  top:28px;     /* 從圓點下面開始 */
+  bottom:0;     /* 一直延伸到區塊底部 */
+  left:50%;
+  width:3px;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,.10);
 }
 
 /* 最後一筆不畫到底 */
