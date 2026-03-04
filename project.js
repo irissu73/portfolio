@@ -1,5 +1,5 @@
 // ===============================
-// project.js - IRIS ｜ AI 實驗場（Detail Page）
+// project.js - IRIS ｜ AI 協作開發實驗（Detail Page）
 // ===============================
 
 const statusMap = {
@@ -40,7 +40,7 @@ function showFatal(msg) {
 }
 
 function formatTitle(p) {
-  document.title = `${p?.title || "Project"} | IRIS ｜ AI 實驗場`;
+  document.title = `${p?.title || "Project"} | IRIS ｜ AI 協作開發實驗`;
 }
 
 function renderTagRow(title, tags) {
@@ -395,7 +395,7 @@ async function init() {
 
         ${renderContent(p)}
 
-        ${renderTagRow("實驗方向", p.directionTags)}
+        ${renderTagRow("應用類型", p.directionTags)}
         ${renderTagRow("技術", p.techTags)}
 
         ${renderTimeline(p)}
