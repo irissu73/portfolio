@@ -1019,4 +1019,14 @@ display:none;
   display:none;
 }
 
+.tl-left::after{
+  content:"";
+  position:absolute;
+  top:28px;
+  bottom:-22px;
+  left:50%;
+  transform:translateX(-50%);
+  width:3px;
+  background:rgba(0,0,0,.10);
+}
 
