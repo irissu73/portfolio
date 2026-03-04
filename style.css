@@ -859,7 +859,8 @@ body{
   display:flex;
   flex-direction:column;
   align-items:center;
-  transform: translateX(4px); /* 你說綠點偏左：整組微往右 */
+  height:100%;   /* ⭐ 這行是關鍵 */
+  /*transform: translateX(4px); *//* 你說綠點偏左：整組微往右 */
 }
 
 /* 垂直線：淡、細、從點下方開始 */
