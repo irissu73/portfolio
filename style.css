@@ -395,7 +395,7 @@ body{
   line-height:1.5;
 }
 
-/* ===== Timeline (old-look + single connected line, NO double line) ===== */
+/* ===== Timeline (connected, auto height, single line) ===== */
 .timeline2{
   display:flex;
   flex-direction:column;
@@ -404,19 +404,19 @@ body{
 }
 
 .tl-item{
+  position:relative;                 /* 讓 ::before 可以定位 */
   display:grid;
   grid-template-columns:44px 1fr;
   column-gap:12px;
   align-items:start;
 }
 
-/* left rail */
+/* 左欄：只負責點置中，不畫線 */
 .tl-left{
-  position:relative;
   width:44px;
   display:flex;
   flex-direction:column;
-  align-items:center; /* 置中：避免不同 emoji 寬度造成歪 */
+  align-items:center;
 }
 
 .tl-dot{
@@ -429,24 +429,30 @@ body{
   line-height:1;
 }
 
-/* ✅ 唯一的一條線：用 ::after 畫（不會雙線） */
-.tl-left::after{
+/* ✅ 唯一的一條線：畫在 tl-item 身上（跟內容一起長） */
+.tl-item::before{
   content:"";
   position:absolute;
-  top:28px;          /* 圓點下緣 */
-  bottom:-22px;      /* 延伸穿過 gap，連續感 */
-  left:50%;
-  transform:translateX(-50%);
+  left:22px;                         /* 44px 欄寬的正中間 = 22px */
+  top:28px;                          /* 從圓點下緣開始 */
+  bottom:-22px;                      /* 延伸跨過 gap，維持連續感 */
   width:3px;
+  transform:translateX(-50%);
   background:rgba(0,0,0,.10);
   border-radius:3px;
 }
-.tl-item:last-child .tl-left::after{ display:none; }
 
-/* 禁用舊的實體線（避免雙線） */
-.tl-line{ display:none !important; }
+/* 最後一筆不要再往下延伸 */
+.tl-item:last-child::before{
+  display:none;
+}
 
-/* typography：比區塊更小（你想要的） */
+/* 防呆：如果 DOM 還有 tl-line，直接關掉避免雙線 */
+.tl-line{
+  display:none !important;
+}
+
+/* 字體大小（你要縮小） */
 .tl-date{
   font-size:15px;
   font-weight:700;
