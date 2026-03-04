@@ -859,5 +859,8 @@ body{
   color:#555;
   line-height:1.5;
 }
+
+.lightbox-panel{
+  touch-action: pan-y; /* 允許上下，但不干擾水平手勢判斷 */
 }
 
