@@ -713,14 +713,13 @@ body{
 }
 
 /* ===== Gallery (App Store style, fixed height B) ===== */
-.gallery-shell{
+/*.gallery-shell{
   position:relative;
   display:flex;
   align-items:center;
   justify-content:center;
   gap:10px;
 }
-
 .gallery-frame{
   width:100%;
   border-radius:18px;
@@ -730,8 +729,30 @@ body{
   overflow:hidden;
   outline:none;
 }
+
+*/
+
+.gallery-shell{
+  display:grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items:center;
+  gap:8px;
+}
+
+.gallery-frame{
+  grid-column:2;
+}
+
+.g-prev{
+  grid-column:1;
+}
+
+.g-next{
+  grid-column:3;
+}
+
 .gallery-viewport{
-  height: min(350px, 60vh);
+  height: min(300px, 60vh);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -822,8 +843,14 @@ body{
   font-weight:900;
   cursor:pointer;
 }
+/*
 .lb-prev{left:18px;}
 .lb-next{right:18px;}
+*/
+.lb-prev,
+.lb-next{
+  display:none;
+}
 
 .no-scroll{overflow:hidden;}
 
