@@ -756,7 +756,7 @@ body{
 }
 
 .gallery-viewport{
-  height: min(300px, 60vh);
+  height: min(260px, 50vh);
   display:flex;
   align-items:center;
   justify-content:center;
