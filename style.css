@@ -328,8 +328,6 @@ body{
 
 /* ===== Timeline ===== */
 
-/* ===== Timeline ===== */
-
 .timeline2{
   display:flex;
   flex-direction:column;
@@ -338,7 +336,7 @@ body{
 
 .tl-item{
   display:grid;
-  grid-template-columns:56px 1fr;
+  grid-template-columns:64px 1fr;
   column-gap:12px;
   align-items:start;
 
@@ -348,33 +346,45 @@ body{
   padding:14px;
 }
 
-/* 左側區 */
+/* 左側時間軸區 */
+
 .tl-left{
   display:flex;
   flex-direction:column;
   align-items:center;
+  position:relative;
 }
 
 /* 圓點 */
+
 .tl-dot{
   font-size:22px;
   line-height:1;
+  z-index:1;
 }
 
-/* 線 */
+/* 中間線 */
+
 .tl-line{
   width:2px;
   flex:1;
-  background:#e5e5e5;
+  background:#e6e6e6;
   margin-top:6px;
 }
 
-/* 最後一個不要線 */
+/* 最後一筆不要線 */
+
 .tl-item:last-child .tl-line{
   display:none;
 }
 
 /* 右側內容 */
+
+.tl-right{
+  padding-top:2px;
+}
+
+/* 日期 */
 
 .tl-date{
   font-size:20px;
@@ -382,11 +392,15 @@ body{
   color:#666;
 }
 
+/* 標題 */
+
 .tl-title{
   font-size:22px;
   font-weight:800;
-  margin-top:4px;
+  margin-top:2px;
 }
+
+/* 描述 */
 
 .tl-note{
   font-size:17px;
