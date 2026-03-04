@@ -326,17 +326,18 @@ body{
 .detail-k{color:#666;font-size:14px;}
 .detail-v{font-weight:700;font-size:14px;}
 
-/* ===== Timeline (fix alignment) ===== */
+/* ===== Timeline ===== */
+
 .timeline{
   display:flex;
   flex-direction:column;
-  gap:14px;
+  gap:18px;
 }
 
 .timeline-item{
   display:grid;
-  grid-template-columns: 44px 1fr;  /* 左：點+線 / 右：內容 */
-  column-gap: 12px;
+  grid-template-columns:56px 1fr;   /* 左：軸線區 / 右：內容 */
+  column-gap:12px;
   align-items:start;
 
   border:1px solid rgba(0,0,0,.08);
@@ -345,58 +346,61 @@ body{
   padding:14px;
 }
 
-/* 左側欄：點與線的容器 */
-.timeline-left{
+/* 左側軸線區 */
+.timeline-axis{
   position:relative;
   display:flex;
-  justify-content:center; /* 點置中 */
-  padding-top: 6px;       /* 微調點跟右側日期對齊 */
+  justify-content:center;
 }
 
-/* 直線（從點下方延伸到底） */
-.timeline-left::before{
+/* 中間那條線 */
+.timeline-axis::after{
   content:"";
   position:absolute;
-  left:50%;
-  top: 34px;              /* 從點下方開始 */
-  bottom: 6px;
+  top:20px;
+  bottom:-14px;
   width:2px;
-  transform:translateX(-50%);
-  background: rgba(0,0,0,.12);
-  border-radius: 2px;
+  background:#e5e5e5;
 }
 
-/* 最後一筆不要畫到底線 */
-.timeline-item:last-child .timeline-left::before{
+/* 最後一個不要線 */
+.timeline-item:last-child .timeline-axis::after{
   display:none;
 }
 
-/* 點點 */
+/* 圓點 */
 .timeline-dot{
-  width:22px;
-  height:22px;
-  border-radius:999px;
-  border:2px solid rgba(0,0,0,.12);
-  background:#fff;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  z-index:1;
 }
 
-/* 右側內容 */
-.timeline-right .timeline-date{
-  font-weight:900;
-  font-size:18px;     /* 你現在畫面是大日期，這樣穩 */
-  line-height:1.1;
-  margin-bottom:6px;
+/* 顏色 */
+.dot-yellow{ background:#ffbf00; }
+.dot-orange{ background:#ff8a00; }
+.dot-green{ background:#00c853; }
+.dot-blue{ background:#1976d2; }
+
+/* 日期 */
+.timeline-date{
+  font-size:20px;
+  font-weight:700;
+  color:#666;
 }
 
-.timeline-right .timeline-title{
-  font-weight:900;
-  margin-bottom:4px;
+/* 標題 */
+.timeline-title{
+  font-size:22px;
+  font-weight:800;
+  margin-top:4px;
 }
 
-.timeline-right .timeline-note{
-  color:#333;
-  font-size:16px;
-  line-height:1.55;
+/* 描述 */
+.timeline-desc{
+  font-size:17px;
+  line-height:1.5;
+  color:#444;
 }
 
 /* ===== Back to Top ===== */
