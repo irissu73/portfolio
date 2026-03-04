@@ -830,47 +830,49 @@ body{
 }
 
 /* =========================
-   Detail Timeline (connected)
+   Timeline (old-look, connected)
    ========================= */
 
-/* 外層容器 */
 .timeline2{
   display:flex;
   flex-direction:column;
-  gap:18px; /* 每個事件間距 */
+  gap: 22px;           /* 舊版比較舒服：不要太密也不要太鬆 */
+  padding: 4px 0;
 }
 
-/* 單一事件（不做卡片） */
+/* 單筆：不要卡片、不加背景、不加框 */
 .tl-item{
   display:grid;
-  grid-template-columns: 64px 1fr; /* 左：點+線 / 右：內容 */
-  column-gap:14px;
+  grid-template-columns: 44px 1fr; /* 左：點+線 / 右：內容 */
+  column-gap: 12px;
   align-items:start;
-
-  padding:6px 0 16px 0; /* 只留上下間距，回到連續時間軸 */
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
 }
 
-/* 左側：點 + 垂直線 */
+/* 左側：點 + 線（置中） */
 .tl-left{
-  position:relative;
+  position: relative;
   display:flex;
   flex-direction:column;
   align-items:center;
-
-  /* 整組微向右，修正你說的「綠點歪」 */
-  transform: translateX(6px);
+  transform: translateX(4px); /* 你說綠點偏左：整組微往右 */
 }
 
-/* 用偽元素畫「整條線」，比 .tl-line 穩定 */
+/* 垂直線：淡、細、從點下方開始 */
 .tl-left::after{
   content:"";
   position:absolute;
-  top:28px;        /* 從點下方開始 */
-  bottom:-14px;    /* 往下延伸到下一筆 */
-  left:50%;
-  width:2px;
-  transform:translateX(-50%);
-  background:rgba(0,0,0,.10);
+  top: 28px;            /* 點的下緣附近開始 */
+  bottom: -22px;        /* 延伸到下一筆的距離 */
+  left: 50%;
+  width: 3px;           /* 舊版那種「淡灰柱」感 */
+  transform: translateX(-50%);
+  background: rgba(0,0,0,.10);
+  border-radius: 999px;
 }
 
 /* 最後一筆不畫到底 */
@@ -878,54 +880,51 @@ body{
   display:none;
 }
 
-/* 點（狀態燈號） */
+/* 點：更小、更扁平（不要陰影/不要外框） */
 .tl-dot{
-  width:40px;
-  height:40px;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
   display:flex;
   align-items:center;
   justify-content:center;
-  border-radius:999px;
 
-  /* 讓 emoji 點更像「燈號」 */
-  background:#fff;
-  border:1px solid rgba(0,0,0,.08);
-  box-shadow:0 6px 14px rgba(0,0,0,.06);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 
-  font-size:20px;
-  line-height:1;
+  font-size: 22px;   /* emoji 點本身就是圖，讓它剛好貼齊 */
+  line-height: 1;
 }
 
-/* 舊的線元素不再使用 */
-.tl-line{
-  display:none;
-}
+/* 不用舊的 tl-line */
+.tl-line{ display:none; }
 
-/* 右側內容 */
-.tl-right{
-  padding-top:2px;
-}
+/* 右側內容：讓標題/內文對齊更順 */
+.tl-right{ padding-top: 0; }
 
-/* 日期：低存在感 */
+/* 日期：低存在感（舊版感覺） */
 .tl-date{
-  font-size:16px;
-  font-weight:700;
-  color:rgba(0,0,0,.55);
-  letter-spacing:.2px;
-  margin-bottom:6px;
+  font-size: 18px;
+  font-weight: 800;
+  color: rgba(0,0,0,.55);
+  margin: 0 0 6px;
+  letter-spacing: .2px;
 }
 
-/* 標題 */
+/* 標題：舊版比較「不爆」 */
 .tl-title{
-  font-size:22px;
-  font-weight:900;
-  margin:0 0 6px;
+  font-size: 22px;
+  font-weight: 900;
+  margin: 0 0 6px;
 }
 
-/* 內容 */
+/* 內文：不要太淡 */
 .tl-note{
-  font-size:18px;
-  line-height:1.55;
-  color:rgba(0,0,0,.75);
+  font-size: 18px;
+  line-height: 1.55;
+  color: rgba(0,0,0,.70);
+  margin: 0;
 }
+
 
