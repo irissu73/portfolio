@@ -855,30 +855,26 @@ body{
 
 /* 左側：點 + 線（置中） */
 .tl-left{
-  position: relative;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  height:100%;   /* ⭐ 這行是關鍵 */
-  /*transform: translateX(4px); *//* 你說綠點偏左：整組微往右 */
+position:relative;
+display:flex;
+flex-direction:column;
+align-items:center;
+align-self:start;
 }
 
-/* 垂直線：淡、細、從點下方開始 */
 .tl-left::after{
-  content:"";
-  position:absolute;
-  top:28px;
-  height:100%;
-  left:50%;
-  width:3px;
-  transform:translateX(-50%);
-  background:rgba(0,0,0,.10);
-}
+content:"";
+position:absolute;
+top:28px;
+height:100%;
+left:50%;
+width:3px;
+transform:translateX(-50%);
+background:rgba(0,0,0,.10);
 }
 
-/* 最後一筆不畫到底 */
 .tl-item:last-child .tl-left::after{
-  display:none;
+display:none;
 }
 
 /* 點：更小、更扁平（不要陰影/不要外框） */
