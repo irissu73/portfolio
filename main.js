@@ -1,5 +1,5 @@
 // ===============================
-// IRIS ｜ AI 實驗場 - main.js (fixed full)
+// IRIS ｜ AI 協作開發實驗 - main.js (fixed full)
 // Works with your current index.html ids:
 // - #status-filters
 // - #project-list
@@ -249,7 +249,7 @@ function renderDrawerFilters() {
         const active = selectedDirections.has(t) ? "active" : "";
         return `<button class="tag ${active}" data-dir="${escapeHtml(t)}">${escapeHtml(t)}</button>`;
       }).join("")
-    : `<div style="opacity:.6;font-size:14px;">（尚無實驗方向）</div>`;
+    : `<div style="opacity:.6;font-size:14px;">（尚無應用類型）</div>`;
 
   techEl.innerHTML = allTech.length
     ? allTech.map((t) => {
@@ -293,7 +293,7 @@ function renderProjects() {
     filtered = filtered.filter((p) => selectedStatuses.has(p.status));
   }
 
-  // OR 多選：實驗方向
+  // OR 多選：應用類型
   if (selectedDirections.size > 0) {
     filtered = filtered.filter((p) => {
       const dirs = getDirections(p);
