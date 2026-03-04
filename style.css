@@ -328,15 +328,15 @@ body{
 
 /* ===== Timeline ===== */
 
-.timeline{
+.timeline2{
   display:flex;
   flex-direction:column;
   gap:18px;
 }
 
-.timeline-item{
+.tl-item{
   display:grid;
-  grid-template-columns:56px 1fr;   /* 左：軸線區 / 右：內容 */
+  grid-template-columns:56px 1fr;   /* 左：點線 / 右：內容 */
   column-gap:12px;
   align-items:start;
 
@@ -346,58 +346,50 @@ body{
   padding:14px;
 }
 
-/* 左側軸線區 */
-.timeline-axis{
+/* 左側點與線 */
+.tl-left{
   position:relative;
   display:flex;
   justify-content:center;
 }
 
-/* 中間那條線 */
-.timeline-axis::after{
-  content:"";
+/* 中間線 */
+.tl-line{
   position:absolute;
-  top:20px;
+  top:22px;
   bottom:-14px;
   width:2px;
   background:#e5e5e5;
 }
 
-/* 最後一個不要線 */
-.timeline-item:last-child .timeline-axis::after{
+/* 最後一筆不要線 */
+.tl-item:last-child .tl-line{
   display:none;
 }
 
 /* 圓點 */
-.timeline-dot{
-  width:18px;
-  height:18px;
-  border-radius:50%;
+.tl-dot{
+  font-size:20px;
+  line-height:1;
   z-index:1;
 }
 
-/* 顏色 */
-.dot-yellow{ background:#ffbf00; }
-.dot-orange{ background:#ff8a00; }
-.dot-green{ background:#00c853; }
-.dot-blue{ background:#1976d2; }
-
 /* 日期 */
-.timeline-date{
+.tl-date{
   font-size:20px;
   font-weight:700;
   color:#666;
 }
 
 /* 標題 */
-.timeline-title{
+.tl-title{
   font-size:22px;
   font-weight:800;
   margin-top:4px;
 }
 
 /* 描述 */
-.timeline-desc{
+.tl-note{
   font-size:17px;
   line-height:1.5;
   color:#444;
