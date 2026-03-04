@@ -946,4 +946,19 @@ display:none;
   margin: 0;
 }
 
+.tl-left{
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+  flex-direction:column;
+}
+
+.tl-dot{
+  width:28px;
+  height:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
 
