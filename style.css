@@ -961,4 +961,58 @@ display:none;
   justify-content:center;
 }
 
+/* === timeline align fix (override) === */
+
+.timeline2{ 
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+}
+
+/* 每筆 */
+.tl-item{
+  display:grid;
+  grid-template-columns:44px 1fr;
+  column-gap:12px;
+  align-items:start;
+}
+
+/* 左邊：固定寬、置中、且要能當定位基準 */
+.tl-left{
+  position:relative;
+  width:44px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;   /* 關鍵：圓點 X 軸置中 */
+}
+
+/* 圓點：固定 28x28，把 emoji 置中（避免 glyph 左右不一） */
+.tl-dot{
+  width:28px;
+  height:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:28px;      /* emoji 大小 */
+  line-height:1;
+}
+
+/* 線：跟著 tl-left 的中心走 */
+.tl-left::after{
+  content:"";
+  position:absolute;
+  top:28px;            /* 從圓點下緣開始 */
+  bottom:-22px;        /* 往下延伸跨過 gap（可微調） */
+  left:50%;
+  transform:translateX(-50%);
+  width:3px;
+  background:rgba(0,0,0,.10);
+  border-radius:3px;
+}
+
+/* 最後一筆不畫到下面 */
+.tl-item:last-child .tl-left::after{
+  display:none;
+}
 
