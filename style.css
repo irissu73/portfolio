@@ -873,3 +873,19 @@ body{
   touch-action: pan-y; /* 允許上下，但不干擾水平手勢判斷 */
 }
 
+/* ===== Gallery thumbnail override (no crop) ===== */
+
+.gallery-img{
+  max-width:100%;
+  max-height:100%;
+  width:auto;
+  height:auto;
+  object-fit:contain !important;
+}
+
+.gallery-viewport{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
