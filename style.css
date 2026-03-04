@@ -326,87 +326,8 @@ body{
 .detail-k{color:#666;font-size:14px;}
 .detail-v{font-weight:700;font-size:14px;}
 
-/* ===== Timeline ===== */
 
-.timeline2{
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-}
 
-.tl-item{
-  display:grid;
-  grid-template-columns:64px 1fr;
-  column-gap:12px;
-  align-items:start;
-
-  border:1px solid rgba(0,0,0,.08);
-  background:#fafafa;
-  border-radius:14px;
-  padding:14px;
-}
-
-/* 左側時間軸區 */
-
-.tl-left{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  position:relative;
-}
-
-/* 圓點 */
-
-.tl-dot{
-  font-size:22px;
-  line-height:1;
-  z-index:1;
-}
-
-/* 中間線 */
-
-.tl-line{
-  width:2px;
-  flex:1;
-  background:#e6e6e6;
-  margin-top:6px;
-}
-
-/* 最後一筆不要線 */
-
-.tl-item:last-child .tl-line{
-  display:none;
-}
-
-/* 右側內容 */
-
-.tl-right{
-  padding-top:2px;
-}
-
-/* 日期 */
-
-.tl-date{
-  font-size:20px;
-  font-weight:700;
-  color:#666;
-}
-
-/* 標題 */
-
-.tl-title{
-  font-size:22px;
-  font-weight:800;
-  margin-top:2px;
-}
-
-/* 描述 */
-
-.tl-note{
-  font-size:17px;
-  line-height:1.5;
-  color:#444;
-}
 
 /* ===== Back to Top ===== */
 .back-to-top{
@@ -906,5 +827,105 @@ body{
   max-height:100% !important;
   object-fit:contain !important;
   display:block !important;
+}
+
+/* =========================
+   Detail Timeline (connected)
+   ========================= */
+
+/* 外層容器 */
+.timeline2{
+  display:flex;
+  flex-direction:column;
+  gap:18px; /* 每個事件間距 */
+}
+
+/* 單一事件（不做卡片） */
+.tl-item{
+  display:grid;
+  grid-template-columns: 64px 1fr; /* 左：點+線 / 右：內容 */
+  column-gap:14px;
+  align-items:start;
+
+  padding:6px 0 16px 0; /* 只留上下間距，回到連續時間軸 */
+}
+
+/* 左側：點 + 垂直線 */
+.tl-left{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+
+  /* 整組微向右，修正你說的「綠點歪」 */
+  transform: translateX(6px);
+}
+
+/* 用偽元素畫「整條線」，比 .tl-line 穩定 */
+.tl-left::after{
+  content:"";
+  position:absolute;
+  top:28px;        /* 從點下方開始 */
+  bottom:-14px;    /* 往下延伸到下一筆 */
+  left:50%;
+  width:2px;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,.10);
+}
+
+/* 最後一筆不畫到底 */
+.tl-item:last-child .tl-left::after{
+  display:none;
+}
+
+/* 點（狀態燈號） */
+.tl-dot{
+  width:40px;
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:999px;
+
+  /* 讓 emoji 點更像「燈號」 */
+  background:#fff;
+  border:1px solid rgba(0,0,0,.08);
+  box-shadow:0 6px 14px rgba(0,0,0,.06);
+
+  font-size:20px;
+  line-height:1;
+}
+
+/* 舊的線元素不再使用 */
+.tl-line{
+  display:none;
+}
+
+/* 右側內容 */
+.tl-right{
+  padding-top:2px;
+}
+
+/* 日期：低存在感 */
+.tl-date{
+  font-size:16px;
+  font-weight:700;
+  color:rgba(0,0,0,.55);
+  letter-spacing:.2px;
+  margin-bottom:6px;
+}
+
+/* 標題 */
+.tl-title{
+  font-size:22px;
+  font-weight:900;
+  margin:0 0 6px;
+}
+
+/* 內容 */
+.tl-note{
+  font-size:18px;
+  line-height:1.55;
+  color:rgba(0,0,0,.75);
 }
 
