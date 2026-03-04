@@ -136,7 +136,8 @@ function renderNextSteps(p) {
 
 // ---------- Gallery (App Store style) ----------
 function setupGallery(container, galleryItems) {
-  const items = asArray(galleryItems).filter(x => x && x.src);
+  const items = (Array.isArray(galleryItems) ? galleryItems : [])
+    .filter(x => x && x.src);
 
   if (!items.length) {
     container.innerHTML = `<div class="muted">（尚未提供成果畫面）</div>`;
@@ -151,7 +152,9 @@ function setupGallery(container, galleryItems) {
 
       <div class="gallery-frame" tabindex="0" aria-label="成果畫面輪播">
         <div class="gallery-viewport">
-          <img class="gallery-img" src="${escapeHtml(items[0].src)}" alt="${escapeHtml(items[0].alt || "")}">
+          <img class="gallery-img"
+               src="${escapeHtml(items[0].src)}"
+               alt="${escapeHtml(items[0].alt || "")}">
         </div>
       </div>
 
@@ -164,6 +167,8 @@ function setupGallery(container, galleryItems) {
       <div class="lightbox-backdrop" data-close="1"></div>
       <div class="lightbox-panel" role="dialog" aria-modal="true">
         <button class="lb-close" type="button" aria-label="關閉">✕</button>
+
+        <!-- 放大後不顯示箭頭，但仍保留鍵盤切換 -->
         <button class="lb-nav lb-prev" type="button" aria-label="上一張">‹</button>
         <img class="lb-img" src="" alt="">
         <button class="lb-nav lb-next" type="button" aria-label="下一張">›</button>
@@ -185,20 +190,30 @@ function setupGallery(container, galleryItems) {
   const lbNext = container.querySelector(".lb-next");
   const lbBackdrop = container.querySelector(".lightbox-backdrop");
 
+  function setNavVisibility(btn, show) {
+    // 不影響排版位置：用 opacity 隱藏
+    btn.style.opacity = show ? "1" : "0";
+    btn.style.pointerEvents = show ? "auto" : "none";
+  }
+
   function apply() {
     const it = items[index];
     img.src = it.src;
     img.alt = it.alt || "";
 
-    // 常駐箭頭，但在邊界要「不顯示」且不影響圖片位置
-    const hasPrev = index > 0;
-    const hasNext = index < items.length - 1;
+    // 只有一張：兩邊都不顯示
+    if (items.length <= 1) {
+      prevBtn.style.display = "none";
+      nextBtn.style.display = "none";
+      return;
+    } else {
+      prevBtn.style.display = "";
+      nextBtn.style.display = "";
+    }
 
-    prevBtn.style.opacity = hasPrev ? "1" : "0";
-    prevBtn.style.pointerEvents = hasPrev ? "auto" : "none";
-
-    nextBtn.style.opacity = hasNext ? "1" : "0";
-    nextBtn.style.pointerEvents = hasNext ? "auto" : "none";
+    // 第一張不顯示左箭頭，最後一張不顯示右箭頭
+    setNavVisibility(prevBtn, index > 0);
+    setNavVisibility(nextBtn, index < items.length - 1);
   }
 
   function go(delta) {
@@ -206,16 +221,19 @@ function setupGallery(container, galleryItems) {
     if (next < 0 || next >= items.length) return;
     index = next;
     apply();
+    syncLightbox();
   }
 
   function openLightbox() {
     const it = items[index];
     lbImg.src = it.src;
     lbImg.alt = it.alt || "";
+
     lb.classList.remove("hidden");
     lb.setAttribute("aria-hidden", "false");
     document.body.classList.add("no-scroll");
-    syncLightboxNav();
+
+    syncLightbox();
   }
 
   function closeLightbox() {
@@ -224,57 +242,47 @@ function setupGallery(container, galleryItems) {
     document.body.classList.remove("no-scroll");
   }
 
-  function syncLightboxNav() {
-    const hasPrev = index > 0;
-    const hasNext = index < items.length - 1;
+  function syncLightbox() {
+    if (lb.classList.contains("hidden")) return;
 
-    lbPrev.style.opacity = hasPrev ? "1" : "0";
-    lbPrev.style.pointerEvents = hasPrev ? "auto" : "none";
-
-    lbNext.style.opacity = hasNext ? "1" : "0";
-    lbNext.style.pointerEvents = hasNext ? "auto" : "none";
+    // 你要求：放大後不顯示 < >，所以這裡不需要顯示/控制按鈕
+    // 但仍保留鍵盤切換
+    lbPrev.style.display = "none";
+    lbNext.style.display = "none";
   }
 
-  function lbGo(delta) {
-    const next = index + delta;
-    if (next < 0 || next >= items.length) return;
-    index = next;
-    const it = items[index];
-    lbImg.src = it.src;
-    lbImg.alt = it.alt || "";
-    apply();
-    syncLightboxNav();
-  }
-
+  // click nav
   prevBtn.addEventListener("click", () => go(-1));
   nextBtn.addEventListener("click", () => go(1));
 
+  // click image -> lightbox
   img.addEventListener("click", openLightbox);
 
+  // close
   lbClose.addEventListener("click", closeLightbox);
   lbBackdrop.addEventListener("click", closeLightbox);
-  lbPrev.addEventListener("click", () => lbGo(-1));
-  lbNext.addEventListener("click", () => lbGo(1));
 
-  // 鍵盤支援：← →
+  // (lightbox arrows hidden, but keep handlers just in case)
+  lbPrev.addEventListener("click", () => go(-1));
+  lbNext.addEventListener("click", () => go(1));
+
+  // keyboard: ← → (both normal and lightbox), ESC closes lightbox
   function onKey(e) {
-    if (e.key === "ArrowLeft") {
-      if (!lb.classList.contains("hidden")) lbGo(-1);
-      else go(-1);
-    }
-    if (e.key === "ArrowRight") {
-      if (!lb.classList.contains("hidden")) lbGo(1);
-      else go(1);
-    }
+    if (e.key === "ArrowLeft") go(-1);
+    if (e.key === "ArrowRight") go(1);
     if (e.key === "Escape") {
       if (!lb.classList.contains("hidden")) closeLightbox();
     }
   }
-
-  // 在 frame focus 或 lightbox 開啟時可用（簡化：直接掛 document）
   document.addEventListener("keydown", onKey);
 
-  // 初始
+  // focus frame: (optional) allow arrow keys even if user taps the frame
+  frame?.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") go(-1);
+    if (e.key === "ArrowRight") go(1);
+  });
+
+  // init
   apply();
 }
 
