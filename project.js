@@ -242,14 +242,17 @@ function setupGallery(container, galleryItems) {
     document.body.classList.remove("no-scroll");
   }
 
-  function syncLightbox() {
-    if (lb.classList.contains("hidden")) return;
+function syncLightbox() {
+  if (lb.classList.contains("hidden")) return;
 
-    // 你要求：放大後不顯示 < >，所以這裡不需要顯示/控制按鈕
-    // 但仍保留鍵盤切換
-    lbPrev.style.display = "none";
-    lbNext.style.display = "none";
-  }
+  const it = items[index];
+  lbImg.src = it.src;
+  lbImg.alt = it.alt || "";
+
+  // 你要求：放大後不顯示 < >
+  lbPrev.style.display = "none";
+  lbNext.style.display = "none";
+}
 
   // click nav
   prevBtn.addEventListener("click", () => go(-1));
