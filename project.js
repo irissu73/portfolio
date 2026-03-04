@@ -161,8 +161,6 @@ function setupGallery(container, galleryItems) {
       <button class="g-nav g-next" type="button" aria-label="下一張">›</button>
     </div>
 
-    <div class="gallery-hint muted">可左右切換，點擊放大</div>
-
     <div class="lightbox hidden" aria-hidden="true">
       <div class="lightbox-backdrop" data-close="1"></div>
       <div class="lightbox-panel" role="dialog" aria-modal="true">
