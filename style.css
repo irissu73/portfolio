@@ -861,7 +861,7 @@ flex-direction:column;
 align-items:center;
 align-self:start;
 }
-
+/*
 .tl-left::after{
 content:"";
 position:absolute;
@@ -871,6 +871,28 @@ left:50%;
 width:3px;
 transform:translateX(-50%);
 background:rgba(0,0,0,.10);
+}*/
+
+/* tl-item 讓我們可以定位線 */
+.tl-item{
+  position: relative;
+}
+
+/* 用 tl-item 畫整條線：跟著文字高度一起長 */
+.tl-item::before{
+  content:"";
+  position:absolute;
+  top:28px;          /* 從圓點下方開始 */
+  bottom:-14px;      /* 延伸到 item 底（含 gap 的視覺連續感，可微調） */
+  left:22px;         /* 線的水平位置：對齊圓點中心（下面有算式） */
+  width:3px;
+  background:rgba(0,0,0,.10);
+  border-radius:3px;
+}
+
+/* 最後一筆不要往下延伸 */
+.tl-item:last-child::before{
+  display:none;
 }
 
 .tl-item:last-child .tl-left::after{
