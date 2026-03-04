@@ -285,6 +285,42 @@ function syncLightbox() {
     if (e.key === "ArrowRight") go(1);
   });
 
+//放大圖可左右滑過切換下一張
+// ----- Lightbox swipe (mobile) -----
+let startX = 0;
+let startY = 0;
+
+function lbTouchStart(e) {
+  if (lb.classList.contains("hidden")) return;
+  const t = e.touches && e.touches[0];
+  if (!t) return;
+  startX = t.clientX;
+  startY = t.clientY;
+}
+
+function lbTouchEnd(e) {
+  if (lb.classList.contains("hidden")) return;
+  const t = e.changedTouches && e.changedTouches[0];
+  if (!t) return;
+
+  const dx = t.clientX - startX;
+  const dy = t.clientY - startY;
+
+  // 必須明顯水平滑動，避免上下滑頁誤觸
+  if (Math.abs(dx) < 40) return;
+  if (Math.abs(dx) < Math.abs(dy) * 1.2) return;
+
+  if (dx < 0) go(1);   // 往左滑 => 下一張
+  else go(-1);         // 往右滑 => 上一張
+}
+
+// 監聽在放大框的面板上（整個區域都可滑）
+const lbPanel = container.querySelector(".lightbox-panel");
+if (lbPanel) {
+  lbPanel.addEventListener("touchstart", lbTouchStart, { passive: true });
+  lbPanel.addEventListener("touchend", lbTouchEnd, { passive: true });
+}
+
   // init
   apply();
 }
