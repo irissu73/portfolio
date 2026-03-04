@@ -905,8 +905,8 @@ body{
 
 /* 日期：低存在感（舊版感覺） */
 .tl-date{
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 16px;
+  font-weight: 700;
   color: rgba(0,0,0,.55);
   margin: 0 0 6px;
   letter-spacing: .2px;
@@ -914,8 +914,8 @@ body{
 
 /* 標題：舊版比較「不爆」 */
 .tl-title{
-  font-size: 22px;
-  font-weight: 900;
+  font-size: 18px;
+  font-weight: 700;
   margin: 0 0 6px;
 }
 
