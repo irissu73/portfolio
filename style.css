@@ -712,26 +712,9 @@ body{
   font-size:15px;
 }
 
-/* ===== Gallery (App Store style, fixed height B) ===== */
-/*.gallery-shell{
-  position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-}
-.gallery-frame{
-  width:100%;
-  border-radius:18px;
-  border:1px solid rgba(0,0,0,.06);
-  background:#fff;
-  box-shadow:0 10px 26px rgba(0,0,0,.06);
-  overflow:hidden;
-  outline:none;
-}
 
-*/
-
+/* ===== Gallery arrows OUTSIDE image (grid) ===== */
+/* ===== Gallery arrows OUTSIDE image (grid) ===== */
 .gallery-shell{
   display:grid;
   grid-template-columns: 44px 1fr 44px;
@@ -739,16 +722,37 @@ body{
   gap:8px;
 }
 
-.gallery-frame{
-  grid-column:2;
+/* 圖片在中間欄 */
+.gallery-frame{ grid-column:2; }
+
+/* 箭頭在左右欄 */
+.g-prev{ grid-column:1; }
+.g-next{ grid-column:3; }
+
+/* 強制不要用舊的 absolute（避免壓圖/跑掉） */
+.g-nav{
+  position: static !important;
+  width:38px;
+  height:38px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.12);
+  background:#fff;
+  color:#111;
+  font-size:28px;
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 6px 18px rgba(0,0,0,.10);
+  cursor:pointer;
 }
 
-.g-prev{
-  grid-column:1;
-}
+.g-nav:active{ transform: scale(.98); }
 
-.g-next{
-  grid-column:3;
+/* 放大後不顯示箭頭（仍可鍵盤切換） */
+.lb-prev,
+.lb-next{
+  display:none !important;
 }
 
 .gallery-viewport{
@@ -766,24 +770,9 @@ body{
   cursor:zoom-in;
 }
 
-.g-nav{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  width:44px;height:44px;
-  border-radius:999px;
-  border:1px solid rgba(0,0,0,.10);
-  background:rgba(255,255,255,.85);
-  color:#111;
-  font-size:26px;
-  font-weight:900;
-  cursor:pointer;
-  box-shadow:0 6px 18px rgba(0,0,0,.10);
-  z-index:2;
-}
 .g-prev{left:14px;}
 .g-next{right:14px;}
-.g-nav:active{transform:translateY(-50%) scale(.98);}
+
 
 .gallery-hint{
   margin-top:10px;
