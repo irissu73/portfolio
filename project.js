@@ -86,7 +86,9 @@ function renderContent(p) {
 }
 
 function renderTimeline(p) {
-  const items = asArray(p.timeline);
+  const items = asArray(p.timeline).sort(
+  (a,b)=> new Date(a.date) - new Date(b.date)
+);
 
   return `
     <section class="detail-section">
