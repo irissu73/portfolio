@@ -762,12 +762,19 @@ body{
   justify-content:center;
   background:#f3f3f3;
 }
+/*
 .gallery-img{
   width:100%;
   height:100%;
-  object-fit:cover; /* 固定高度 + 裁切，不固定比例 */
+  object-fit:cover; 
   display:block;
   cursor:zoom-in;
+}*/
+.gallery-img{
+  width:100%;
+  height:100%;
+  object-fit:contain;     /* ✅ 完整顯示，不裁切 */
+  background:#f3f3f3;     /* 可能會有留白，用底色補 */
 }
 
 .g-prev{left:14px;}
