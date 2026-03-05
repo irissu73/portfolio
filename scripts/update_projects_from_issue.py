@@ -29,8 +29,8 @@ UPDATE_END = "=== UPDATE END ==="
 ALLOWED_STATUS = {"concept", "testing", "validated", "expanding"}
 
 
-    # 用 workflow 執行時間（UTC+8台灣時間）當「推到網站的日期」
-   from datetime import timedelta
+# 用 workflow 執行時間（UTC+8台灣時間）當「推到網站的日期」
+from datetime import timedelta
 def today_ymd_utc() -> str:
     taiwan_time = datetime.now(timezone.utc) + timedelta(hours=8)
     return taiwan_time.strftime("%Y-%m-%d")
