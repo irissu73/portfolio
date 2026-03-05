@@ -50,7 +50,7 @@ jobs:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           REPO: ${{ github.repository }}
         run: |
-          gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body "$(cat <<'EOF'
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body "✅ 已完成自動更新並推送到 GitHub（projects.json）。接下來 Vercel 會自動部署，網站內容將更新。"
 
       - name: Close Issue
         if: success()
