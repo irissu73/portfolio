@@ -216,9 +216,10 @@ def ensure_project_base(project_id: str, forced: dict):
 
 def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_gallery):
     """
-    讓 AI 輸出 patch（只包含要更新的欄位），不允許輸出 id / updated。
+    讓 AI 輸出「patch」(只包含要更新的欄位)，不允許輸出 id。
+    使用 Chat Completions + response_format(json_object) 取得穩定 JSON。
     """
-    url = "https://api.openai.com/v1/responses"
+    url = "https://api.openai.com/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {OPENAI_API_KEY}",
         "Content-Type": "application/json",
@@ -232,15 +233,14 @@ def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_g
     system = (
         "你是 projects.json 的更新器。你只能輸出「JSON物件」作為 patch（不要 markdown / 不要多餘文字）。\n"
         "定案 Schema：id(KEY不可修改)、name、summary、cover、status、updated、output、content、category、techTags、timeline、next、gallery、pin。\n"
-        "timeline 子欄位：date/phase/title/note（phase 用於時間軸階段）。\n"
         "規則：\n"
         "1) 絕對不能輸出或修改 id。\n"
-        "2) 只輸出需要更新的欄位；不需要更新就不要輸出該欄位。\n"
-        "3) 多值欄位 category/techTags/timeline/next/gallery 必須是陣列（可空）。\n"
+        "2) 你只能輸出需要更新的欄位；不需要更新就不要輸出該欄位。\n"
+        "3) 多值欄位：category/techTags/timeline/next/gallery 必須是陣列（可空）。\n"
         "4) status 只能是 concept/testing/validated/expanding 四種之一。\n"
         "5) updated 不要輸出（外層程式會在有變更時自動更新）。\n"
         f"6) {pin_rule}\n"
-        "7) 若 issue 內容有提到成果檔名（gallery_hints），合理時更新 gallery（加入或整理）。\n"
+        "7) 若 issue 內容有提到成果檔名，合理時更新 gallery（加入或整理）。\n"
         "8) 若 issue 有新增內容，合理時更新 content/timeline/next/category/techTags/output/status。\n"
         "輸出務必是有效 JSON 物件。\n"
     )
@@ -248,18 +248,17 @@ def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_g
     user = {
         "project_before": project_before,
         "issue": issue_text,
-        "pin_intent": pin_intent,
-        "gallery_hints": hints_gallery
+        "pin_intent": pin_intent,          # None/True/False
+        "gallery_hints": hints_gallery      # 檔名提示（不一定要全用）
     }
 
     payload = {
         "model": "gpt-4o-mini",
-        "input": [
+        "messages": [
             {"role": "system", "content": system},
             {"role": "user", "content": json.dumps(user, ensure_ascii=False)}
         ],
         "temperature": 0.2,
-        "max_output_tokens": 900,
         "response_format": {"type": "json_object"},
     }
 
@@ -268,30 +267,13 @@ def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_g
         raise RuntimeError(f"OpenAI error {r.status_code}: {r.text}")
 
     data = r.json()
-
-    patch = None
-    for item in data.get("output", []):
-        for c in item.get("content", []):
-            if c.get("type") == "output_json":
-                patch = c.get("json")
-                break
-        if patch is not None:
-            break
-
-    if patch is None:
-        text_parts = []
-        for item in data.get("output", []):
-            for c in item.get("content", []):
-                if c.get("type") == "output_text":
-                    text_parts.append(c.get("text", ""))
-        text = "".join(text_parts).strip()
-        if not text:
-            raise RuntimeError("No JSON returned from model.")
-        patch = json.loads(text)
+    content = data["choices"][0]["message"]["content"]
+    patch = json.loads(content)
 
     if not isinstance(patch, dict):
         raise RuntimeError("Model patch is not a JSON object.")
 
+    # 保護：永遠不允許 id / updated 由 AI 改
     patch.pop("id", None)
     patch.pop("updated", None)
     return patch
