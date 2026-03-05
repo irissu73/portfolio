@@ -1,5 +1,5 @@
 // ===============================
-// IRIS ｜ AI 協作開發實驗 - main.js (fixed full)
+// IRIS ｜ AI 協作開發實驗 - main.js (schema-aligned)
 // Works with your current index.html ids:
 // - #status-filters
 // - #project-list
@@ -8,7 +8,7 @@
 // - #tech-filters
 // - #menuBtn #closeBtn #overlay #drawer #clearFilters
 // ===============================
-console.log("✅ main.js loaded: base008");
+console.log("✅ main.js loaded: schema_v1");
 
 const statusOrder = ["concept", "testing", "validated", "expanding"];
 
@@ -57,15 +57,13 @@ function clearFatal() {
   document.getElementById("fatalBox")?.remove();
 }
 
-//強制清除函式
+// 強制清除舊提示（保留你原本的）
 function nukeLegacyWarning() {
   const needle1 = "JS 尚未載入";
   const needle2 = "main.js / projects.json";
 
-  // 刪掉我們自己的 fatal
   document.getElementById("fatalBox")?.remove();
 
-  // 掃描整頁：只要元素文字包含關鍵字就移除
   document.querySelectorAll("body *").forEach(el => {
     if (el.children.length === 0) {
       const t = (el.textContent || "").trim();
@@ -81,9 +79,9 @@ function uniqSorted(arr) {
     .sort((a, b) => a.localeCompare(b, "zh-Hant"));
 }
 
-// ✅ align to your JSON fields: directionTags / techTags
+// ✅ align to FINAL JSON fields: category / techTags
 function getDirections(p) {
-  return Array.isArray(p?.directionTags) ? p.directionTags.map(String) : [];
+  return Array.isArray(p?.category) ? p.category.map(String) : [];
 }
 function getTech(p) {
   return Array.isArray(p?.techTags) ? p.techTags.map(String) : [];
@@ -135,21 +133,18 @@ function setupDrawer() {
   }
 }
 
-//回最頂
 // 回到上方按鈕
 function setupBackToTop() {
   const btn = document.getElementById("backToTop");
   if (!btn) return;
 
   function refresh() {
-    // 內容短：直接顯示（方便現在資料少測試）
     const canScroll = document.documentElement.scrollHeight > window.innerHeight + 10;
     if (!canScroll) {
       btn.classList.add("show");
       return;
     }
 
-    // 有滾動就顯示
     if (window.scrollY > 1) btn.classList.add("show");
     else btn.classList.remove("show");
   }
@@ -162,10 +157,7 @@ function setupBackToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  // 給 renderProjects 呼叫（篩選後高度變動）
   window.__updateBackToTop = refresh;
-
-  // 初始判斷
   refresh();
 }
 
@@ -194,7 +186,7 @@ async function init() {
     if (countEl) countEl.textContent = `實驗清單（共 ${allProjects.length}）`;
 
     renderStatusFilters();
-    renderDrawerFilters();   // ✅ must be after allProjects loaded
+    renderDrawerFilters();
     renderProjects();
     document.body.classList.add("js-loaded");
 
@@ -293,7 +285,7 @@ function renderProjects() {
     filtered = filtered.filter((p) => selectedStatuses.has(p.status));
   }
 
-  // OR 多選：應用類型
+  // OR 多選：應用類型（category）
   if (selectedDirections.size > 0) {
     filtered = filtered.filter((p) => {
       const dirs = getDirections(p);
@@ -309,12 +301,12 @@ function renderProjects() {
     });
   }
 
-  // ✅ featured / pinned 置頂 + updatedAt 新到舊
+  // ✅ pin 置頂 + updated 新到舊
   filtered.sort((a, b) => {
-    const ap = (a.featured || a.pinned) ? 1 : 0;
-    const bp = (b.featured || b.pinned) ? 1 : 0;
+    const ap = a?.pin ? 1 : 0;
+    const bp = b?.pin ? 1 : 0;
     if (ap !== bp) return bp - ap;
-    return String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""));
+    return String(b.updated || "").localeCompare(String(a.updated || ""));
   });
 
   listEl.innerHTML = filtered.map(renderCard).join("");
@@ -329,7 +321,7 @@ function renderCard(p) {
     <div class="card-cover-wrap">
       <img class="card-cover"
            src="${escapeHtml(p.cover)}"
-           alt="${escapeHtml(p.title || "")}"
+           alt="${escapeHtml(p.name || "")}"
            onerror="this.remove()">
     </div>
   ` : "";
@@ -345,10 +337,10 @@ function renderCard(p) {
       <div class="card-body content">
         <div class="card-meta meta">
           <span class="dot">${meta.dot}</span>
-          ${meta.zh} ｜ 更新 ${escapeHtml(p.updatedAt || "")}
+          ${meta.zh} ｜ 更新 ${escapeHtml(p.updated || "")}
         </div>
 
-        <h3 class="card-title">${escapeHtml(p.title || "")}</h3>
+        <h3 class="card-title">${escapeHtml(p.name || "")}</h3>
 
         ${p.summary ? `<p class="card-summary">${escapeHtml(p.summary)}</p>` : ""}
 
