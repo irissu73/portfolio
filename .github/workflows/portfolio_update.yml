@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: write
-  issues: read
+  issues: write
 
 jobs:
   update:
@@ -42,3 +42,21 @@ jobs:
           git add projects.json
           git commit -m "Update projects.json from issue" || echo "No changes to commit"
           git push
+
+      - name: Comment summary on Issue
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body "$(cat <<'EOF'
+
+      - name: Close Issue
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh issue close "$ISSUE_NUMBER" --repo "$REPO" --comment "🔒 此次更新流程已完成，先自動關閉本 Issue。"
