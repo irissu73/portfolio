@@ -1,5 +1,8 @@
 // ===============================
 // project.js - IRIS ｜ AI 協作開發實驗（Detail Page）
+// Schema-aligned to FINAL projects.json:
+// - name / summary / cover / status / updated / output / content
+// - category / techTags / timeline[{date,phase,title,note}] / next / gallery / pin
 // ===============================
 
 const statusMap = {
@@ -40,7 +43,7 @@ function showFatal(msg) {
 }
 
 function formatTitle(p) {
-  document.title = `${p?.title || "Project"} | IRIS ｜ AI 協作開發實驗`;
+  document.title = `${p?.name || "Project"} | IRIS ｜ AI 協作開發實驗`;
 }
 
 function renderTagRow(title, tags) {
@@ -86,9 +89,10 @@ function renderContent(p) {
 }
 
 function renderTimeline(p) {
-  const items = asArray(p.timeline).sort(
-  (a,b)=> new Date(a.date) - new Date(b.date)
-);
+  // ✅ date 格式是 "YYYY.MM.DD"：字串排序即可（避免 Date 解析失敗）
+  const items = asArray(p.timeline)
+    .filter(it => it && typeof it === "object")
+    .sort((a, b) => String(b.date || "").localeCompare(String(a.date || ""))); // 新到舊
 
   return `
     <section class="detail-section">
@@ -97,12 +101,11 @@ function renderTimeline(p) {
         items.length
           ? `<div class="timeline2">
               ${items.map((it) => {
-                const meta = statusMap[it.status] || { dot: "⚪️", zh: "未分類" };
+                const meta = statusMap[it.phase] || { dot: "⚪️", zh: "未分類" };
                 return `
                   <div class="tl-item">
                     <div class="tl-left">
-                      <div class="tl-dot" data-status="${escapeHtml(it.status || "")}" aria-label="${escapeHtml(meta.zh)}">${meta.dot}</div>
-                      
+                      <div class="tl-dot" data-phase="${escapeHtml(it.phase || "")}" aria-label="${escapeHtml(meta.zh)}">${meta.dot}</div>
                     </div>
                     <div class="tl-right">
                       <div class="tl-date">${escapeHtml(it.date || "")}</div>
@@ -120,7 +123,7 @@ function renderTimeline(p) {
 }
 
 function renderNextSteps(p) {
-  const arr = asArray(p.nextSteps).map(String).filter(Boolean);
+  const arr = asArray(p.next).map(String).filter(Boolean);
 
   return `
     <section class="detail-section">
@@ -138,7 +141,17 @@ function renderNextSteps(p) {
 
 // ---------- Gallery (App Store style) ----------
 function setupGallery(container, galleryItems) {
-  const items = (Array.isArray(galleryItems) ? galleryItems : [])
+  // ✅ 支援：
+  // 1) [{src,alt}, ...]
+  // 2) ["./a.jpg", "./b.jpg"]
+  const raw = Array.isArray(galleryItems) ? galleryItems : [];
+  const items = raw
+    .map((x) => {
+      if (!x) return null;
+      if (typeof x === "string") return { src: x, alt: "" };
+      if (typeof x === "object" && x.src) return { src: x.src, alt: x.alt || "" };
+      return null;
+    })
     .filter(x => x && x.src);
 
   if (!items.length) {
@@ -191,7 +204,6 @@ function setupGallery(container, galleryItems) {
   const lbBackdrop = container.querySelector(".lightbox-backdrop");
 
   function setNavVisibility(btn, show) {
-    // 不影響排版位置：用 opacity 隱藏
     btn.style.opacity = show ? "1" : "0";
     btn.style.pointerEvents = show ? "auto" : "none";
   }
@@ -201,7 +213,6 @@ function setupGallery(container, galleryItems) {
     img.src = it.src;
     img.alt = it.alt || "";
 
-    // 只有一張：兩邊都不顯示
     if (items.length <= 1) {
       prevBtn.style.display = "none";
       nextBtn.style.display = "none";
@@ -211,7 +222,6 @@ function setupGallery(container, galleryItems) {
       nextBtn.style.display = "";
     }
 
-    // 第一張不顯示左箭頭，最後一張不顯示右箭頭
     setNavVisibility(prevBtn, index > 0);
     setNavVisibility(nextBtn, index < items.length - 1);
   }
@@ -242,17 +252,17 @@ function setupGallery(container, galleryItems) {
     document.body.classList.remove("no-scroll");
   }
 
-function syncLightbox() {
-  if (lb.classList.contains("hidden")) return;
+  function syncLightbox() {
+    if (lb.classList.contains("hidden")) return;
 
-  const it = items[index];
-  lbImg.src = it.src;
-  lbImg.alt = it.alt || "";
+    const it = items[index];
+    lbImg.src = it.src;
+    lbImg.alt = it.alt || "";
 
-  // 你要求：放大後不顯示 < >
-  lbPrev.style.display = "none";
-  lbNext.style.display = "none";
-}
+    // 你要求：放大後不顯示 < >
+    lbPrev.style.display = "none";
+    lbNext.style.display = "none";
+  }
 
   // click nav
   prevBtn.addEventListener("click", () => go(-1));
@@ -269,7 +279,7 @@ function syncLightbox() {
   lbPrev.addEventListener("click", () => go(-1));
   lbNext.addEventListener("click", () => go(1));
 
-  // keyboard: ← → (both normal and lightbox), ESC closes lightbox
+  // keyboard: ← → , ESC closes lightbox
   function onKey(e) {
     if (e.key === "ArrowLeft") go(-1);
     if (e.key === "ArrowRight") go(1);
@@ -279,49 +289,45 @@ function syncLightbox() {
   }
   document.addEventListener("keydown", onKey);
 
-  // focus frame: (optional) allow arrow keys even if user taps the frame
+  // focus frame
   frame?.addEventListener("keydown", (e) => {
     if (e.key === "ArrowLeft") go(-1);
     if (e.key === "ArrowRight") go(1);
   });
 
-//放大圖可左右滑過切換下一張
-// ----- Lightbox swipe (mobile) -----
-let startX = 0;
-let startY = 0;
+  // ----- Lightbox swipe (mobile) -----
+  let startX = 0;
+  let startY = 0;
 
-function lbTouchStart(e) {
-  if (lb.classList.contains("hidden")) return;
-  const t = e.touches && e.touches[0];
-  if (!t) return;
-  startX = t.clientX;
-  startY = t.clientY;
-}
+  function lbTouchStart(e) {
+    if (lb.classList.contains("hidden")) return;
+    const t = e.touches && e.touches[0];
+    if (!t) return;
+    startX = t.clientX;
+    startY = t.clientY;
+  }
 
-function lbTouchEnd(e) {
-  if (lb.classList.contains("hidden")) return;
-  const t = e.changedTouches && e.changedTouches[0];
-  if (!t) return;
+  function lbTouchEnd(e) {
+    if (lb.classList.contains("hidden")) return;
+    const t = e.changedTouches && e.changedTouches[0];
+    if (!t) return;
 
-  const dx = t.clientX - startX;
-  const dy = t.clientY - startY;
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
 
-  // 必須明顯水平滑動，避免上下滑頁誤觸
-  if (Math.abs(dx) < 40) return;
-  if (Math.abs(dx) < Math.abs(dy) * 1.2) return;
+    if (Math.abs(dx) < 40) return;
+    if (Math.abs(dx) < Math.abs(dy) * 1.2) return;
 
-  if (dx < 0) go(1);   // 往左滑 => 下一張
-  else go(-1);         // 往右滑 => 上一張
-}
+    if (dx < 0) go(1);
+    else go(-1);
+  }
 
-// 監聽在放大框的面板上（整個區域都可滑）
-const lbPanel = container.querySelector(".lightbox-panel");
-if (lbPanel) {
-  lbPanel.addEventListener("touchstart", lbTouchStart, { passive: true });
-  lbPanel.addEventListener("touchend", lbTouchEnd, { passive: true });
-}
+  const lbPanel = container.querySelector(".lightbox-panel");
+  if (lbPanel) {
+    lbPanel.addEventListener("touchstart", lbTouchStart, { passive: true });
+    lbPanel.addEventListener("touchend", lbTouchEnd, { passive: true });
+  }
 
-  // init
   apply();
 }
 
@@ -351,7 +357,6 @@ function setupBackToTop() {
 }
 
 async function init() {
-  // 保險：避免被錯誤載到首頁
   if (!$("detail")) return;
 
   const id = getQueryParam("id");
@@ -375,27 +380,35 @@ async function init() {
 
     formatTitle(p);
 
-    // ✅ Header：專案標題 + 摘要 + 狀態/更新（你剛定案）
-    const meta = statusMap[p.status] || { dot: "⚪️", zh: "未分類" };
+    // Header：專案標題 + 摘要
     const brand = document.querySelector(".brand");
     if (brand) {
       brand.innerHTML = `
-  <h1 class="brand-title">${escapeHtml(p.title || "")}</h1>
-  ${p.summary ? `<p class="brand-summary">${escapeHtml(p.summary)}</p>` : ""}
-`;
+        <h1 class="brand-title">${escapeHtml(p.name || "")}</h1>
+        ${p.summary ? `<p class="brand-summary">${escapeHtml(p.summary)}</p>` : ""}
+      `;
     }
 
     const coverHtml = p.cover
-      ? `<img class="detail-cover" src="${escapeHtml(p.cover)}" alt="${escapeHtml(p.title || "")}" onerror="this.remove()">`
+      ? `<img class="detail-cover" src="${escapeHtml(p.cover)}" alt="${escapeHtml(p.name || "")}" onerror="this.remove()">`
       : "";
+
+    const meta = statusMap[p.status] || { dot: "⚪️", zh: "未分類" };
 
     const html = `
       <article class="detail-card">
         ${coverHtml}
 
+        <section class="detail-section">
+          <div class="detail-meta">
+            <span class="dot">${meta.dot}</span>
+            ${escapeHtml(meta.zh)} ｜ 更新 ${escapeHtml(p.updated || "")}
+          </div>
+        </section>
+
         ${renderContent(p)}
 
-        ${renderTagRow("應用類型", p.directionTags)}
+        ${renderTagRow("應用類型", p.category)}
         ${renderTagRow("技術", p.techTags)}
 
         ${renderTimeline(p)}
@@ -410,7 +423,6 @@ async function init() {
 
     $("detail").innerHTML = html;
 
-    // 成果畫面：最後區塊（App Store style + 箭頭 + 鍵盤 + 放大）
     const galleryHost = document.querySelector("#gallery .gallery-host");
     if (galleryHost) setupGallery(galleryHost, p.gallery);
 
