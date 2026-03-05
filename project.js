@@ -92,7 +92,8 @@ function renderTimeline(p) {
   // ✅ date 格式是 "YYYY.MM.DD"：字串排序即可（避免 Date 解析失敗）
   const items = asArray(p.timeline)
     .filter(it => it && typeof it === "object")
-    .sort((a, b) => String(b.date || "").localeCompare(String(a.date || ""))); // 新到舊
+    .sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
+    //.sort((a, b) => String(b.date || "").localeCompare(String(a.date || ""))); // 新到舊
 
   return `
     <section class="detail-section">
