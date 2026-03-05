@@ -1,77 +1,84 @@
 {
   "projects": [
-    
-   {
-  "id": "ai-collab-dev",
-  "title": "AI × 協作開發實驗",
-  "summary": "測試 AI 是否能協作完成一個可用的 iOS App。",
-  "output": "LittleHQ 小總部",
-  "status": "validated",
-  "updatedAt": "2026-03",
-  "directionTags": ["協作開發"],
-  "techTags": ["SwiftUI", "OpenAI API"],
-  "cover": "./assets/littlehq-cover-2026.jpg",
-
-  "content": [
-    "這個實驗的起點其實很單純：我想測試 AI 是否真的可以協作完成一個可用的 iOS App。",
-    "不是只產生片段程式碼，而是從零開始，包含畫面、資料結構、功能邏輯、除錯與測試。",
-    "開發過程中，我逐步拆解需求，請 AI 協助產出 SwiftUI 結構、狀態管理邏輯與 UI 微調建議。",
-    "從主頁、錢包功能、遊戲頁面到集點卡系統，每一次改動都透過對話迭代完成。",
-    "原本只是想試試能不能寫出 App，沒想到最後發展成具有教學效果的應用。"
-  ],
-
-  "timeline": [
     {
-      "date": "2026.02.18",
-      "status": "concept",
-      "title": "開始實驗",
-      "note": "第一次接觸 AI，開始用對話方式嘗試把想法落地。"
-    },
-    {
-      "date": "2026.02.22",
-      "status": "testing",
-      "title": "完成主頁與錢包雛形",
-      "note": "主頁視覺、基本結構完成；錢包開始可記錄與加總。"
-    },
-    {
-      "date": "2026.03.01",
+      "id": "ios-app-littlehq",
+      "name": "AI × 協作開發實驗",
+      "summary": "測試 AI 是否能協作完成一個可用的 iOS App。",
+      "output": "LittleHQ 小總部",
       "status": "validated",
-      "title": "可用版本產出",
-      "note": "成功跑到 iPad 並實測，確認可用流程。"
+      "updated": "2026-03",
+      "category": ["協作開發"],
+      "techTags": ["SwiftUI", "OpenAI API"],
+      "cover": "./assets/littlehq-cover-2026.jpg",
+
+      "content": [
+        "這個實驗的起點其實很單純：我想測試 AI 是否真的可以協作完成一個可用的 iOS App。",
+        "不是只產生片段程式碼，而是從零開始，包含畫面、資料結構、功能邏輯、除錯與測試。",
+        "開發過程中，我逐步拆解需求，請 AI 協助產出 SwiftUI 結構、狀態管理邏輯與 UI 微調建議。",
+        "從主頁、錢包功能、遊戲頁面到集點卡系統，每一次改動都透過對話迭代完成。",
+        "原本只是想試試能不能寫出 App，沒想到最後發展成具有教學效果的應用。"
+      ],
+
+      "timeline": [
+        {
+          "date": "2026.02.18",
+          "phase": "concept",
+          "title": "開始實驗",
+          "note": "第一次接觸 AI，開始用對話方式嘗試把想法落地。"
+        },
+        {
+          "date": "2026.02.22",
+          "phase": "testing",
+          "title": "完成主頁與錢包雛形",
+          "note": "主頁視覺、基本結構完成；錢包開始可記錄與加總。"
+        },
+        {
+          "date": "2026.03.01",
+          "phase": "validated",
+          "title": "可用版本產出",
+          "note": "成功跑到 iPad 並實測，確認可用流程。"
+        },
+        {
+          "date": "2026.03.03",
+          "phase": "expanding",
+          "title": "延伸遊戲與集點方向",
+          "note": "開始把題庫與遊戲體驗整合，往更完整的學習情境延伸。"
+        }
+      ],
+
+      "next": [
+        "強化遊戲成就回饋節奏",
+        "優化家長專區題庫新增與分類",
+        "把提示機制做得更溫柔，降低挫折感"
+      ],
+
+      "gallery": [
+        { "src": "./assets/littlehq-screen-01.jpg", "alt": "主頁畫面" },
+        { "src": "./assets/littlehq-screen-02.jpg", "alt": "錢包功能" },
+        { "src": "./assets/littlehq-screen-03.jpg", "alt": "集點功能" },
+        { "src": "./assets/littlehq-screen-04.jpg", "alt": "遊戲功能：買東西" },
+        { "src": "./assets/littlehq-screen-05.jpg", "alt": "家長專區" }
+      ],
+
+      "pin": false
     },
-    {
-      "date": "2026.03.03",
-      "status": "expanding",
-      "title": "延伸遊戲與集點方向",
-      "note": "開始把題庫與遊戲體驗整合，往更完整的學習情境延伸。"
-    }
-  ],
 
-  "nextSteps": [
-    "強化遊戲成就回饋節奏",
-    "優化家長專區題庫新增與分類",
-    "把提示機制做得更溫柔，降低挫折感"
-  ],
-
-  "gallery": [
-    { "src": "./assets/littlehq-screen-01.jpg", "alt": "主頁畫面" },
-    { "src": "./assets/littlehq-screen-02.jpg", "alt": "錢包功能" },
-    { "src": "./assets/littlehq-screen-03.jpg", "alt": "集點功能" },
-    { "src": "./assets/littlehq-screen-04.jpg", "alt": "遊戲功能：買東西" },
-    { "src": "./assets/littlehq-screen-05.jpg", "alt": "家長專區" }
-  ]
-}
-    ,
     {
-      "id": "ai-auto-publish",
-      "title": "AI × 自動化發布實驗",
-      "output": "IRIS ｜ AI 實驗場",
-      "status": "testing",
-      "updatedAt": "2026-03",
+      "id": "web-automation",
+      "name": "AI 協作開發實驗",
       "summary": "測試專案資料是否能透過 AI 自動生成並發佈。",
-      "directionTags": ["自動化發布"],
+      "output": "IRIS ｜ AI 協作開發實驗（本網站）",
+      "status": "testing",
+      "updated": "2026-03",
+      "category": ["自動化發布"],
       "techTags": ["GitHub Actions", "Vercel", "JSON", "OpenAI API"],
-      "cover": "/images/site-cover.jpg"
+      "cover": "/images/site-cover.jpg",
+
+      "content": [],
+      "timeline": [],
+      "next": [],
+      "gallery": [],
+      "pin": false
     }
   ]
 }
