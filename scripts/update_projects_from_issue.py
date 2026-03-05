@@ -277,6 +277,53 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
             return ""
         project_after["timeline"] = sorted(project_after["timeline"], key=_date_key, reverse=True)
 
+timeline = project_after.get("timeline")
+
+if isinstance(timeline, list):
+
+    # 去重複
+    seen = set()
+    unique = []
+
+    for item in timeline:
+        if not isinstance(item, dict):
+            continue
+
+        key = (item.get("date"), item.get("title"))
+
+        if key not in seen:
+            seen.add(key)
+            unique.append(item)
+
+    # 日期排序
+    unique = sorted(
+        unique,
+        key=lambda x: str(x.get("date") or ""),
+        reverse=True
+    )
+
+    project_after["timeline"] = unique
+    
+    gallery = project_after.get("gallery")
+
+if isinstance(gallery, list):
+
+    seen = set()
+    unique = []
+
+    for item in gallery:
+        if not isinstance(item, dict):
+            continue
+
+        src = item.get("src")
+
+        if src and src not in seen:
+            seen.add(src)
+            unique.append(item)
+
+    project_after["gallery"] = unique
+
+
     # 4) updated：若有變更就更新為今日（推到網站的日期）
     changed = json.dumps(project_after, ensure_ascii=False, sort_keys=True) != json.dumps(project_before, ensure_ascii=False, sort_keys=True)
     if changed:
