@@ -429,7 +429,7 @@ def main():
         before["timeline"] = _ensure_timeline(before.get("timeline"))
         before["gallery"] = _ensure_gallery(before.get("gallery"))
 
-    issue_text = f"Issue title:\n{ISSUE_TITLE}\n\nIssue body:\n{ISSUE_BODY}\n"
+    issue_text = f"Issue title:\n{ISSUE_TITLE}\n\nUpdate block:\n{block}\n"
     ai_patch = call_openai_patch(before, issue_text, pin_intent, hints_gallery)
     after, changed = merge_project(before, forced, pin_intent, ai_patch)
 
