@@ -74,16 +74,37 @@ def _ensure_content(v):
     content 我們允許 AI 回：
       - 字串
       - 字串陣列
-    最終一律存成「字串陣列」（更好呈現/更穩）
+
+    最終一律存成「字串陣列」，並保留換行段落
     """
     if v is None:
         return []
+
+    lines = []
+
+    # AI 回傳 list
     if isinstance(v, list):
-        return [str(x).strip() for x in v if str(x).strip()]
-    if isinstance(v, str):
-        s = v.strip()
-        return [s] if s else []
-    return [str(v).strip()] if str(v).strip() else []
+        for item in v:
+            if item is None:
+                continue
+            text = str(item)
+            lines.extend(text.splitlines())
+
+    # AI 回傳 string
+    elif isinstance(v, str):
+        lines.extend(v.splitlines())
+
+    else:
+        lines.append(str(v))
+
+    # 清理空行
+    cleaned = []
+    for line in lines:
+        t = line.strip()
+        if t:
+            cleaned.append(t)
+
+    return cleaned
 
 def _ensure_timeline(v):
     if v is None:
