@@ -1,6 +1,52 @@
 {
   "projects": [
     {
+      "id": "line-bot-center",
+      "name": "AI × LINE × Automation",
+      "summary": "建立一個可透過 LINE 發送指令自動更新網站資料的機器人。",
+      "cover": "./assets/line-bot-center-cover.png",
+      "status": "concept",
+      "updated": "2026-03-06",
+      "output": "LINE 指揮中心",
+      "content": [
+        "這個專案是「AI × Web × Automation」的延伸構想。",
+        "當網站資料已經可以透過 GitHub Issue 指令更新後，我開始思考：是否也能透過 LINE 發送訊息來更新網站資料？",
+        "因此構想了一個「LINE 指揮中心」，未來只需要在 LINE 裡傳送指令，就能更新網站上的專案資料，例如新增時間軸、更新摘要或加入成果畫面。",
+        "這個專案的核心概念，是把 LINE 當成新的操作入口，再透過 GitHub Actions 與 OpenAI API 解析訊息內容，最後自動更新 `projects.json` 並重新部署網站。",
+        "今天開始實作，專案正式啟動。"
+      ],
+      "category": [
+        "工具",
+        "自動化"
+      ],
+      "techTags": [
+        "LINE Messaging API",
+        "GitHub Actions",
+        "OpenAI API",
+        "Webhook"
+      ],
+      "timeline": [
+        {
+          "date": "2026.03.07",
+          "phase": "concept",
+          "title": "構想",
+          "note": "提出 LINE 指揮中心的概念，希望未來可以透過 LINE 訊息更新網站資料。"
+        },
+        {
+          "date": "2026.03.05",
+          "phase": "concept",
+          "title": "構想",
+          "note": "提出LINE指揮中心想法"
+        }
+      ],
+      "next": [
+        "設計 LINE webhook 接收訊息",
+        "測試 LINE 指令更新網站資料"
+      ],
+      "gallery": [],
+      "pin": false
+    },
+    {
       "id": "web-automation",
       "name": "AI × Web × Automation",
       "summary": "建立一個記錄 AI 協作開發過程的專案網站，並透過自動化流程讓內容持續更新。",
@@ -64,45 +110,6 @@
           "alt": "AI × Web × Automation 成果畫面"
         }
       ],
-      "pin": false
-    },
-    {
-      "id": "line-bot-center",
-      "name": "AI × LINE × Automation",
-      "summary": "建立一個可透過 LINE 發送指令自動更新網站資料的機器人。",
-      "cover": "./assets/line-bot-center-cover.png",
-      "status": "concept",
-      "updated": "2026-03-06",
-      "output": "LINE 指揮中心",
-      "content": [
-        "這個專案是「AI × Web × Automation」的延伸構想。",
-        "當網站資料已經可以透過 GitHub Issue 指令更新後，我開始思考：是否也能透過 LINE 發送訊息來更新網站資料？",
-        "因此構想了一個「LINE 指揮中心」，未來只需要在 LINE 裡傳送指令，就能更新網站上的專案資料，例如新增時間軸、更新摘要或加入成果畫面。",
-        "這個專案的核心概念，是把 LINE 當成新的操作入口，再透過 GitHub Actions 與 OpenAI API 解析訊息內容，最後自動更新 `projects.json` 並重新部署網站。"
-      ],
-      "category": [
-        "工具",
-        "自動化"
-      ],
-      "techTags": [
-        "LINE Messaging API",
-        "GitHub Actions",
-        "OpenAI API",
-        "Webhook"
-      ],
-      "timeline": [
-        {
-          "date": "2026.03.07",
-          "phase": "concept",
-          "title": "構想",
-          "note": "提出 LINE 指揮中心的概念，希望未來可以透過 LINE 訊息更新網站資料。"
-        }
-      ],
-      "next": [
-        "設計 LINE webhook 接收訊息",
-        "測試 LINE 指令更新網站資料"
-      ],
-      "gallery": [],
       "pin": false
     },
     {
