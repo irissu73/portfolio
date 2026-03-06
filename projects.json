@@ -1,195 +1,101 @@
 {
   "projects": [
+
+{
+  "id": "ios-app-littlehq",
+  "name": "AI x iOS APP",
+  "summary": "測試能否透過 ChatGPT 對話協作方式，從零開始完成一個可實際運作的 iOS App。",
+  "output": "LittleHQ 小總部",
+  "status": "validated",
+  "updated": "2026-02-28",
+
+  "category": [
+    "產品",
+    "學習"
+  ],
+
+  "techTags": [
+    "SwiftUI",
+    "iOS",
+    "ChatGPT"
+  ],
+
+  "cover": "./assets/littlehq-cover-2026.jpg",
+
+  "content": [
+    "起初只是想試試：透過 ChatGPT 對話協作，是否真的能完成一個可運作的 iOS App。",
+    "過程中很快發現，重點其實不是學寫 Code，而是學會如何把想法轉成清楚的指令，逐步拆解需求，透過 ChatGPT 對話協作產出整個應用，包括畫面設計、資料結構、功能邏輯、除錯、測試與優化。",
+    "最開始的目標是做一個兒子專屬的 App，因此規劃了主頁、錢包、集點卡與家長專區。開發過程中又延伸出新的想法：把題目藏進遊戲裡，讓孩子透過「買東西」的方式學習。",
+    "實際讓五歲的兒子測試後，他玩得很投入，也慢慢理解不同錢幣的組合方式，效果讓我非常滿意。",
+    "原本只是想驗證 AI 是否能協助從零開始完成 App 開發，最後卻意外做出一個能讓孩子在遊戲中學習金錢概念的應用。"
+  ],
+
+  "timeline": [
     {
-      "id": "line-bot-family",
-      "name": "AI x LINE 群組機器人",
-      "summary": "測試是否能建立一個不需要自架主機的 LINE 家庭記事與提醒機器人。",
-      "cover": "./assets/line-bot-family-cover.png",
-      "status": "concept",
-      "updated": "2026-03-06",
-      "output": "LINE 家庭記事機器人",
-      "content": [
-        "這個專案的目標是建立一個可以加入家庭 LINE 群組的機器人，用來記錄家庭待辦事項並自動提醒。",
-        "系統設計希望不需要自架主機，透過 LINE Messaging API 搭配 Google Apps Script，並把資料存放在 Google Sheets。",
-        "使用情境包括：\n- 爸媽回診時間提醒\n- 家庭聚餐時間地點提醒"
-      ],
-      "category": [
-        "生活",
-        "自動化"
-      ],
-      "techTags": [
-        "LINE Messaging API",
-        "Google Apps Script",
-        "Google Sheets"
-      ],
-      "timeline": [
-        {
-          "date": "2026.03.06",
-          "phase": "concept",
-          "title": "事前準備",
-          "note": "研究是否能透過 LINE Messaging API 與 Google Apps Script 實現"
-        }
-      ],
-      "next": [
-        "建立 LINE 官方帳號",
-        "測試 Messaging API webhook",
-        "設計記事資料結構"
-      ],
-      "gallery": [
-        {
-          "src": "./assets/line-bot-family/01-line-bot-family.JPG",
-          "alt": ""
-        }
-      ],
-      "pin": false
+      "date": "2026.02.18",
+      "phase": "concept",
+      "title": "開始 AI 協作開發",
+      "note": "第一次嘗試透過 ChatGPT 對話協作方式，把想法逐步轉成 App 的實際功能。"
     },
     {
-      "id": "line-bot-center",
-      "name": "test4 口語新增",
-      "summary": "這個專案定位成「LINE 指揮中心」，讓我之後直接在 LINE 裡丟一句話，就能更新網站上的專案資料。",
-      "cover": "./assets/line-bot-center-cover.png",
-      "status": "concept",
-      "updated": "2026-03-06",
-      "output": "",
-      "content": [
-        "進行專案「AI × Web × Automation」的後期，想到如果可以用LINE發佈指令，不需透GitHub建立issues就能自動更新會很方便。",
-        "核心想法是把 LINE 當成入口，後面再串 GitHub Actions、OpenAI API，最後把資料寫回 projects.json。",
-        "我覺得它比較偏工具 / 自動化，技術上應該會用到 LINE Messaging API、GitHub Actions、OpenAI API，可能還會再接 Webhook。",
-        "這個專案的第一步，應該是先確認：LINE 傳進來的文字要怎麼轉成標準更新格式，再來才是接 GitHub 跟網站更新流程。"
-      ],
-      "category": [],
-      "techTags": [],
-      "timeline": [
-        {
-          "date": "2026.03.06",
-          "phase": "concept",
-          "title": "開始準備",
-          "note": "確認技術可行性及相關的事前準備"
-        },
-        {
-          "date": "2026.03.06",
-          "phase": "testing",
-          "title": "測試完成ㄧ筆指令發佈",
-          "note": ""
-        },
-        {
-          "date": "2026.03.05",
-          "phase": "concept",
-          "title": "構想",
-          "note": "希望未來能直接用 LINE 當成專案更新"
-        }
-      ],
-      "next": [
-        "確認 LINE 傳進來的文字要怎麼轉成標準更新格式",
-        "接 GitHub 跟網站更新流程"
-      ],
-      "gallery": [
-        {
-          "src": "./assets/line-bot-center/01-line-bot-center.png",
-          "alt": ""
-        }
-      ],
-      "pin": false
+      "date": "2026.02.22",
+      "phase": "testing",
+      "title": "主頁與錢包功能",
+      "note": "完成主頁視覺設計與基本架構，並實作錢包記帳系統。"
     },
     {
-      "id": "ios-app-littlehq",
-      "name": "AI × 協作開發實驗",
-      "summary": "測試 AI 是否能協作完成一個可用的 iOS App。",
-      "output": "LittleHQ 小總部",
-      "status": "validated",
-      "updated": "2026-03",
-      "category": [
-        "協作開發"
-      ],
-      "techTags": [
-        "SwiftUI",
-        "OpenAI API"
-      ],
-      "cover": "./assets/littlehq-cover-2026.jpg",
-      "content": [
-        "這個實驗的起點其實很單純：我想測試 AI 是否真的可以協作完成一個可用的 iOS App。",
-        "不是只產生片段程式碼，而是從零開始，包含畫面、資料結構、功能邏輯、除錯與測試。",
-        "開發過程中，我逐步拆解需求，請 AI 協助產出 SwiftUI 結構、狀態管理邏輯與 UI 微調建議。",
-        "從主頁、錢包功能、遊戲頁面到集點卡系統，每一次改動都透過對話迭代完成。",
-        "原本只是想試試能不能寫出 App，沒想到最後發展成具有教學效果的應用。"
-      ],
-      "timeline": [
-        {
-          "date": "2026.02.18",
-          "phase": "concept",
-          "title": "開始實驗",
-          "note": "第一次接觸 AI，開始用對話方式嘗試把想法落地。"
-        },
-        {
-          "date": "2026.02.22",
-          "phase": "testing",
-          "title": "完成主頁與錢包雛形",
-          "note": "主頁視覺、基本結構完成；錢包開始可記錄與加總。"
-        },
-        {
-          "date": "2026.03.01",
-          "phase": "validated",
-          "title": "可用版本產出",
-          "note": "成功跑到 iPad 並實測，確認可用流程。"
-        },
-        {
-          "date": "2026.03.03",
-          "phase": "expanding",
-          "title": "延伸遊戲與集點方向",
-          "note": "開始把題庫與遊戲體驗整合，往更完整的學習情境延伸。"
-        }
-      ],
-      "next": [
-        "強化遊戲成就回饋節奏",
-        "優化家長專區題庫新增與分類",
-        "把提示機制做得更溫柔，降低挫折感"
-      ],
-      "gallery": [
-        {
-          "src": "./assets/littlehq-screen-01.jpg",
-          "alt": "主頁畫面"
-        },
-        {
-          "src": "./assets/littlehq-screen-02.jpg",
-          "alt": "錢包功能"
-        },
-        {
-          "src": "./assets/littlehq-screen-03.jpg",
-          "alt": "集點功能"
-        },
-        {
-          "src": "./assets/littlehq-screen-04.jpg",
-          "alt": "遊戲功能：買東西"
-        },
-        {
-          "src": "./assets/littlehq-screen-05.jpg",
-          "alt": "家長專區"
-        }
-      ],
-      "pin": false
+      "date": "2026.02.23",
+      "phase": "testing",
+      "title": "集點卡系統與家長專區",
+      "note": "設計「我的集點卡」功能，孩子可以累積點數並兌換禮物，同時建立家長專區管理設定（含密碼控管）。"
     },
     {
-      "id": "web-automation",
-      "name": "AI 協作開發實驗",
-      "summary": "測試專案資料是否能透過 AI 自動生成並發佈。",
-      "output": "IRIS ｜ AI 協作開發實驗（本網站）",
-      "status": "testing",
-      "updated": "2026-03",
-      "category": [
-        "自動化發布"
-      ],
-      "techTags": [
-        "GitHub Actions",
-        "Vercel",
-        "JSON",
-        "OpenAI API"
-      ],
-      "cover": "/images/site-cover.jpg",
-      "content": [],
-      "timeline": [],
-      "next": [],
-      "gallery": [],
-      "pin": false
+      "date": "2026.02.24",
+      "phase": "validated",
+      "title": "iPad 實機測試",
+      "note": "將 App 安裝到 iPad 進行實際操作測試，確認主要流程可以正常運作，並依使用者（兒子）實測結果優化錢包介面。"
+    },
+    {
+      "date": "2026.02.26",
+      "phase": "expanding",
+      "title": "買東西遊戲",
+      "note": "將題目設計成購物情境，透過不同錢幣組合完成金額計算，讓孩子在遊戲中練習金錢概念與簡單數學。"
+    },
+    {
+      "date": "2026.02.28",
+      "phase": "expanding",
+      "title": "爵士鼓遊戲",
+      "note": "設計鼓組畫面並測試點擊觸發音效，探索更多互動式遊戲玩法。"
     }
+  ],
+
+  "next": [
+    "增加更多學習遊戲玩法",
+    "優化遊戲互動與回饋體驗",
+    "擴充家長專區的題庫與設定功能"
+  ],
+
+  "gallery": [
+    {
+      "src": "./assets/ios-app-littlehq/littlehq-screen-home.png",
+      "alt": "LittleHQ 主頁"
+    },
+    {
+      "src": "./assets/ios-app-littlehq/littlehq-screen-wallet.png",
+      "alt": "錢包記帳系統"
+    },
+    {
+      "src": "./assets/ios-app-littlehq/littlehq-screen-points.png",
+      "alt": "集點卡系統"
+    },
+    {
+      "src": "./assets/ios-app-littlehq/littlehq-screen-shop.png",
+      "alt": "買東西學習遊戲"
+    }
+  ],
+
+  "pin": false
+}
+
   ]
 }
