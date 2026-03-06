@@ -33,6 +33,12 @@
           "note": "提出 LINE 指揮中心的概念，希望未來可以透過 LINE 訊息更新網站資料。"
         },
         {
+          "date": "2026.03.06",
+          "phase": "validated",
+          "title": "開始實作",
+          "note": "專案正式啟動"
+        },
+        {
           "date": "2026.03.05",
           "phase": "concept",
           "title": "構想",
