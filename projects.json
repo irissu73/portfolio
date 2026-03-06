@@ -90,11 +90,17 @@
         "OpenAI API",
         "Webhook"
       ],
-      "timeline": [],
+      "timeline": [
+        {
+          "date": "2026.03.07",
+          "phase": "concept",
+          "title": "構想",
+          "note": "提出 LINE 指揮中心的概念，希望未來可以透過 LINE 訊息更新網站資料。"
+        }
+      ],
       "next": [
-        "研究 LINE Messaging API webhook",
-        "設計 LINE 指令格式",
-        "測試透過 LINE 指令更新網站"
+        "設計 LINE webhook 接收訊息",
+        "測試 LINE 指令更新網站資料"
       ],
       "gallery": [],
       "pin": false
