@@ -28,7 +28,24 @@ UPDATE_START = "=== UPDATE START ==="
 UPDATE_END = "=== UPDATE END ==="
 
 ALLOWED_STATUS = {"concept", "testing", "validated", "expanding"}
+PHASE_MAP = {
+    "構想": "concept",
+    "構想中": "concept",
+    "準備": "concept",
+    "開始準備": "concept",
+    "規劃": "concept",
 
+    "測試": "testing",
+    "測試中": "testing",
+    "驗證": "testing",
+    "驗證中": "testing",
+
+    "已驗證": "validated",
+    "完成": "validated",
+
+    "延伸": "expanding",
+    "延伸中": "expanding",
+}
 
 # 用 workflow 執行時間（UTC+8台灣時間）當「推到網站的日期」
 from datetime import timedelta
@@ -106,21 +123,64 @@ def _ensure_content(v):
     t = _fold(v)
     return [t] if t else []
 
+def _normalize_date_text(s: str) -> str:
+    """
+    把日期文字轉成統一格式：
+    - 2026.03.05
+    - 2026-03-05
+    - 今天 / 昨天
+    """
+    s = str(s or "").strip()
+
+    if not s:
+        return ""
+
+    # 今天 / 昨天
+    taiwan_time = datetime.now(timezone.utc) + timedelta(hours=8)
+
+    if s == "今天":
+        return taiwan_time.strftime("%Y.%m.%d")
+    if s == "昨天":
+        return (taiwan_time - timedelta(days=1)).strftime("%Y.%m.%d")
+
+    # 2026-03-05 -> 2026.03.05
+    if re.match(r"^\d{4}-\d{2}-\d{2}$", s):
+        return s.replace("-", ".")
+
+    # 2026.03.05 保持不動
+    if re.match(r"^\d{4}\.\d{2}\.\d{2}$", s):
+        return s
+
+    return s
+
 def _ensure_timeline(v):
     if v is None:
         return []
     if not isinstance(v, list):
         return []
+
     out = []
+
     for item in v:
         if not isinstance(item, dict):
             continue
+
+        date = _normalize_date_text(item.get("date"))
+        phase = str(item.get("phase") or "").strip()
+        title = str(item.get("title") or "").strip()
+        note = str(item.get("note") or "").strip()
+
+        # phase 中文自動轉英文
+        if phase in PHASE_MAP:
+            phase = PHASE_MAP[phase]
+
         out.append({
-            "date": str(item.get("date") or "").strip(),
-            "phase": str(item.get("phase") or "").strip(),
-            "title": str(item.get("title") or "").strip(),
-            "note": str(item.get("note") or "").strip(),
+            "date": date,
+            "phase": phase,
+            "title": title,
+            "note": note,
         })
+
     return out
 
 def _ensure_gallery(v):
@@ -301,6 +361,9 @@ def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_g
         "3.1.2) content 只能整理專案內容相關敘述，不要包含 UPDATE START / UPDATE END / 專案清單等指令文字。\n"
         "3.2) content 只能整理【專案內容】區塊，或根據更新敘述整理出的專案內容；不要包含專案清單、更新指令標題、或 UPDATE START/END 文字。\n"
         "3.3) timeline 必須是物件陣列，每筆一定要有 date, phase, title；phase 必填且只能是 concept/testing/validated/expanding。\n"
+        "3.3.1) 若描述中出現口語化時間軸，例如『2026.03.05 構想』下一行接說明，請整理成 timeline。\n"
+        "3.3.2) 若 date 使用中文，例如『今天』『昨天』，請保留並交由外層程式正規化。\n"
+        "3.3.3) phase 若使用中文，例如『構想 / 測試 / 已驗證 / 延伸』，請保留語意正確，外層程式會轉成英文。\n"
         "3.4) gallery 必須是物件陣列，每筆格式為 {\"src\":\"檔名或路徑\",\"alt\":\"\"}；不要輸出字串陣列。\n"
         "3.5) 若描述中出現「第一步 / 下一步 / 接下來 / 先做 / 接著做」等語句，請整理為 next 陣列。\n"
         "4) status 只能是 concept/testing/validated/expanding 四種之一。\n"
@@ -394,24 +457,41 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
         else:
             project_after[k] = v
 
-    # status 校正
-    if project_after.get("status") not in ALLOWED_STATUS:
-        old = project_before.get("status")
-        project_after["status"] = old if old in ALLOWED_STATUS else "concept"
-
+        # status 校正（支援中文）
+        status = str(project_after.get("status") or "").strip()
+        if status in PHASE_MAP:
+            status = PHASE_MAP[status]
+            project_after["status"] = status
+    
+        if project_after.get("status") not in ALLOWED_STATUS:
+            old = project_before.get("status")
+            project_after["status"] = old if old in ALLOWED_STATUS else "concept"
+            
     # ----------------------------
     # Normalize: timeline
     # ----------------------------
     tl = project_after.get("timeline")
     if isinstance(tl, list):
-        # phase 空值保底
-        fixed = []
-        for it in tl:
-            if not isinstance(it, dict):
-                continue
-            if not str(it.get("phase") or "").strip():
-                it["phase"] = project_after.get("status") or "concept"
-            fixed.append(it)
+    # phase 空值保底 + 中文轉英文 + 日期正規化
+    fixed = []
+    for it in tl:
+        if not isinstance(it, dict):
+            continue
+
+        phase = str(it.get("phase") or "").strip()
+        date = _normalize_date_text(it.get("date"))
+
+        # 中文階段自動轉英文
+        if phase in PHASE_MAP:
+            phase = PHASE_MAP[phase]
+
+        # 空值保底
+        if not phase:
+            phase = project_after.get("status") or "concept"
+
+        it["phase"] = phase
+        it["date"] = date
+        fixed.append(it)
 
         # 去重複（date+title）
         seen = set()
