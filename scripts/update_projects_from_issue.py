@@ -369,7 +369,13 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
     # 1) forced
     for k in ["name", "summary", "cover", "content"]:
         if k in forced and forced[k]:
-            project_after[k] = forced[k]
+            if k == "content":
+                # 有標記【專案內容】時，直接保留原始段落
+                project_after["content"] = [
+                    x.rstrip() for x in str(forced[k]).split("\n\n") if x.strip()
+                ]
+            else:
+                project_after[k] = forced[k]
 
     # 2) pin（只有明確指令才改）
     if pin_intent is True:
