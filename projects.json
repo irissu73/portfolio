@@ -1,101 +1,101 @@
 {
   "projects": [
 
-{
-  "id": "ios-app-littlehq",
-  "name": "AI x iOS APP",
-  "summary": "測試能否透過 ChatGPT 對話協作方式，從零開始完成一個可實際運作的 iOS App。",
-  "output": "LittleHQ 小總部",
-  "status": "validated",
-  "updated": "2026-02-28",
-
-  "category": [
-    "產品",
-    "學習"
-  ],
-
-  "techTags": [
-    "SwiftUI",
-    "iOS",
-    "ChatGPT"
-  ],
-
-  "cover": "./assets/littlehq-cover-2026.jpg",
-
-  "content": [
-    "起初只是想試試：透過 ChatGPT 對話協作，是否真的能完成一個可運作的 iOS App。",
-    "過程中很快發現，重點其實不是學寫 Code，而是學會如何把想法轉成清楚的指令，逐步拆解需求，透過 ChatGPT 對話協作產出整個應用，包括畫面設計、資料結構、功能邏輯、除錯、測試與優化。",
-    "最開始的目標是做一個兒子專屬的 App，因此規劃了主頁、錢包、集點卡與家長專區。開發過程中又延伸出新的想法：把題目藏進遊戲裡，讓孩子透過「買東西」的方式學習。",
-    "實際讓五歲的兒子測試後，他玩得很投入，也慢慢理解不同錢幣的組合方式，效果讓我非常滿意。",
-    "原本只是想驗證 AI 是否能協助從零開始完成 App 開發，最後卻意外做出一個能讓孩子在遊戲中學習金錢概念的應用。"
-  ],
-
-  "timeline": [
     {
-      "date": "2026.02.18",
-      "phase": "concept",
-      "title": "開始 AI 協作開發",
-      "note": "第一次嘗試透過 ChatGPT 對話協作方式，把想法逐步轉成 App 的實際功能。"
-    },
-    {
-      "date": "2026.02.22",
-      "phase": "testing",
-      "title": "主頁與錢包功能",
-      "note": "完成主頁視覺設計與基本架構，並實作錢包記帳系統。"
-    },
-    {
-      "date": "2026.02.23",
-      "phase": "testing",
-      "title": "集點卡系統與家長專區",
-      "note": "設計「我的集點卡」功能，孩子可以累積點數並兌換禮物，同時建立家長專區管理設定（含密碼控管）。"
-    },
-    {
-      "date": "2026.02.24",
-      "phase": "validated",
-      "title": "iPad 實機測試",
-      "note": "將 App 安裝到 iPad 進行實際操作測試，確認主要流程可以正常運作，並依使用者（兒子）實測結果優化錢包介面。"
-    },
-    {
-      "date": "2026.02.26",
-      "phase": "expanding",
-      "title": "買東西遊戲",
-      "note": "將題目設計成購物情境，透過不同錢幣組合完成金額計算，讓孩子在遊戲中練習金錢概念與簡單數學。"
-    },
-    {
-      "date": "2026.02.28",
-      "phase": "expanding",
-      "title": "爵士鼓遊戲",
-      "note": "設計鼓組畫面並測試點擊觸發音效，探索更多互動式遊戲玩法。"
+      "id": "ios-app-littlehq",
+      "name": "AI x iOS APP",
+      "summary": "測試能否透過 ChatGPT 對話協作方式，從零開始完成一個可實際運作的 iOS App。",
+      "output": "LittleHQ 小總部",
+      "status": "validated",
+      "updated": "2026-02-28",
+    
+      "category": [
+        "產品",
+        "學習"
+      ],
+    
+      "techTags": [
+        "SwiftUI",
+        "iOS",
+        "ChatGPT"
+      ],
+    
+      "cover": "./assets/littlehq-cover-2026.jpg",
+    
+      "content": [
+        "起初只是想試試：透過 ChatGPT 對話協作，是否真的能完成一個可運作的 iOS App。",
+        "過程中很快發現，重點其實不是學寫 Code，而是學會如何把想法轉成清楚的指令，逐步拆解需求，透過 ChatGPT 對話協作產出整個應用，包括畫面設計、資料結構、功能邏輯、除錯、測試與優化。",
+        "最開始的目標是做一個兒子專屬的 App，因此規劃了主頁、錢包、集點卡與家長專區。開發過程中又延伸出新的想法：把題目藏進遊戲裡，讓孩子透過「買東西」的方式學習。",
+        "實際讓五歲的兒子測試後，他玩得很投入，也慢慢理解不同錢幣的組合方式，效果讓我非常滿意。",
+        "原本只是想驗證 AI 是否能協助從零開始完成 App 開發，最後卻意外做出一個能讓孩子在遊戲中學習金錢概念的應用。"
+      ],
+    
+      "timeline": [
+        {
+          "date": "2026.02.18",
+          "phase": "concept",
+          "title": "開始 AI 協作開發",
+          "note": "第一次嘗試透過 ChatGPT 對話協作方式，把想法逐步轉成 App 的實際功能。"
+        },
+        {
+          "date": "2026.02.22",
+          "phase": "testing",
+          "title": "主頁與錢包功能",
+          "note": "完成主頁視覺設計與基本架構，並實作錢包記帳系統。"
+        },
+        {
+          "date": "2026.02.23",
+          "phase": "testing",
+          "title": "集點卡系統與家長專區",
+          "note": "設計「我的集點卡」功能，孩子可以累積點數並兌換禮物，同時建立家長專區管理設定（含密碼控管）。"
+        },
+        {
+          "date": "2026.02.24",
+          "phase": "validated",
+          "title": "iPad 實機測試",
+          "note": "將 App 安裝到 iPad 進行實際操作測試，確認主要流程可以正常運作，並依使用者（兒子）實測結果優化錢包介面。"
+        },
+        {
+          "date": "2026.02.26",
+          "phase": "expanding",
+          "title": "買東西遊戲",
+          "note": "將題目設計成購物情境，透過不同錢幣組合完成金額計算，讓孩子在遊戲中練習金錢概念與簡單數學。"
+        },
+        {
+          "date": "2026.02.28",
+          "phase": "expanding",
+          "title": "爵士鼓遊戲",
+          "note": "設計鼓組畫面並測試點擊觸發音效，探索更多互動式遊戲玩法。"
+        }
+      ],
+    
+      "next": [
+        "增加更多學習遊戲玩法",
+        "優化遊戲互動與回饋體驗",
+        "擴充家長專區的題庫與設定功能"
+      ],
+    
+      "gallery": [
+        {
+          "src": "./assets/ios-app-littlehq/littlehq-screen-home.png",
+          "alt": "LittleHQ 主頁"
+        },
+        {
+          "src": "./assets/ios-app-littlehq/littlehq-screen-wallet.png",
+          "alt": "錢包記帳系統"
+        },
+        {
+          "src": "./assets/ios-app-littlehq/littlehq-screen-points.png",
+          "alt": "集點卡系統"
+        },
+        {
+          "src": "./assets/ios-app-littlehq/littlehq-screen-shop.png",
+          "alt": "買東西學習遊戲"
+        }
+      ],
+    
+      "pin": false
     }
-  ],
-
-  "next": [
-    "增加更多學習遊戲玩法",
-    "優化遊戲互動與回饋體驗",
-    "擴充家長專區的題庫與設定功能"
-  ],
-
-  "gallery": [
-    {
-      "src": "./assets/ios-app-littlehq/littlehq-screen-home.png",
-      "alt": "LittleHQ 主頁"
-    },
-    {
-      "src": "./assets/ios-app-littlehq/littlehq-screen-wallet.png",
-      "alt": "錢包記帳系統"
-    },
-    {
-      "src": "./assets/ios-app-littlehq/littlehq-screen-points.png",
-      "alt": "集點卡系統"
-    },
-    {
-      "src": "./assets/ios-app-littlehq/littlehq-screen-shop.png",
-      "alt": "買東西學習遊戲"
-    }
-  ],
-
-  "pin": false
-}
 
   ]
 }
