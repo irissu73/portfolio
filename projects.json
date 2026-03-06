@@ -107,8 +107,12 @@
       ],
       "gallery": [
         {
-          "src": "./assets/web-automation/01-web-automation.png",
-          "alt": "AI × Web × Automation 成果畫面"
+          "src": "./assets/web-automation/01-web-automation.gif",
+          "alt": "自動新增"
+        },
+         {
+          "src": "./assets/web-automation/02-web-automation.gif",
+          "alt": "自動更新"
         }
       ],
       "pin": false
