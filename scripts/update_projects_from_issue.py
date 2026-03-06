@@ -466,34 +466,32 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
     if project_after.get("status") not in ALLOWED_STATUS:
         old = project_before.get("status")
         project_after["status"] = old if old in ALLOWED_STATUS else "concept"
-        
+
     # ----------------------------
     # Normalize: timeline
     # ----------------------------
     tl = project_after.get("timeline")
     if isinstance(tl, list):
-    # phase 空值保底 + 中文轉英文 + 日期正規化
-    fixed = []
-    for it in tl:
-        if not isinstance(it, dict):
-            continue
+        # phase 空值保底 + 中文轉英文 + 日期正規化
+        fixed = []
+        for it in tl:
+            if not isinstance(it, dict):
+                continue
 
-        phase = str(it.get("phase") or "").strip()
-        date = _normalize_date_text(it.get("date"))
+            phase = str(it.get("phase") or "").strip()
+            date = _normalize_date_text(it.get("date"))
 
-        # 中文階段自動轉英文
-        if phase in PHASE_MAP:
-            phase = PHASE_MAP[phase]
+            if phase in PHASE_MAP:
+                phase = PHASE_MAP[phase]
 
-        # 空值保底
-        if not phase:
-            phase = project_after.get("status") or "concept"
+            if not phase:
+                phase = project_after.get("status") or "concept"
 
-        it["phase"] = phase
-        it["date"] = date
-        fixed.append(it)
+            it["phase"] = phase
+            it["date"] = date
+            fixed.append(it)
 
-        # 去重複（date+title）
+        # 去重複（date + title）
         seen = set()
         unique = []
         for it in fixed:
@@ -505,10 +503,10 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
             seen.add(key)
             unique.append(it)
 
-        # 排序：新到舊（你若要舊到新，把 reverse 改 False）
+        # 排序：新到舊
         unique = sorted(unique, key=lambda x: str(x.get("date") or ""), reverse=True)
         project_after["timeline"] = unique
-
+        
     # ----------------------------
     # Normalize: cover path
     # ----------------------------
