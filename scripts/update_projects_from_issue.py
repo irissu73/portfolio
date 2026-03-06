@@ -296,9 +296,13 @@ def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_g
         "2) 只輸出需要更新的欄位；不需要更新就不要輸出該欄位。\n"
         "3) 多值欄位 category/techTags/timeline/next/gallery 必須是陣列（可空）。\n"
         "3.1) content 必須是字串陣列，但內容風格應保持自然敘述；若輸入有多行，可整理成一段或少量敘述，不要把整份指令原樣貼回。\n"
+        "3.1) content 必須是字串陣列。\n"
+        "3.1.1) 若原始敘述本身有段落（例如空行分段），請保留段落並轉成多個 content item，不要全部合併成一段。\n"
+        "3.1.2) content 只能整理專案內容相關敘述，不要包含 UPDATE START / UPDATE END / 專案清單等指令文字。\n"
         "3.2) content 只能整理【專案內容】區塊，或根據更新敘述整理出的專案內容；不要包含專案清單、更新指令標題、或 UPDATE START/END 文字。\n"
         "3.3) timeline 必須是物件陣列，每筆一定要有 date, phase, title；phase 必填且只能是 concept/testing/validated/expanding。\n"
         "3.4) gallery 必須是物件陣列，每筆格式為 {\"src\":\"檔名或路徑\",\"alt\":\"\"}；不要輸出字串陣列。\n"
+        "3.5) 若描述中出現「第一步 / 下一步 / 接下來 / 先做 / 接著做」等語句，請整理為 next 陣列。\n"
         "4) status 只能是 concept/testing/validated/expanding 四種之一。\n"
         "5) updated 不要輸出（外層程式會在有變更時自動更新）。\n"
         "6) pin 欄位只有在使用者明確提到「置頂」或「取消置頂」時才允許改動；若本次更新沒有此指令，請不要輸出 pin。\n"
@@ -365,8 +369,7 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
     # 3) AI patch（不得覆蓋 forced；pin 無指令不得改）
     allowed_ai = {
         "status", "pin", "output", "content",
-        "category", "techTags", "timeline", "next", "gallery",
-        "name", "summary", "cover"
+        "category", "techTags", "timeline", "next", "gallery", "summary"
     }
 
     for k, v in (ai_patch or {}).items():
