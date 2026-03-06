@@ -38,12 +38,9 @@ Google Apps Script
 Google Sheets
 
 【專案內容】
-這個專案的目標是建立一個可以加入家庭 LINE 群組的機器人，
-用來記錄家庭待辦事項並自動提醒。
+這個專案的目標是建立一個可以加入家庭 LINE 群組的機器人，用來記錄家庭待辦事項並自動提醒。
 
-系統設計希望不需要自架主機，
-透過 LINE Messaging API 搭配 Google Apps Script，
-並把資料存放在 Google Sheets。
+系統設計希望不需要自架主機，透過 LINE Messaging API 搭配 Google Apps Script，並把資料存放在 Google Sheets。
 
 使用情境包括：
 - 爸媽回診時間提醒
