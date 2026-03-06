@@ -75,9 +75,14 @@ def _ensure_content(v):
     最終存成 list[str]，但內容保持自然敘述：
     - 若有換行，折疊成空格
     - 不強制拆段
+    - 防止 AI 把整份 issue 貼進 content
     """
     if v is None:
         return []
+
+    if isinstance(v, str):
+        if "UPDATE START" in v or "專案清單" in v:
+            return []
 
     def _fold(s: str) -> str:
         s = str(s or "")
@@ -140,6 +145,27 @@ def _ensure_gallery(v):
             out.append(item)
     return out
 
+def _read_section(lines, start_idx):
+    """
+    從 start_idx 下一行開始，讀到下一個【xxx】或 UPDATE_END 或檔尾。
+    回傳 (text, next_idx)
+    """
+    buf = []
+    i = start_idx + 1
+    while i < len(lines):
+        ln = lines[i]
+        if ln.startswith("【") and ln.endswith("】"):
+            break
+        # 有些人會把 UPDATE END 放在 block 裡
+        if UPDATE_END in ln:
+            break
+        buf.append(ln)
+        i += 1
+
+    text = "\n".join(buf).strip()
+    return text, i
+
+
 def parse_forced_fields(block: str):
     """
     回傳：
@@ -148,120 +174,73 @@ def parse_forced_fields(block: str):
       - pin_intent: None/True/False（只有寫置頂/取消置頂才有值）
       - hints_gallery: list[str]（block 內寫了 成果：xxx.png 的提示；不強制）
     """
-    lines = [ln.rstrip() for ln in block.splitlines()]
+    lines = [ln.rstrip() for ln in block.splitlines() if ln.strip()]
 
     project_id = ""
     forced = {}
     pin_intent = None
     hints_gallery = []
 
-    pending_key = None
-    pending_lines = []
+    i = 0
+    while i < len(lines):
+        line = lines[i].strip()
 
-    def flush_pending():
-        nonlocal pending_key, pending_lines, project_id, forced, hints_gallery
-        if not pending_key:
-            return
-
-        text = "\n".join(pending_lines).strip()
-
-        if pending_key == "project_id":
-            if text:
-                project_id = text
-        elif pending_key in ("name", "summary", "cover"):
-            if text:
-                forced[pending_key] = text
-        elif pending_key == "content":
-            if text:
-                forced["content"] = text
-        elif pending_key == "gallery":
-            if text:
-                hints_gallery.extend([x.strip() for x in text.splitlines() if x.strip()])
-
-        pending_key = None
-        pending_lines = []
-
-    section_map = {
-        "【專案】": "project_id",
-        "【專案ID】": "project_id",
-        "【id】": "project_id",
-        "【ID】": "project_id",
-        "【專案名稱】": "name",
-        "【名稱】": "name",
-        "【name】": "name",
-        "【Name】": "name",
-        "【摘要】": "summary",
-        "【summary】": "summary",
-        "【Summary】": "summary",
-        "【封面】": "cover",
-        "【cover】": "cover",
-        "【Cover】": "cover",
-        "【專案內容】": "content",
-        "【內容】": "content",
-        "【content】": "content",
-        "【Content】": "content",
-        "【成果】": "gallery",
-        "【成果畫面】": "gallery",
-        "【gallery】": "gallery",
-        "【Gallery】": "gallery",
-    }
-
-    for raw in lines:
-        line = raw.strip()
-
-        # 新段落標題出現時，先結算上一段
-        if line in section_map:
-            flush_pending()
-            pending_key = section_map[line]
-            continue
-
-        # 多行區塊收集
-        if pending_key:
-            pending_lines.append(raw)
-            continue
-
-        # 置頂 / 取消置頂
-        if "取消置頂" in line:
-            pin_intent = False
-            continue
-        if "置頂" in line:
-            pin_intent = True
-            continue
-
-        # 冒號格式
+        # 專案 id
         if line.startswith("專案") or line.lower().startswith("id"):
             v = _after_colon(line)
             if v:
                 project_id = v
+            i += 1
             continue
 
-        if line.startswith("專案名稱") or line.lower().startswith("name"):
-            v = _after_colon(line)
-            if v:
-                forced["name"] = v
+        # 置頂/取消置頂（只有出現才改）
+        if "取消置頂" in line:
+            pin_intent = False
+            i += 1
+            continue
+        if "置頂" in line:
+            pin_intent = True
+            i += 1
             continue
 
-        if line.startswith("摘要") or line.lower().startswith("summary"):
-            v = _after_colon(line)
-            if v:
-                forced["summary"] = v
+        # ✅ 新：用【區塊】方式讀取（保留換行與段落）
+        if line in ("【專案名稱】", "【name】"):
+            text, i = _read_section(lines, i)
+            if text:
+                forced["name"] = text.strip()
             continue
 
-        if line.startswith("封面") or line.lower().startswith("cover"):
-            v = _after_colon(line)
-            if v:
-                forced["cover"] = v
+        if line in ("【摘要】", "【summary】"):
+            text, i = _read_section(lines, i)
+            if text:
+                forced["summary"] = text.strip()
             continue
 
+        if line in ("【封面】", "【cover】"):
+            text, i = _read_section(lines, i)
+            if text:
+                forced["cover"] = text.strip()
+            continue
+
+        # ✅ 這就是妳要的：標記【專案內容】就直接覆寫（保留段落）
+        if line in ("【專案內容】", "【content】"):
+            text, i = _read_section(lines, i)
+            if text:
+                forced["content"] = text  # 保留原始換行，後面 merge_project 再決定怎麼存
+            continue
+
+        # 成果檔名提示（不強制覆寫；交給 AI 判斷更新 gallery）
         if line.startswith("成果") or line.lower().startswith("gallery"):
             v = _after_colon(line)
             if v:
                 hints_gallery.append(v)
+            i += 1
             continue
 
-    flush_pending()
+        i += 1
+
     return project_id, forced, pin_intent, hints_gallery
-    
+
 def find_project_index(data: dict, project_id: str):
     projects = data.get("projects", [])
     for i, p in enumerate(projects):
