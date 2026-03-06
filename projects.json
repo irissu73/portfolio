@@ -44,6 +44,39 @@
       "pin": false
     },
     {
+      "id": "line-bot-center",
+      "name": "TEST 口語新增專案",
+      "summary": "這個專案可以定位成「LINE 指揮中心」，讓我之後直接在 LINE 裡丟一句話，就能更新網站上的專案資料。",
+      "cover": "./assets/line-bot-center-cover.png",
+      "status": "concept",
+      "updated": "2026-03-06",
+      "output": "",
+      "content": [
+        "目前先把它放在構想階段，核心想法是把 LINE 當成入口，後面再串 GitHub Actions、OpenAI API，最後把資料寫回 projects.json。我覺得它比較偏工具 / 自動化，技術上應該會用到 LINE Messaging API、GitHub Actions、OpenAI API，可能還會再接 Webhook。這個專案的第一步，應該是先確認：LINE 傳進來的文字要怎麼轉成標準更新格式，再來才是接 GitHub 跟網站更新流程。"
+      ],
+      "category": [
+        "工具",
+        "自動化"
+      ],
+      "techTags": [
+        "LINE Messaging API",
+        "GitHub Actions",
+        "OpenAI API",
+        "Webhook"
+      ],
+      "timeline": [
+        {
+          "date": "2026-03-05",
+          "phase": "concept",
+          "title": "提出 LINE 指揮中心構想",
+          "note": "希望未來能直接用 LINE 當成專案更新入口"
+        }
+      ],
+      "next": [],
+      "gallery": [],
+      "pin": false
+    },
+    {
       "id": "ios-app-littlehq",
       "name": "AI × 協作開發實驗",
       "summary": "測試 AI 是否能協作完成一個可用的 iOS App。",
