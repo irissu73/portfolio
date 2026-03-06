@@ -132,22 +132,54 @@ def parse_forced_fields(block: str):
       - pin_intent: None/True/False（只有寫置頂/取消置頂才有值）
       - hints_gallery: list[str]（block 內寫了 成果：xxx.png 的提示；不強制）
     """
-    lines = [ln.strip() for ln in block.splitlines() if ln.strip()]
+    lines = [ln.rstrip() for ln in block.splitlines()]
 
     project_id = ""
     forced = {}
     pin_intent = None
     hints_gallery = []
 
-    for line in lines:
-        # 專案 id
-        if line.startswith("專案") or line.lower().startswith("id"):
-            v = _after_colon(line)
-            if v:
-                project_id = v
+    pending_key = None  # 用來接【封面】下一行這種格式
+
+    for raw in lines:
+        line = raw.strip()
+        if not line:
             continue
 
-        # 置頂/取消置頂（只有出現才改）
+        # ---------- 先處理「【欄位】」標題 ----------
+        if line in ("【專案】", "【專案ID】", "【id】", "【ID】"):
+            pending_key = "project_id"
+            continue
+
+        if line in ("【專案名稱】", "【名稱】", "【name】", "【Name】"):
+            pending_key = "name"
+            continue
+
+        if line in ("【摘要】", "【summary】", "【Summary】"):
+            pending_key = "summary"
+            continue
+
+        if line in ("【封面】", "【cover】", "【Cover】"):
+            pending_key = "cover"
+            continue
+
+        if line in ("【成果】", "【成果畫面】", "【gallery】", "【Gallery】"):
+            pending_key = "gallery"
+            continue
+
+        # ---------- 若上一行是【欄位】，這一行就當值 ----------
+        if pending_key:
+            if pending_key == "project_id":
+                project_id = line
+            elif pending_key in ("name", "summary", "cover"):
+                forced[pending_key] = line
+            elif pending_key == "gallery":
+                hints_gallery.append(line)
+
+            pending_key = None
+            continue
+
+        # ---------- 置頂 / 取消置頂 ----------
         if "取消置頂" in line:
             pin_intent = False
             continue
@@ -155,7 +187,13 @@ def parse_forced_fields(block: str):
             pin_intent = True
             continue
 
-        # 強制欄位（標記）
+        # ---------- 冒號格式 ----------
+        if line.startswith("專案") or line.lower().startswith("id"):
+            v = _after_colon(line)
+            if v:
+                project_id = v
+            continue
+
         if line.startswith("專案名稱") or line.lower().startswith("name"):
             v = _after_colon(line)
             if v:
@@ -174,7 +212,6 @@ def parse_forced_fields(block: str):
                 forced["cover"] = v
             continue
 
-        # 成果檔名提示（不強制覆寫；交給 AI 判斷更新 gallery）
         if line.startswith("成果") or line.lower().startswith("gallery"):
             v = _after_colon(line)
             if v:
@@ -308,6 +345,8 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
         if k in forced:
             continue
         if k == "pin" and pin_intent is None:
+            continue
+        if k in {"name", "summary", "cover", "output"} and isinstance(v, str) and not v.strip():
             continue
 
         # 型別統一（避免 AI 回錯型態）
