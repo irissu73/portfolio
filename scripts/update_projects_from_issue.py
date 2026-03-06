@@ -143,7 +143,7 @@ def parse_forced_fields(block: str):
     """
     回傳：
       - project_id: 必填
-      - forced: dict（name/summary/cover 強制覆寫）
+      - forced: dict（name/summary/cover/content 強制覆寫）
       - pin_intent: None/True/False（只有寫置頂/取消置頂才有值）
       - hints_gallery: list[str]（block 內寫了 成果：xxx.png 的提示；不強制）
     """
@@ -154,47 +154,72 @@ def parse_forced_fields(block: str):
     pin_intent = None
     hints_gallery = []
 
-    pending_key = None  # 用來接【封面】下一行這種格式
+    pending_key = None
+    pending_lines = []
+
+    def flush_pending():
+        nonlocal pending_key, pending_lines, project_id, forced, hints_gallery
+        if not pending_key:
+            return
+
+        text = "\n".join(pending_lines).strip()
+
+        if pending_key == "project_id":
+            if text:
+                project_id = text
+        elif pending_key in ("name", "summary", "cover"):
+            if text:
+                forced[pending_key] = text
+        elif pending_key == "content":
+            if text:
+                forced["content"] = text
+        elif pending_key == "gallery":
+            if text:
+                hints_gallery.extend([x.strip() for x in text.splitlines() if x.strip()])
+
+        pending_key = None
+        pending_lines = []
+
+    section_map = {
+        "【專案】": "project_id",
+        "【專案ID】": "project_id",
+        "【id】": "project_id",
+        "【ID】": "project_id",
+        "【專案名稱】": "name",
+        "【名稱】": "name",
+        "【name】": "name",
+        "【Name】": "name",
+        "【摘要】": "summary",
+        "【summary】": "summary",
+        "【Summary】": "summary",
+        "【封面】": "cover",
+        "【cover】": "cover",
+        "【Cover】": "cover",
+        "【專案內容】": "content",
+        "【內容】": "content",
+        "【content】": "content",
+        "【Content】": "content",
+        "【成果】": "gallery",
+        "【成果畫面】": "gallery",
+        "【gallery】": "gallery",
+        "【Gallery】": "gallery",
+    }
 
     for raw in lines:
         line = raw.strip()
-        if not line:
+
+        # 新段落標題出現時，先結算上一段
+        if line in section_map:
+            flush_pending()
+            pending_key = section_map[line]
             continue
 
-        # ---------- 先處理「【欄位】」標題 ----------
-        if line in ("【專案】", "【專案ID】", "【id】", "【ID】"):
-            pending_key = "project_id"
-            continue
-
-        if line in ("【專案名稱】", "【名稱】", "【name】", "【Name】"):
-            pending_key = "name"
-            continue
-
-        if line in ("【摘要】", "【summary】", "【Summary】"):
-            pending_key = "summary"
-            continue
-
-        if line in ("【封面】", "【cover】", "【Cover】"):
-            pending_key = "cover"
-            continue
-
-        if line in ("【成果】", "【成果畫面】", "【gallery】", "【Gallery】"):
-            pending_key = "gallery"
-            continue
-
-        # ---------- 若上一行是【欄位】，這一行就當值 ----------
+        # 多行區塊收集
         if pending_key:
-            if pending_key == "project_id":
-                project_id = line
-            elif pending_key in ("name", "summary", "cover"):
-                forced[pending_key] = line
-            elif pending_key == "gallery":
-                hints_gallery.append(line)
-
-            pending_key = None
+            pending_lines.append(raw)
             continue
 
-        # ---------- 置頂 / 取消置頂 ----------
+        # 置頂 / 取消置頂
         if "取消置頂" in line:
             pin_intent = False
             continue
@@ -202,7 +227,7 @@ def parse_forced_fields(block: str):
             pin_intent = True
             continue
 
-        # ---------- 冒號格式 ----------
+        # 冒號格式
         if line.startswith("專案") or line.lower().startswith("id"):
             v = _after_colon(line)
             if v:
@@ -233,8 +258,9 @@ def parse_forced_fields(block: str):
                 hints_gallery.append(v)
             continue
 
+    flush_pending()
     return project_id, forced, pin_intent, hints_gallery
-
+    
 def find_project_index(data: dict, project_id: str):
     projects = data.get("projects", [])
     for i, p in enumerate(projects):
@@ -341,7 +367,7 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
     project_after = json.loads(json.dumps(project_before, ensure_ascii=False))
 
     # 1) forced
-    for k in ["name", "summary", "cover"]:
+    for k in ["name", "summary", "cover", "content"]:
         if k in forced and forced[k]:
             project_after[k] = forced[k]
 
