@@ -14,6 +14,40 @@ ai-planner：AI 企劃師
 
 === UPDATE START ===
 
+專案：line-bot-center
+
+我最近想到，這個專案可以定位成「LINE 指揮中心」，讓我之後直接在 LINE 裡丟一句話，就能更新網站上的專案資料。
+
+例如新增一筆時間軸、補摘要、加成果圖，甚至調整下一步。
+
+目前先把它放在構想階段，
+核心想法是把 LINE 當成入口，
+後面再串 GitHub Actions、OpenAI API，最後把資料寫回 projects.json。
+
+我覺得它比較偏工具 / 自動化，
+技術上應該會用到 LINE Messaging API、GitHub Actions、OpenAI API，可能還會再接 Webhook。
+
+這個專案的第一步，應該是先確認：
+LINE 傳進來的文字要怎麼轉成標準更新格式，
+再來才是接 GitHub 跟網站更新流程。
+
+時間軸也可以先補一筆：
+日期：2026.03.05
+階段：concept
+標題：提出 LINE 指揮中心構想
+說明：希望未來能直接用 LINE 當成專案更新入口
+
+【封面】
+line-bot-center-cover.png
+
+=== UPDATE END ===
+
+
+---
+
+## 歷次自動更新
+
+#2026-03-05:用【標記】新增專案
 專案：line-bot-family
 
 【專案名稱】
@@ -61,16 +95,3 @@ Google Sheets
 
 【成果畫面】
 01-line-bot-family.JPG
-
-=== UPDATE END ===
-
-
----
-
-## 歷次自動更新
-
-#2026-03-05
-專案：line-bot-family
-
-【專案名稱】
-（測試）AI x LINE 群組機器人
