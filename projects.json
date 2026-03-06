@@ -1,53 +1,6 @@
 {
   "projects": [
-    {
-      "id": "line-bot-family",
-      "name": "AI x LINE 群組機器人",
-      "summary": "測試是否能建立一個不需要自架主機的 LINE 家庭記事與提醒機器人。",
-      "cover": "",
-      "status": "concept",
-      "updated": "2026-03-06",
-      "output": "LINE 家庭記事機器人",
-      "content": [
-        "這個專案的目標是建立一個可以加入家庭 LINE 群組的機器人，",
-        "用來記錄家庭待辦事項並自動提醒。",
-        "系統設計希望不需要自架主機，",
-        "透過 LINE Messaging API 搭配 Google Apps Script，",
-        "並把資料存放在 Google Sheets。",
-        "使用情境包括：",
-        "- 爸媽回診時間提醒",
-        "- 家庭聚餐時間地點提醒"
-      ],
-      "category": [
-        "生活",
-        "自動化"
-      ],
-      "techTags": [
-        "LINE Messaging API",
-        "Google Apps Script",
-        "Google Sheets"
-      ],
-      "timeline": [
-        {
-          "date": "2026.03.06",
-          "phase": "concept",
-          "title": "事前準備",
-          "note": ""
-        }
-      ],
-      "next": [
-        "建立 LINE 官方帳號",
-        "測試 Messaging API webhook",
-        "設計記事資料結構"
-      ],
-      "gallery": [
-        {
-          "src": "./assets/line-bot-family/01-line-bot-family.JPG",
-          "alt": ""
-        }
-      ],
-      "pin": false
-    },
+
     {
       "id": "ios-app-littlehq",
       "name": "AI × 協作開發實驗",
