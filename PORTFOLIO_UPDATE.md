@@ -16,7 +16,11 @@ ai-planner：AI 企劃師
 
 專案：line-bot-center
 
-我最近想到，這個專案可以定位成「LINE 指揮中心」，讓我之後直接在 LINE 裡丟一句話，就能更新網站上的專案資料。
+專案名稱先定為「AI × LINE × Automation」
+進行專案「AI × Web × Automation」的後期，想到如果可以用LINE發佈指令，
+不需透GitHnub建立issues就能自動更新會很方便，
+於是將這個專案定位成「LINE 指揮中心」，
+讓我之後直接在 LINE 裡丟一句話，就能更新網站上的專案資料。
 
 例如新增一筆時間軸、補摘要、加成果圖，甚至調整下一步。
 
@@ -31,14 +35,18 @@ ai-planner：AI 企劃師
 LINE 傳進來的文字要怎麼轉成標準更新格式，
 再來才是接 GitHub 跟網站更新流程。
 
-時間軸也可以先補一筆：
-日期：2026.03.05
-階段：concept
-標題：提出 LINE 指揮中心構想
-說明：希望未來能直接用 LINE 當成專案更新入口
+
+2026.03.05 構想
+希望未來能直接用 LINE 當成專案更新
+
+2026.03.07 開始準備
+確認技術可行性及相關的事前準備
 
 【封面】
 line-bot-center-cover.png
+
+【成果】
+01-line-bot-center.png
 
 === UPDATE END ===
 
