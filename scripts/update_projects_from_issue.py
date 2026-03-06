@@ -457,16 +457,16 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
         else:
             project_after[k] = v
 
-        # status 校正（支援中文）
-        status = str(project_after.get("status") or "").strip()
-        if status in PHASE_MAP:
-            status = PHASE_MAP[status]
-            project_after["status"] = status
-    
-        if project_after.get("status") not in ALLOWED_STATUS:
-            old = project_before.get("status")
-            project_after["status"] = old if old in ALLOWED_STATUS else "concept"
-            
+    # status 校正（支援中文）
+    status = str(project_after.get("status") or "").strip()
+    if status in PHASE_MAP:
+        status = PHASE_MAP[status]
+        project_after["status"] = status
+
+    if project_after.get("status") not in ALLOWED_STATUS:
+        old = project_before.get("status")
+        project_after["status"] = old if old in ALLOWED_STATUS else "concept"
+        
     # ----------------------------
     # Normalize: timeline
     # ----------------------------
