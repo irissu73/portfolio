@@ -43,7 +43,54 @@
       ],
       "pin": false
     },
-    
+    {
+      "id": "line-bot-center",
+      "name": "test4 口語新增",
+      "summary": "這個專案定位成「LINE 指揮中心」，讓我之後直接在 LINE 裡丟一句話，就能更新網站上的專案資料。",
+      "cover": "./assets/line-bot-center-cover.png",
+      "status": "concept",
+      "updated": "2026-03-06",
+      "output": "",
+      "content": [
+        "進行專案「AI × Web × Automation」的後期，想到如果可以用LINE發佈指令，不需透GitHub建立issues就能自動更新會很方便。",
+        "核心想法是把 LINE 當成入口，後面再串 GitHub Actions、OpenAI API，最後把資料寫回 projects.json。",
+        "我覺得它比較偏工具 / 自動化，技術上應該會用到 LINE Messaging API、GitHub Actions、OpenAI API，可能還會再接 Webhook。",
+        "這個專案的第一步，應該是先確認：LINE 傳進來的文字要怎麼轉成標準更新格式，再來才是接 GitHub 跟網站更新流程。"
+      ],
+      "category": [],
+      "techTags": [],
+      "timeline": [
+        {
+          "date": "2026.03.06",
+          "phase": "concept",
+          "title": "開始準備",
+          "note": "確認技術可行性及相關的事前準備"
+        },
+        {
+          "date": "2026.03.06",
+          "phase": "testing",
+          "title": "測試完成ㄧ筆指令發佈",
+          "note": ""
+        },
+        {
+          "date": "2026.03.05",
+          "phase": "concept",
+          "title": "構想",
+          "note": "希望未來能直接用 LINE 當成專案更新"
+        }
+      ],
+      "next": [
+        "確認 LINE 傳進來的文字要怎麼轉成標準更新格式",
+        "接 GitHub 跟網站更新流程"
+      ],
+      "gallery": [
+        {
+          "src": "./assets/line-bot-center/01-line-bot-center.png",
+          "alt": ""
+        }
+      ],
+      "pin": false
+    },
     {
       "id": "ios-app-littlehq",
       "name": "AI × 協作開發實驗",
