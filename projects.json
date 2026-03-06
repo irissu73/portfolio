@@ -1,73 +1,104 @@
 {
   "projects": [
-    
     {
-  "id": "web-automation",
-  "name": "AI × Web × Automation",
-  "summary": "建立一個記錄 AI 協作開發過程的專案網站，並透過自動化流程讓內容持續更新。",
-  "output": "IRIS AI 協作開發實驗",
-  "status": "validated",
-  "updated": "2026-03-06",
-  "category": [
-    "工具",
-    "自動化"
-  ],
-  "techTags": [
-    "HTML",
-    "JavaScript",
-    "JSON",
-    "GitHub Actions",
-    "OpenAI API",
-    "Vercel"
-  ],
-  "cover": "./assets/web-automation-cover.png",
-  "content": [
-    "起初只是想有個公開的地方，可以持續記錄自己透過 AI 協作開發的過程。但與一般作品集不同的是，在網站架構完成後盡可能不再修改，核心目標是讓資料能透過 AI 與自動化流程持續更新。",
-    "因此網站架構保持簡單，專案資料集中在一個 JSON 檔案中，並定義清楚所有欄位結構，讓 ChatGPT 協助產生可被 AI 判讀的更新腳本。當我在 GitHub 建立更新指令並提供文字版更新內容時，GitHub Actions 會觸發腳本，將指令交給 AI 解析，再自動整理成結構化資料並寫回 `projects.json`。最後透過 Vercel 自動重新部署網站，整個流程就完成一次更新。",
-    "這個網站不只是作品展示，也是「AI × Web × Automation」專案的成果。",
-    "其中最具代表性的亮點，是成功建立一個可以透過文字指令，由 AI 自動解析並更新網站資料的流程。",
-    "（PS. 這個專案的開發，從程式撰寫、更新指令、測試流程到網站部署，整個過程都是使用手機完成。"
-  ],
-  "timeline": [
-    {
-      "date": "2026.03.01",
-      "phase": "concept",
-      "title": "提出網站構想",
-      "note": "開始規劃建立一個可由 AI 自動更新資料的專案網站。"
+      "id": "web-automation",
+      "name": "AI × Web × Automation",
+      "summary": "建立一個記錄 AI 協作開發過程的專案網站，並透過自動化流程讓內容持續更新。",
+      "output": "IRIS AI 協作開發實驗",
+      "status": "validated",
+      "updated": "2026-03-06",
+      "category": [
+        "工具",
+        "自動化"
+      ],
+      "techTags": [
+        "HTML",
+        "JavaScript",
+        "JSON",
+        "GitHub Actions",
+        "OpenAI API",
+        "Vercel"
+      ],
+      "cover": "./assets/web-automation-cover.png",
+      "content": [
+        "起初只是想有個公開的地方，可以持續記錄自己透過 AI 協作開發的過程。但與一般作品集不同的是，在網站架構完成後盡可能不再修改，核心目標是讓資料能透過 AI 與自動化流程持續更新。",
+        "因此網站架構保持簡單，專案資料集中在一個 JSON 檔案中，並定義清楚所有欄位結構，讓 ChatGPT 協助產生可被 AI 判讀的更新腳本。當我在 GitHub 建立更新指令並提供文字版更新內容時，GitHub Actions 會觸發腳本，將指令交給 AI 解析，再自動整理成結構化資料並寫回 `projects.json`。最後透過 Vercel 自動重新部署網站，整個流程就完成一次更新。",
+        "這個網站不只是作品展示，也是「AI × Web × Automation」專案的成果。",
+        "其中最具代表性的亮點，是成功建立一個可以透過文字指令，由 AI 自動解析並更新網站資料的流程。",
+        "（PS. 這個專案的開發，從程式撰寫、更新指令、測試流程到網站部署，整個過程都是使用手機完成。"
+      ],
+      "timeline": [
+        {
+          "date": "2026.03.01",
+          "phase": "concept",
+          "title": "提出網站構想",
+          "note": "開始規劃建立一個可由 AI 自動更新資料的專案網站。"
+        },
+        {
+          "date": "2026.03.04",
+          "phase": "testing",
+          "title": "建立網站架構",
+          "note": "完成網站基本頁面與專案資料結構設計，並將專案資料集中於 `projects.json` 管理。"
+        },
+        {
+          "date": "2026.03.05",
+          "phase": "testing",
+          "title": "建立 AI 更新流程",
+          "note": "整合 GitHub Actions 與 OpenAI API，測試透過更新指令讓 AI 解析內容並自動更新網站資料。"
+        },
+        {
+          "date": "2026.03.06",
+          "phase": "validated",
+          "title": "完成自動更新流程",
+          "note": "成功建立「文字指令 → AI 解析 → JSON 更新 → Vercel 重新部署」的完整更新流程。"
+        }
+      ],
+      "next": [
+        "優化 AI 更新指令的解析能力",
+        "新增更多專案與成果展示",
+        "嘗試透過 LINE 發送更新指令"
+      ],
+      "gallery": [
+        {
+          "src": "./assets/web-automation/01-web-automation.png",
+          "alt": "AI × Web × Automation 成果畫面"
+        }
+      ],
+      "pin": false
     },
     {
-      "date": "2026.03.04",
-      "phase": "testing",
-      "title": "建立網站架構",
-      "note": "完成網站基本頁面與專案資料結構設計，並將專案資料集中於 `projects.json` 管理。"
+      "id": "line-bot-center",
+      "name": "AI × LINE × Automation",
+      "summary": "建立一個可透過 LINE 發送指令自動更新網站資料的機器人。",
+      "cover": "./assets/line-bot-center-cover.png",
+      "status": "concept",
+      "updated": "2026-03-06",
+      "output": "LINE 指揮中心",
+      "content": [
+        "這個專案是「AI × Web × Automation」的延伸構想。",
+        "當網站資料已經可以透過 GitHub Issue 指令更新後，我開始思考：是否也能透過 LINE 發送訊息來更新網站資料？",
+        "因此構想了一個「LINE 指揮中心」，未來只需要在 LINE 裡傳送指令，就能更新網站上的專案資料，例如新增時間軸、更新摘要或加入成果畫面。",
+        "這個專案的核心概念，是把 LINE 當成新的操作入口，再透過 GitHub Actions 與 OpenAI API 解析訊息內容，最後自動更新 `projects.json` 並重新部署網站。"
+      ],
+      "category": [
+        "工具",
+        "自動化"
+      ],
+      "techTags": [
+        "LINE Messaging API",
+        "GitHub Actions",
+        "OpenAI API",
+        "Webhook"
+      ],
+      "timeline": [],
+      "next": [
+        "研究 LINE Messaging API webhook",
+        "設計 LINE 指令格式",
+        "測試透過 LINE 指令更新網站"
+      ],
+      "gallery": [],
+      "pin": false
     },
-    {
-      "date": "2026.03.05",
-      "phase": "testing",
-      "title": "建立 AI 更新流程",
-      "note": "整合 GitHub Actions 與 OpenAI API，測試透過更新指令讓 AI 解析內容並自動更新網站資料。"
-    },
-    {
-      "date": "2026.03.06",
-      "phase": "validated",
-      "title": "完成自動更新流程",
-      "note": "成功建立「文字指令 → AI 解析 → JSON 更新 → Vercel 重新部署」的完整更新流程。"
-    }
-  ],
-  "next": [
-    "優化 AI 更新指令的解析能力",
-    "新增更多專案與成果展示",
-    "嘗試透過 LINE 發送更新指令"
-  ],
-  "gallery": [
-    {
-      "src": "./assets/web-automation/01-web-automation.png",
-      "alt": "AI × Web × Automation 成果畫面"
-    }
-  ],
-  "pin": false
-},
-
     {
       "id": "ios-app-littlehq",
       "name": "AI x iOS APP",
@@ -75,20 +106,16 @@
       "output": "LittleHQ 小總部",
       "status": "validated",
       "updated": "2026-02-28",
-    
       "category": [
         "產品",
         "學習"
       ],
-    
       "techTags": [
         "SwiftUI",
         "iOS",
         "ChatGPT"
       ],
-    
       "cover": "./assets/ios-app-littlehq-cover.png",
-    
       "content": [
         "起初只是想試試透過 ChatGPT 對話協作，是否真的能完成一個可運作的 iOS App。",
         "過程中很快發現，重點其實不是學寫 Code，而是學會如何把想法轉成清楚的指令，逐步拆解需求，透過 ChatGPT 對話協作產出整個應用，包括畫面設計、資料結構、功能邏輯、除錯、測試與優化。",
@@ -96,7 +123,6 @@
         "實際讓五歲的兒子測試後，他玩得很投入，也慢慢理解不同錢幣的組合方式，效果讓我非常滿意。",
         "原本只是想驗證 AI 是否能協助從零開始完成 App 開發，最後卻意外做出一個能讓孩子在遊戲中學習金錢概念的應用。"
       ],
-    
       "timeline": [
         {
           "date": "2026.02.18",
@@ -135,13 +161,11 @@
           "note": "設計鼓組畫面並測試點擊觸發音效，探索更多互動式遊戲玩法。"
         }
       ],
-    
       "next": [
         "增加更多學習遊戲玩法",
         "優化遊戲互動與回饋體驗",
         "擴充家長專區的題庫與設定功能"
       ],
-    
       "gallery": [
         {
           "src": "./assets/ios-app-littlehq/littlehq-screen-01.jpg",
@@ -164,9 +188,7 @@
           "alt": "家長專區"
         }
       ],
-    
       "pin": false
     }
-
   ]
 }
