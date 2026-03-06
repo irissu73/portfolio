@@ -287,6 +287,8 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
       4) timeline：去重複 + 排序（新到舊）
       5) gallery：去重複
       6) 若有變更 => updated=今天（workflow 日期）
+      7) 封面檔名前自動補：./assets/{filename}
+      8) 成果畫面檔名前自動補：./assets/{projectId}/{filename}
     """
     project_after = json.loads(json.dumps(project_before, ensure_ascii=False))
 
@@ -375,10 +377,30 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
     if changed:
         project_after["updated"] = today_ymd_utc()
 
+    # 7) 封面補路徑
+    cover = str(project_after.get("cover") or "").strip()
+    if cover and not cover.startswith(("http://", "https://", "/", "./")):
+        project_after["cover"] = f"./assets/{cover}"
+
+    # 8) 成果畫面補路徑
+    gallery = project_after.get("gallery")
+    project_id = project_after.get("id")
+
+    if isinstance(gallery, list):
+        for item in gallery:
+            if not isinstance(item, dict):
+                continue
+
+            src = str(item.get("src") or "").strip()
+
+            if src and not src.startswith(("http://", "https://", "/", "./")):
+                item["src"] = f"./assets/{project_id}/{src}"
+
     # id 永遠不變
     project_after["id"] = project_before["id"]
     return project_after, changed
-
+    
+    
 def sort_projects(projects: list):
     # pin true 在前；updated 新到舊
     def key(p):
