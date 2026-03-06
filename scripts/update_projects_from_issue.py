@@ -237,6 +237,9 @@ def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_g
         "1) 絕對不能輸出或修改 id。\n"
         "2) 你只能輸出需要更新的欄位；不需要更新就不要輸出該欄位。\n"
         "3) 多值欄位：category/techTags/timeline/next/gallery 必須是陣列（可空）。\n"
+        "3.1) content 必須是字串陣列，且只能整理【專案內容】區塊的文字；不要包含專案清單、更新指令、或 UPDATE START/END 文字。\n"
+        "3.2) timeline 必須是物件陣列，每筆一定要有 date, phase, title；phase 必填且只能是 concept/testing/validated/expanding。\n"
+        "3.3) gallery 必須是物件陣列，每筆格式為 {\"src\":\"檔名或路徑\",\"alt\":\"\"}；不要輸出字串陣列。\n"
         "4) status 只能是 concept/testing/validated/expanding 四種之一。\n"
         "5) updated 不要輸出（外層程式會在有變更時自動更新）。\n"
         f"6) {pin_rule}\n"
@@ -279,17 +282,6 @@ def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_g
     return patch
 
 def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict):
-    """
-    合併優先序：
-      1) forced（標記內）強制覆寫 name/summary/cover
-      2) pin：只有 pin_intent != None 才覆寫
-      3) ai_patch：覆寫允許 AI 的欄位（但不得覆蓋 forced 欄位）
-      4) timeline：去重複 + 排序（新到舊）
-      5) gallery：去重複
-      6) 若有變更 => updated=今天（workflow 日期）
-      7) 封面檔名前自動補：./assets/{filename}
-      8) 成果畫面檔名前自動補：./assets/{projectId}/{filename}
-    """
     project_after = json.loads(json.dumps(project_before, ensure_ascii=False))
 
     # 1) forced
@@ -305,9 +297,11 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
 
     # 3) AI patch（不得覆蓋 forced；pin 無指令不得改）
     allowed_ai = {
-        "status", "pin", "output", "content", "category", "techTags", "timeline", "next", "gallery",
+        "status", "pin", "output", "content",
+        "category", "techTags", "timeline", "next", "gallery",
         "name", "summary", "cover"
     }
+
     for k, v in (ai_patch or {}).items():
         if k not in allowed_ai:
             continue
@@ -333,68 +327,93 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
         old = project_before.get("status")
         project_after["status"] = old if old in ALLOWED_STATUS else "concept"
 
-    # 4) timeline 去重複 + 排序（依 date 新到舊）
-    timeline = project_after.get("timeline")
-    if isinstance(timeline, list):
+    # ----------------------------
+    # Normalize: timeline
+    # ----------------------------
+    tl = project_after.get("timeline")
+    if isinstance(tl, list):
+        # phase 空值保底
+        fixed = []
+        for it in tl:
+            if not isinstance(it, dict):
+                continue
+            if not str(it.get("phase") or "").strip():
+                it["phase"] = project_after.get("status") or "concept"
+            fixed.append(it)
+
+        # 去重複（date+title）
         seen = set()
         unique = []
-        for item in timeline:
-            if not isinstance(item, dict):
-                continue
-            date = str(item.get("date") or "").strip()
-            title = str(item.get("title") or "").strip()
+        for it in fixed:
+            date = str(it.get("date") or "").strip()
+            title = str(it.get("title") or "").strip()
             key = (date, title)
             if key in seen:
                 continue
             seen.add(key)
-            unique.append(item)
+            unique.append(it)
 
+        # 排序：新到舊（你若要舊到新，把 reverse 改 False）
         unique = sorted(unique, key=lambda x: str(x.get("date") or ""), reverse=True)
         project_after["timeline"] = unique
 
-    # 5) gallery 去重複（以 src 或字串為 key）
-    gallery = project_after.get("gallery")
-    if isinstance(gallery, list):
-        seen = set()
-        unique = []
-        for item in gallery:
-            if isinstance(item, str):
-                key = item.strip()
-                if key and key not in seen:
-                    seen.add(key)
-                    unique.append(key)
-            elif isinstance(item, dict):
-                src = str(item.get("src") or "").strip()
-                # 若沒有 src，就退回用整個 dict 字串化當 key（避免直接丟掉）
-                key = src if src else json.dumps(item, ensure_ascii=False, sort_keys=True)
-                if key and key not in seen:
-                    seen.add(key)
-                    unique.append(item)
-        project_after["gallery"] = unique
-
-    # 6) updated：若有變更就更新為今日（推到網站的日期）
-    changed = json.dumps(project_after, ensure_ascii=False, sort_keys=True) != json.dumps(project_before, ensure_ascii=False, sort_keys=True)
-    if changed:
-        project_after["updated"] = today_ymd_utc()
-
-    # 7) 封面補路徑
+    # ----------------------------
+    # Normalize: cover path
+    # ----------------------------
     cover = str(project_after.get("cover") or "").strip()
     if cover and not cover.startswith(("http://", "https://", "/", "./")):
         project_after["cover"] = f"./assets/{cover}"
+    cover_basename = str(project_after.get("cover") or "").strip().split("/")[-1]
 
-    # 8) 成果畫面補路徑
-    gallery = project_after.get("gallery")
-    project_id = project_after.get("id")
+    # ----------------------------
+    # Normalize: gallery (type -> remove cover -> dedupe -> path)
+    # ----------------------------
+    g = project_after.get("gallery")
 
-    if isinstance(gallery, list):
-        for item in gallery:
-            if not isinstance(item, dict):
+    # 1) list[str] -> list[dict]
+    if isinstance(g, list) and g and isinstance(g[0], str):
+        g = [{"src": str(s).strip(), "alt": ""} for s in g if str(s).strip()]
+        project_after["gallery"] = g
+
+    g = project_after.get("gallery")
+    if isinstance(g, list):
+        cleaned = []
+        for it in g:
+            if not isinstance(it, dict):
                 continue
+            src = str(it.get("src") or "").strip()
+            if not src:
+                continue
+            # 去掉跟封面同檔名
+            if cover_basename and src.split("/")[-1] == cover_basename:
+                continue
+            cleaned.append(it)
 
-            src = str(item.get("src") or "").strip()
+        # 去重複（以 src）
+        seen = set()
+        unique = []
+        for it in cleaned:
+            src = str(it.get("src") or "").strip()
+            if not src or src in seen:
+                continue
+            seen.add(src)
+            unique.append(it)
 
+        # 補路徑：./assets/{projectId}/
+        project_id = project_after.get("id")
+        for it in unique:
+            src = str(it.get("src") or "").strip()
             if src and not src.startswith(("http://", "https://", "/", "./")):
-                item["src"] = f"./assets/{project_id}/{src}"
+                it["src"] = f"./assets/{project_id}/{src}"
+
+        project_after["gallery"] = unique
+
+    # ----------------------------
+    # 最後：算 changed / updated（一定要放最後）
+    # ----------------------------
+    changed = json.dumps(project_after, ensure_ascii=False, sort_keys=True) != json.dumps(project_before, ensure_ascii=False, sort_keys=True)
+    if changed:
+        project_after["updated"] = today_ymd_utc()
 
     # id 永遠不變
     project_after["id"] = project_before["id"]
@@ -452,6 +471,7 @@ def main():
         before["gallery"] = _ensure_gallery(before.get("gallery"))
 
     issue_text = f"Issue title:\n{ISSUE_TITLE}\n\nUpdate block:\n{block}\n"
+    
     ai_patch = call_openai_patch(before, issue_text, pin_intent, hints_gallery)
     after, changed = merge_project(before, forced, pin_intent, ai_patch)
 
