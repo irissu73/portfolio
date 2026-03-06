@@ -71,40 +71,34 @@ def _ensure_list_of_str(v):
 
 def _ensure_content(v):
     """
-    content 我們允許 AI 回：
-      - 字串
-      - 字串陣列
-
-    最終一律存成「字串陣列」，並保留換行段落
+    最終存成 list[str]，但內容保持自然敘述：
+    - 若有換行，折疊成空格
+    - 不強制拆段
     """
     if v is None:
         return []
 
-    lines = []
+    def _fold(s: str) -> str:
+        s = str(s or "")
+        s = s.replace("\r\n", "\n").replace("\r", "\n")
+        s = re.sub(r"\n+", " ", s)
+        s = re.sub(r"\s{2,}", " ", s)
+        return s.strip()
 
-    # AI 回傳 list
     if isinstance(v, list):
-        for item in v:
-            if item is None:
-                continue
-            text = str(item)
-            lines.extend(text.splitlines())
+        out = []
+        for x in v:
+            t = _fold(x)
+            if t:
+                out.append(t)
+        return out
 
-    # AI 回傳 string
-    elif isinstance(v, str):
-        lines.extend(v.splitlines())
+    if isinstance(v, str):
+        t = _fold(v)
+        return [t] if t else []
 
-    else:
-        lines.append(str(v))
-
-    # 清理空行
-    cleaned = []
-    for line in lines:
-        t = line.strip()
-        if t:
-            cleaned.append(t)
-
-    return cleaned
+    t = _fold(v)
+    return [t] if t else []
 
 def _ensure_timeline(v):
     if v is None:
@@ -291,21 +285,25 @@ def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_g
     system = (
         "你是 projects.json 的更新器。你只能輸出「JSON物件」作為 patch（不要 markdown / 不要多餘文字）。\n"
         "定案 Schema：id(KEY不可修改)、name、summary、cover、status、updated、output、content、category、techTags、timeline、next、gallery、pin。\n"
+        "timeline 子欄位：date/phase/title/note（phase 用於時間軸階段）。\n"
         "規則：\n"
         "1) 絕對不能輸出或修改 id。\n"
-        "2) 你只能輸出需要更新的欄位；不需要更新就不要輸出該欄位。\n"
-        "3) 多值欄位：category/techTags/timeline/next/gallery 必須是陣列（可空）。\n"
-        "3.1) content 必須是字串陣列，且只能整理【專案內容】區塊的文字；不要包含專案清單、更新指令、或 UPDATE START/END 文字。\n"
-        "3.2) timeline 必須是物件陣列，每筆一定要有 date, phase, title；phase 必填且只能是 concept/testing/validated/expanding。\n"
-        "3.3) gallery 必須是物件陣列，每筆格式為 {\"src\":\"檔名或路徑\",\"alt\":\"\"}；不要輸出字串陣列。\n"
+        "2) 只輸出需要更新的欄位；不需要更新就不要輸出該欄位。\n"
+        "3) 多值欄位 category/techTags/timeline/next/gallery 必須是陣列（可空）。\n"
+        "3.1) content 必須是字串陣列，但內容風格應保持自然敘述；若輸入有多行，可整理成一段或少量敘述，不要把整份指令原樣貼回。\n"
+        "3.2) content 只能整理【專案內容】區塊，或根據更新敘述整理出的專案內容；不要包含專案清單、更新指令標題、或 UPDATE START/END 文字。\n"
+        "3.3) timeline 必須是物件陣列，每筆一定要有 date, phase, title；phase 必填且只能是 concept/testing/validated/expanding。\n"
+        "3.4) gallery 必須是物件陣列，每筆格式為 {\"src\":\"檔名或路徑\",\"alt\":\"\"}；不要輸出字串陣列。\n"
         "4) status 只能是 concept/testing/validated/expanding 四種之一。\n"
         "5) updated 不要輸出（外層程式會在有變更時自動更新）。\n"
-        f"6) {pin_rule}\n"
-        "7) 若 issue 內容有提到成果檔名，合理時更新 gallery（加入或整理）。\n"
-        "8) 若 issue 有新增內容，合理時更新 content/timeline/next/category/techTags/output/status。\n"
+        "6) pin 欄位只有在使用者明確提到「置頂」或「取消置頂」時才允許改動；若本次更新沒有此指令，請不要輸出 pin。\n"
+        "7) 若更新內容使用標記欄位（例如【摘要】、【封面】、【時間軸】等），請優先依標記內容更新。\n"
+        "8) 若更新內容沒有標記欄位，而是自然語句，請依敘述自行判斷要更新哪些欄位，但不要因資訊不足而清空原本欄位。\n"
+        "9) 若 issue 內容有提到成果檔名，合理時更新 gallery；若沒有明確成果畫面，不要自行把封面當成成果畫面。\n"
+        "10) 若 issue 有新增內容，合理時更新 content/timeline/next/category/techTags/output/status。\n"
         "輸出務必是有效 JSON 物件。\n"
     )
-
+    
     user = {
         "project_before": project_before,
         "issue": issue_text,
