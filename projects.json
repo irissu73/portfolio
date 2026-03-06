@@ -1,43 +1,6 @@
 {
   "projects": [
-    {
-      "id": "line-bot-family",
-      "name": "AI x LINE 群組機器人",
-      "summary": "測試是否能建立一個不需要自架主機的 LINE 家庭記事與提醒機器人。",
-      "cover": "./assets/line-bot-family-cover.png",
-      "status": "concept",
-      "updated": "2026-03-06",
-      "output": "LINE 家庭記事機器人",
-      "content": [
-        "# Portfolio Update 2026-03-06\n\n## 專案清單\n\nios-app-littlehq：AI × 開發 iOS App（LittleHQ 小總部）  \nweb-automation：AI × Web × Automation（IRIS AI 協作開發實驗）  \nline-bot-family：（暫定）LINE 家庭記事機器人  \nline-bot-center：（暫定）LINE 指揮中心  \nai-planner：AI 企劃師  \n\n---\n\n## 更新指令\n\n=== UPDATE START ===\n\n專案：line-bot-family\n\n【專案名稱】\nAI x LINE 群組機器人\n\n【封面】\nline-bot-family-cover.png\n\n【摘要】\n測試是否能建立一個不需要自架主機的 LINE 家庭記事與提醒機器人。\n\n【產出】\nLINE 家庭記事機器人\n\n【應用類型】\n生活\n自動化\n\n【技術】\nLINE Messaging API\nGoogle Apps Script\nGoogle Sheets\n\n【專案內容】\n這個專案的目標是建立一個可以加入家庭 LINE 群組的機器人，\n用來記錄家庭待辦事項並自動提醒。\n\n系統設計希望不需要自架主機，\n透過 LINE Messaging API 搭配 Google Apps Script，\n並把資料存放在 Google Sheets。\n\n使用情境包括：\n- 爸媽回診時間提醒\n- 家庭聚餐時間地點提醒\n\n【時間軸】\n\n日期：2026.03.06\n階段：concept\n標題：事前準備\n說明：研究是否能透過 LINE Messaging API 與 Google Apps Script 實現\n\n【下一步】\n\n建立 LINE 官方帳號\n測試 Messaging API webhook\n設計記事資料結構\n\n=== UPDATE END ===\n\n\n---\n\n## 歷次自動更新"
-      ],
-      "category": [
-        "生活",
-        "自動化"
-      ],
-      "techTags": [
-        "LINE Messaging API",
-        "Google Apps Script",
-        "Google Sheets"
-      ],
-      "timeline": [
-        {
-          "date": "2026.03.06",
-          "phase": "",
-          "title": "事前準備",
-          "note": ""
-        }
-      ],
-      "next": [
-        "建立 LINE 官方帳號",
-        "測試 Messaging API webhook",
-        "設計記事資料結構"
-      ],
-      "gallery": [
-        "line-bot-family-cover.png"
-      ],
-      "pin": false
-    },
+
     {
       "id": "ios-app-littlehq",
       "name": "AI × 協作開發實驗",
