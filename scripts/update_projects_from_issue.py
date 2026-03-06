@@ -174,8 +174,7 @@ def parse_forced_fields(block: str):
       - pin_intent: None/True/False（只有寫置頂/取消置頂才有值）
       - hints_gallery: list[str]（block 內寫了 成果：xxx.png 的提示；不強制）
     """
-    lines = [ln.rstrip() for ln in block.splitlines() if ln.strip()]
-
+    lines = [ln.rstrip() for ln in block.splitlines()]
     project_id = ""
     forced = {}
     pin_intent = None
