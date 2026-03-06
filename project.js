@@ -79,7 +79,12 @@ function renderContent(p) {
       ${
         lines.length
           ? `<div class="content-text">
-              ${lines.map(t => `<p>${escapeHtml(t).replace(/\\n/g, "<br>")}</p>`).join("")}
+              ${lines.map(t => {
+                const html = escapeHtml(t)
+                  .replace(/\\\\n/g, "<br>")
+                  .replace(/\n/g, "<br>");
+                return `<p>${html}</p>`;
+              }).join("")}
             </div>`
           : `<div class="muted">（尚未填寫內容）</div>`
       }
