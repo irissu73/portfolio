@@ -20,7 +20,7 @@
         "ChatGPT"
       ],
     
-      "cover": "./assets/littlehq-cover-2026.jpg",
+      "cover": "./assets/ios-app-littlehq-cover.png",
     
       "content": [
         "起初只是想試試：透過 ChatGPT 對話協作，是否真的能完成一個可運作的 iOS App。",
@@ -77,20 +77,24 @@
     
       "gallery": [
         {
-          "src": "./assets/ios-app-littlehq/littlehq-screen-home.png",
+          "src": "./assets/ios-app-littlehq/littlehq-screen-01.jpg",
           "alt": "LittleHQ 主頁"
         },
         {
-          "src": "./assets/ios-app-littlehq/littlehq-screen-wallet.png",
+          "src": "./assets/ios-app-littlehq/littlehq-screen-02.jpg",
           "alt": "錢包記帳系統"
         },
         {
-          "src": "./assets/ios-app-littlehq/littlehq-screen-points.png",
+          "src": "./assets/ios-app-littlehq/littlehq-screen-03.jpg",
           "alt": "集點卡系統"
         },
         {
-          "src": "./assets/ios-app-littlehq/littlehq-screen-shop.png",
+          "src": "./assets/ios-app-littlehq/littlehq-screen-04.jpg",
           "alt": "買東西學習遊戲"
+        },
+        {
+          "src": "./assets/ios-app-littlehq/littlehq-screen-05.jpg",
+          "alt": "家長專區"
         }
       ],
     
