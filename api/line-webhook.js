@@ -155,8 +155,10 @@ async function appendTimelineToProject({ projectId, title, note }) {
 
   const today = getTodayInTaiwan();
 
+  
   target.timeline.push({
     date: today,
+    phase: target.status || "concept",
     title,
     note
   });
