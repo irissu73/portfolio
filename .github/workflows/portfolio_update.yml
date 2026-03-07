@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -35,6 +37,114 @@ jobs:
         run: |
           python scripts/update_projects_from_issue.py
 
+      - name: Build update summary
+        id: summary
+        run: |
+          python <<'PY'
+          import json
+          import os
+          import subprocess
+
+          def load_json_from_git(ref):
+              try:
+                  text = subprocess.check_output(
+                      ["git", "show", f"{ref}:projects.json"],
+                      text=True,
+                      encoding="utf-8"
+                  )
+                  return json.loads(text)
+              except Exception:
+                  return {"projects": []}
+
+          def load_worktree():
+              with open("projects.json", "r", encoding="utf-8") as f:
+                  return json.load(f)
+
+          before = load_json_from_git("HEAD")
+          after = load_worktree()
+
+          def to_map(data):
+              return {p.get("id"): p for p in data.get("projects", [])}
+
+          bmap = to_map(before)
+          amap = to_map(after)
+
+          changed_lines = []
+          target_project_id = None
+
+          for pid, ap in amap.items():
+              bp = bmap.get(pid)
+
+              if bp is None:
+                  target_project_id = pid
+                  changed_lines.append("• 新增專案")
+                  continue
+
+              local_changes = []
+
+              def changed(key):
+                  return bp.get(key) != ap.get(key)
+
+              if changed("name"):
+                  local_changes.append("• 專案名稱")
+              if changed("summary"):
+                  local_changes.append("• 摘要")
+              if changed("cover"):
+                  local_changes.append("• 封面")
+              if changed("output"):
+                  local_changes.append("• 產出")
+              if changed("status"):
+                  local_changes.append("• 狀態")
+
+              for key, label in [
+                  ("content", "專案內容"),
+                  ("next", "下一步"),
+                  ("category", "應用類型"),
+                  ("techTags", "技術"),
+                  ("gallery", "成果"),
+              ]:
+                  b = bp.get(key) or []
+                  a = ap.get(key) or []
+                  if b != a:
+                      delta = max(len(a) - len(b), 0)
+                      local_changes.append(f"• {label}" + (f" +{delta}" if delta > 0 else ""))
+
+              bt = bp.get("timeline") or []
+              at = ap.get("timeline") or []
+              if bt != at:
+                  delta = max(len(at) - len(bt), 0)
+                  local_changes.append(f"• 時間軸" + (f" +{delta}" if delta > 0 else ""))
+
+              if changed("pin"):
+                  local_changes.append("• 置頂")
+
+              if changed("updated"):
+                  # 不列出 updated，因為是系統自動欄位
+                  pass
+
+              if local_changes:
+                  target_project_id = pid
+                  changed_lines.extend(local_changes)
+
+          seen = set()
+          final_lines = []
+          for line in changed_lines:
+              if line not in seen:
+                  seen.add(line)
+                  final_lines.append(line)
+
+          summary = "\n".join(final_lines).strip() or "• 無可辨識欄位變更"
+          project_id = target_project_id or "unknown-project"
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+              f.write("project_id<<EOF\n")
+              f.write(project_id + "\n")
+              f.write("EOF\n")
+              f.write("summary<<EOF\n")
+              f.write(summary + "\n")
+              f.write("EOF\n")
+          PY
+
       - name: Commit and push changes
         run: |
           git config user.name "portfolio-bot"
@@ -49,8 +159,67 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           REPO: ${{ github.repository }}
+          PROJECT_ID: ${{ steps.summary.outputs.project_id }}
+          UPDATE_SUMMARY: ${{ steps.summary.outputs.summary }}
         run: |
-          gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body "✅ 已完成自動更新並推送到 GitHub（projects.json）。接下來 Vercel 會自動部署，網站內容將更新。"
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body "✅ 已完成網站自動發佈
+
+          專案：$PROJECT_ID
+
+          本次更新：
+          $UPDATE_SUMMARY
+
+          網站：
+          https://iris-ai-lab.vercel.app/#$PROJECT_ID"
+
+      - name: Notify LINE success
+        if: success()
+        env:
+          LINE_PUSH_ACCESS_TOKEN: ${{ secrets.LINE_PUSH_ACCESS_TOKEN }}
+          LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
+          PROJECT_ID: ${{ steps.summary.outputs.project_id }}
+          UPDATE_SUMMARY: ${{ steps.summary.outputs.summary }}
+        run: |
+          python <<'PY'
+          import os
+          import requests
+
+          token = os.environ["LINE_PUSH_ACCESS_TOKEN"]
+          user_id = os.environ["LINE_USER_ID"]
+          project_id = os.environ["PROJECT_ID"]
+          summary = os.environ["UPDATE_SUMMARY"]
+
+          text = f"""✅ 完成網站自動發佈
+
+          專案：{project_id}
+
+          本次更新：
+          {summary}
+
+          🔎 點擊查看
+          https://iris-ai-lab.vercel.app/#{project_id}"""
+
+          r = requests.post(
+              "https://api.line.me/v2/bot/message/push",
+              headers={
+                  "Authorization": f"Bearer {token}",
+                  "Content-Type": "application/json"
+              },
+              json={
+                  "to": user_id,
+                  "messages": [
+                      {
+                          "type": "text",
+                          "text": text
+                      }
+                  ]
+              },
+              timeout=30
+          )
+
+          if r.status_code >= 400:
+              raise RuntimeError(f"LINE push failed: {r.status_code} {r.text}")
+          PY
 
       - name: Close Issue
         if: success()
@@ -60,3 +229,42 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           gh issue close "$ISSUE_NUMBER" --repo "$REPO" --comment "🔒 此次更新流程已完成，先自動關閉本 Issue。"
+
+      - name: Notify LINE failure
+        if: failure()
+        env:
+          LINE_PUSH_ACCESS_TOKEN: ${{ secrets.LINE_PUSH_ACCESS_TOKEN }}
+          LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
+        run: |
+          python <<'PY'
+          import os
+          import requests
+
+          token = os.environ["LINE_PUSH_ACCESS_TOKEN"]
+          user_id = os.environ["LINE_USER_ID"]
+
+          text = """⚠️ 網站更新失敗
+
+          請查看 GitHub workflow"""
+
+          r = requests.post(
+              "https://api.line.me/v2/bot/message/push",
+              headers={
+                  "Authorization": f"Bearer {token}",
+                  "Content-Type": "application/json"
+              },
+              json={
+                  "to": user_id,
+                  "messages": [
+                      {
+                          "type": "text",
+                          "text": text
+                      }
+                  ]
+              },
+              timeout=30
+          )
+
+          if r.status_code >= 400:
+              raise RuntimeError(f"LINE push failed: {r.status_code} {r.text}")
+          PY
