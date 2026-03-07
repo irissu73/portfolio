@@ -27,12 +27,7 @@
         "Webhook"
       ],
       "timeline": [
-        {
-          "date": "2026.03.07",
-          "phase": "testing",
-          "title": "進度更新",
-          "note": "完成：\n- webhook 打通\n- 指令辨識完成\n- GitHub API 接通"
-        },
+ 
         {
           "date": "2026.03.05",
           "phase": "concept",
@@ -46,10 +41,16 @@
           "note": "專案正式啟動"
         },
         {
+           "date": "2026.03.07",
+          "phase": "testing",
+          "title": "進度更新",
+          "note": "完成：\n- webhook 打通\n- 指令辨識完成\n- GitHub API 接通"
+        },
+        {
           "date": "2026.03.07",
           "phase": "testing",
           "title": "進度更新",
-          "note": "完成：\n- 驗簽版上線\n\n/更新\n完成：\n- 中文指令也可用"
+          "note": "完成：\n- 驗簽版上線\n"
         }
       ],
       "next": [
