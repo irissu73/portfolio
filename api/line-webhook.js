@@ -78,22 +78,26 @@ export default async function handler(req, res) {
     }
 
     const text = (event.message.text || "").trim();
-
     let replyMessage = "IRIS 控制中心已收到指令";
 
     try {
       const parsed = parseCommand(text);
 
-      // 單純回覆型，不更新 GitHub
       if (parsed.message) {
         replyMessage = parsed.message;
+      } else if (parsed.mode === "ai") {
+        const issue = await createGitHubIssueFromAi(parsed.rawText);
+        replyMessage = `已收到 AI 更新指令
+
+GitHub Issue 已建立：
+#${issue.number} ${issue.title}
+
+接下來將交由既有工作流程處理，完成後網站會自動更新。`;
       } else {
         const updatedProjectsData = await updateProjectsJson(parsed);
 
-        // 目前先針對 timeline 寫固定成功訊息
         if (parsed.fields?.timeline) {
           const note = parsed.fields.timeline.map((item) => item.note || "").join("\n\n");
-
           replyMessage = `已更新 ${parsed.projectId} 時間軸
 
 內容如下：
@@ -103,7 +107,6 @@ ${note}`.trim();
           replyMessage = `已更新 ${parsed.projectId} 專案資料`;
         }
 
-        // 讓 lint / 後續 debug 可追蹤
         console.log("Updated projects count:", updatedProjectsData.projects.length);
       }
     } catch (error) {
@@ -121,6 +124,88 @@ ${note}`.trim();
       message: error.message
     });
   }
+}
+
+async function createGitHubIssueFromAi(rawText) {
+  const githubToken = process.env.GITHUB_TOKEN;
+  const owner = process.env.GITHUB_OWNER;
+  const repo = process.env.GITHUB_REPO;
+  const label = process.env.GITHUB_ISSUE_LABEL || "portfolio-update";
+  const titlePrefix = process.env.GITHUB_ISSUE_TITLE_PREFIX || "line";
+
+  if (!githubToken || !owner || !repo) {
+    throw new Error("Missing GitHub environment variables");
+  }
+
+  const projectId = extractProjectId(rawText);
+  if (!projectId) {
+    throw new Error("缺少專案：請在 /ai 內容中加入「專案：project-id」");
+  }
+
+  const today = getTodayDashInTaiwan();
+  const title = `${titlePrefix}_${projectId}_${today}`;
+
+  const issueUrl = `https://api.github.com/repos/${owner}/${repo}/issues`;
+
+  const createRes = await fetch(issueUrl, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${githubToken}`,
+      Accept: "application/vnd.github+json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      title,
+      body: rawText
+    })
+  });
+
+  if (!createRes.ok) {
+    const errorText = await createRes.text();
+    throw new Error(`建立 GitHub Issue 失敗：${errorText}`);
+  }
+
+  const issue = await createRes.json();
+
+  const labelRes = await fetch(`${issueUrl}/${issue.number}/labels`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${githubToken}`,
+      Accept: "application/vnd.github+json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      labels: [label]
+    })
+  });
+
+  if (!labelRes.ok) {
+    const errorText = await labelRes.text();
+    throw new Error(`Issue 已建立，但加 label 失敗：${errorText}`);
+  }
+
+  return issue;
+}
+
+function extractProjectId(rawText) {
+  const lines = String(rawText || "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  for (const line of lines) {
+    if (line.startsWith("專案：")) {
+      return line.replace("專案：", "").trim();
+    }
+    if (line.toLowerCase().startsWith("id:")) {
+      return line.split(":", 2)[1]?.trim() || "";
+    }
+    if (line.includes("：") && line.startsWith("專案")) {
+      return line.split("：", 2)[1]?.trim() || "";
+    }
+  }
+
+  return "";
 }
 
 async function updateProjectsJson(parsed) {
@@ -178,6 +263,19 @@ async function updateProjectsJson(parsed) {
   }
 
   return updatedProjectsData;
+}
+
+function getTodayDashInTaiwan() {
+  const now = new Date();
+  const taiwanNow = new Date(
+    now.toLocaleString("en-US", { timeZone: "Asia/Taipei" })
+  );
+
+  const year = taiwanNow.getFullYear();
+  const month = String(taiwanNow.getMonth() + 1).padStart(2, "0");
+  const day = String(taiwanNow.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }
 
 function verifyLineSignature(rawBody, channelSecret, signature) {
