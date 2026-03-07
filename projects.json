@@ -28,16 +28,22 @@
       ],
       "timeline": [
         {
-          "date": "2026.03.07",
+          "date": "2026-03-07",
           "phase": "concept",
-          "title": "開始實作",
-          "note": "專案正式啟動"
+          "title": "進度更新",
+          "note": "完成：\n- webhook 打通\n- 指令辨識完成\n- GitHub API 接通"
         },
         {
           "date": "2026.03.05",
           "phase": "concept",
           "title": "構想",
           "note": "提出LINE指揮中心想法"
+        },
+        {
+          "date": "2026.03.07",
+          "phase": "concept",
+          "title": "開始實作",
+          "note": "專案正式啟動"
         }
       ],
       "next": [
@@ -110,7 +116,7 @@
           "src": "./assets/web-automation/01-web-automation.gif",
           "alt": "自動新增"
         },
-         {
+        {
           "src": "./assets/web-automation/02-web-automation.gif",
           "alt": "自動更新"
         }
