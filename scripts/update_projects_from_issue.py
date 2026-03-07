@@ -13,17 +13,6 @@ if not OPENAI_API_KEY:
 
 PROJECTS_PATH = "projects.json"
 
-# ====== 定案規則 ======
-# Schema（定案）
-# id (KEY，不可修改)
-# name(必填/標記)、summary(選填/標記)、cover(選填/標記)
-# status(AI), updated(系統自動), output(AI), content(AI)
-# category(選填多值/AI), techTags(選填多值/AI),
-# timeline(選填多值/AI；子欄位：date/phase/title/note),
-# next(選填多值/AI), gallery(選填多值/AI)
-# pin(AI)，但：只有寫「置頂/取消置頂」才判斷/改動
-# 規則：標記內容優先（強制更新）；否則 AI 自動判斷要不要改；updated 用本次 workflow 日期
-
 ALLOWED_STATUS = {"concept", "testing", "validated", "expanding"}
 
 PHASE_MAP = {
@@ -32,20 +21,81 @@ PHASE_MAP = {
     "準備": "concept",
     "開始準備": "concept",
     "規劃": "concept",
+
     "測試": "testing",
     "測試中": "testing",
     "驗證": "testing",
     "驗證中": "testing",
+
     "已驗證": "validated",
     "完成": "validated",
+
     "延伸": "expanding",
     "延伸中": "expanding",
 }
 
+BLOCK_ALIASES = {
+    "專案名稱": "name",
+    "名稱": "name",
+    "name": "name",
 
-def today_ymd_utc() -> str:
+    "摘要": "summary",
+    "summary": "summary",
+
+    "封面": "cover",
+    "cover": "cover",
+
+    "產出": "output",
+    "output": "output",
+
+    "狀態": "status",
+    "status": "status",
+
+    "專案內容": "content",
+    "內容": "content",
+    "content": "content",
+
+    "時間軸": "timeline",
+    "timeline": "timeline",
+
+    "下一步": "next",
+    "next": "next",
+
+    "成果": "gallery",
+    "gallery": "gallery",
+
+    "技術": "techTags",
+    "技術標籤": "techTags",
+    "techtags": "techTags",
+    "techTags": "techTags",
+
+    "應用類型": "category",
+    "category": "category",
+}
+
+DEFAULT_MODE_BY_FIELD = {
+    "name": "ALL",
+    "summary": "ALL",
+    "cover": "ALL",
+    "output": "ALL",
+    "status": "ALL",
+    "content": "ADD",
+    "timeline": "ADD",
+    "next": "ADD",
+    "gallery": "ADD",
+    "techTags": "ADD",
+    "category": "ADD",
+}
+
+
+def today_dash() -> str:
     taiwan_time = datetime.now(timezone.utc) + timedelta(hours=8)
     return taiwan_time.strftime("%Y-%m-%d")
+
+
+def today_dot() -> str:
+    taiwan_time = datetime.now(timezone.utc) + timedelta(hours=8)
+    return taiwan_time.strftime("%Y.%m.%d")
 
 
 def load_projects():
@@ -78,52 +128,34 @@ def _ensure_list_of_str(v):
     return [str(v).strip()] if str(v).strip() else []
 
 
+def _split_paragraphs(text: str):
+    text = str(text or "").strip().replace("\r\n", "\n").replace("\r", "\n")
+    if not text:
+        return []
+    return [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+
+
 def _ensure_content(v):
-    """
-    最終存成 list[str]，但內容保持自然敘述：
-    - 若有換行，折疊成空格
-    - 不強制拆段
-    - 防止 AI 把整份 issue 貼進 content
-    """
     if v is None:
         return []
-
-    if isinstance(v, str):
-        if "專案清單" in v:
-            return []
-
-    def _fold(s: str) -> str:
-        s = str(s or "")
-        s = s.replace("\r\n", "\n").replace("\r", "\n")
-        s = re.sub(r"\n+", " ", s)
-        s = re.sub(r"\s{2,}", " ", s)
-        return s.strip()
 
     if isinstance(v, list):
         out = []
         for x in v:
-            t = _fold(x)
+            t = str(x or "").strip()
             if t:
                 out.append(t)
         return out
 
     if isinstance(v, str):
-        t = _fold(v)
-        return [t] if t else []
+        return _split_paragraphs(v)
 
-    t = _fold(v)
-    return [t] if t else []
+    s = str(v).strip()
+    return [s] if s else []
 
 
 def _normalize_date_text(s: str) -> str:
-    """
-    把日期文字轉成統一格式：
-    - 2026.03.05
-    - 2026-03-05
-    - 今天 / 昨天
-    """
     s = str(s or "").strip()
-
     if not s:
         return ""
 
@@ -163,23 +195,18 @@ def _ensure_timeline(v):
         if phase in PHASE_MAP:
             phase = PHASE_MAP[phase]
 
-        out.append({
-            "date": date,
-            "phase": phase,
-            "title": title,
-            "note": note,
-        })
+        if title:
+            out.append({
+                "date": date,
+                "phase": phase,
+                "title": title,
+                "note": note,
+            })
 
     return out
 
 
 def _ensure_gallery(v):
-    """
-    gallery 允許兩種：
-      - ["./a.png", "./b.png"]
-      - [{"src":"./a.png","alt":"..."}, ...]
-    最終保留原型態（字串或 dict），但去重複時以 src/字串值作 key。
-    """
     if v is None:
         return []
     if not isinstance(v, list):
@@ -195,93 +222,178 @@ def _ensure_gallery(v):
     return out
 
 
-def _read_section(lines, start_idx):
+def _lines_to_items(text: str):
+    lines = []
+    for line in str(text or "").splitlines():
+        s = line.strip()
+        if not s:
+            continue
+        s = re.sub(r"^[-•]\s*", "", s)
+        if s:
+            lines.append(s)
+    return lines
+
+
+def _parse_block_mode_and_body(field_key: str, text: str):
+    lines = str(text or "").replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    lines = [ln.rstrip() for ln in lines]
+
+    mode = None
+    body_lines = lines
+
+    for idx, raw in enumerate(lines):
+        s = raw.strip()
+        if not s:
+            continue
+        upper = s.upper()
+        if upper in ("ALL", "ADD"):
+            mode = upper
+            body_lines = lines[idx + 1:]
+        else:
+            body_lines = lines[idx:]
+        break
+
+    if not mode:
+        mode = DEFAULT_MODE_BY_FIELD.get(field_key, "ALL")
+
+    body = "\n".join(body_lines).strip()
+    return mode, body
+
+
+def _normalize_block_name(name: str):
+    return BLOCK_ALIASES.get(str(name or "").strip(), "")
+
+
+def _parse_timeline_text(text: str):
     """
-    從 start_idx 下一行開始，讀到下一個【xxx】或檔尾。
-    回傳 (text, next_idx)
+    支援：
+    今天 測試
+    note...
+
+    2026.03.06 構想2
+    note...
     """
-    buf = []
-    i = start_idx + 1
-    while i < len(lines):
-        ln = lines[i]
-        if ln.startswith("【") and ln.endswith("】"):
-            break
-        buf.append(ln)
-        i += 1
+    text = str(text or "").replace("\r\n", "\n").replace("\r", "\n").strip()
+    if not text:
+        return []
 
-    text = "\n".join(buf).strip()
-    return text, i
+    blocks = [b.strip() for b in re.split(r"\n\s*\n", text) if b.strip()]
+    result = []
+
+    for block in blocks:
+        lines = [ln.strip() for ln in block.split("\n") if ln.strip()]
+        if not lines:
+            continue
+
+        first = lines[0]
+
+        date = ""
+        title = ""
+        note = ""
+        phase = ""
+
+        m = re.match(r"^(今天|昨天|\d{4}[.-]\d{2}[.-]\d{2})\s+(.+)$", first)
+        if m:
+            date = m.group(1).strip()
+            title = m.group(2).strip()
+            note = "\n".join(lines[1:]).strip()
+        else:
+            # 若不是標準格式，整段跳過，交給 AI
+            continue
+
+        if title:
+            # 從 title 猜 phase
+            title_first_word = title.split()[0]
+            if title_first_word in PHASE_MAP:
+                phase = PHASE_MAP[title_first_word]
+            elif title in PHASE_MAP:
+                phase = PHASE_MAP[title]
+
+            result.append({
+                "date": date,
+                "phase": phase,
+                "title": title,
+                "note": note,
+            })
+
+    return result
 
 
-def parse_forced_fields(block: str):
+def extract_structured_parts(full_text: str):
     """
     回傳：
-      - project_id: 必填
-      - forced: dict（name/summary/cover/content 強制覆寫）
-      - pin_intent: None/True/False（只有寫置頂/取消置頂才有值）
-      - hints_gallery: list[str]（block 內寫了 成果：xxx.png 的提示；不強制）
+      project_id: str
+      forced_ops: {
+        field_key: {
+          "mode": "ALL" | "ADD",
+          "value": ...
+        }
+      }
+      pin_intent: None / True / False
+      remaining_text: 已移除標記區塊後的文字
     """
-    lines = [ln.rstrip() for ln in block.splitlines()]
-    project_id = ""
-    forced = {}
-    pin_intent = None
-    hints_gallery = []
+    text = (full_text or "").replace("\r\n", "\n").replace("\r", "\n")
 
-    i = 0
-    while i < len(lines):
-        line = lines[i].strip()
+    project_id = ""
+    pin_intent = None
+
+    for raw in text.split("\n"):
+        line = raw.strip()
+        if not line:
+            continue
 
         if line.startswith("專案") or line.lower().startswith("id"):
             v = _after_colon(line)
             if v:
                 project_id = v
-            i += 1
-            continue
 
         if "取消置頂" in line:
             pin_intent = False
-            i += 1
-            continue
-
-        if "置頂" in line:
+        elif "置頂" in line:
             pin_intent = True
-            i += 1
+
+    forced_ops = {}
+
+    pattern = re.compile(r"【([^】]+)】(.*?)【/\1】", re.DOTALL)
+    matches = list(pattern.finditer(text))
+
+    for m in matches:
+        raw_name = m.group(1).strip()
+        body = m.group(2).strip()
+        field_key = _normalize_block_name(raw_name)
+        if not field_key:
             continue
 
-        if line in ("【專案名稱】", "【name】", "【名稱】"):
-            text, i = _read_section(lines, i)
-            if text:
-                forced["name"] = text.strip()
-            continue
+        mode, body_text = _parse_block_mode_and_body(field_key, body)
 
-        if line in ("【摘要】", "【summary】"):
-            text, i = _read_section(lines, i)
-            if text:
-                forced["summary"] = text.strip()
-            continue
+        if field_key in {"name", "summary", "cover", "output", "status"}:
+            forced_ops[field_key] = {
+                "mode": "ALL",
+                "value": body_text.strip()
+            }
 
-        if line in ("【封面】", "【cover】"):
-            text, i = _read_section(lines, i)
-            if text:
-                forced["cover"] = text.strip()
-            continue
+        elif field_key == "content":
+            forced_ops[field_key] = {
+                "mode": mode,
+                "value": _ensure_content(body_text)
+            }
 
-        if line in ("【專案內容】", "【content】", "【內容】"):
-            text, i = _read_section(lines, i)
-            if text:
-                forced["content"] = text
-            continue
+        elif field_key == "timeline":
+            forced_ops[field_key] = {
+                "mode": mode,
+                "value": _parse_timeline_text(body_text)
+            }
 
-        if line.startswith("成果") or line.lower().startswith("gallery"):
-            v = _after_colon(line)
-            if v:
-                hints_gallery.append(v)
-            i += 1
-            continue
+        elif field_key in {"gallery", "next", "category", "techTags"}:
+            forced_ops[field_key] = {
+                "mode": mode,
+                "value": _lines_to_items(body_text)
+            }
 
-        i += 1
+    remaining_text = pattern.sub("", text)
+    remaining_text = re.sub(r"\n{3,}", "\n\n", remaining_text).strip()
 
-    return project_id, forced, pin_intent, hints_gallery
+    return project_id, forced_ops, pin_intent, remaining_text
 
 
 def find_project_index(data: dict, project_id: str):
@@ -292,20 +404,31 @@ def find_project_index(data: dict, project_id: str):
     return None
 
 
-def ensure_project_base(project_id: str, forced: dict):
-    """
-    新增專案時建立基本骨架
-    """
-    name = forced.get("name") or (ISSUE_TITLE.strip() if ISSUE_TITLE else project_id)
-    base = {
+def ensure_project_base(project_id: str, forced_ops: dict):
+    name = str(forced_ops.get("name", {}).get("value") or "").strip() or (ISSUE_TITLE.strip() if ISSUE_TITLE else project_id)
+    summary = str(forced_ops.get("summary", {}).get("value") or "").strip()
+
+    cover = str(forced_ops.get("cover", {}).get("value") or "").strip()
+    if not cover:
+        cover = f"./assets/{project_id}-cover.png"
+
+    output = str(forced_ops.get("output", {}).get("value") or "").strip() or "開發中"
+
+    status = str(forced_ops.get("status", {}).get("value") or "").strip()
+    if status in PHASE_MAP:
+        status = PHASE_MAP[status]
+    if status not in ALLOWED_STATUS:
+        status = "concept"
+
+    return {
         "id": project_id,
         "name": name,
-        "summary": forced.get("summary", ""),
-        "cover": forced.get("cover", ""),
-        "status": "concept",
-        "updated": today_ymd_utc(),
-        "output": "",
-        "content": _ensure_content(ISSUE_BODY.strip() or ""),
+        "summary": summary,
+        "cover": cover,
+        "status": status,
+        "updated": today_dash(),
+        "output": output,
+        "content": [],
         "category": [],
         "techTags": [],
         "timeline": [],
@@ -313,14 +436,9 @@ def ensure_project_base(project_id: str, forced: dict):
         "gallery": [],
         "pin": False
     }
-    return base
 
 
-def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_gallery):
-    """
-    讓 AI 輸出「patch」(只包含要更新的欄位)，不允許輸出 id。
-    使用 Chat Completions + response_format(json_object) 取得穩定 JSON。
-    """
+def call_openai_patch(project_before: dict, issue_text: str, pin_intent):
     url = "https://api.openai.com/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {OPENAI_API_KEY}",
@@ -328,38 +446,33 @@ def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_g
     }
 
     system = (
-        "你是 projects.json 的更新器。你只能輸出「JSON物件」作為 patch（不要 markdown / 不要多餘文字）。\n"
-        "定案 Schema：id(KEY不可修改)、name、summary、cover、status、updated、output、content、category、techTags、timeline、next、gallery、pin。\n"
-        "timeline 子欄位：date/phase/title/note（phase 用於時間軸階段）。\n"
+        "你是 projects.json 的更新器。你只能輸出 JSON 物件作為 patch，不要輸出 markdown 或多餘文字。\n"
+        "Schema：id(KEY不可修改)、name、summary、cover、status、updated、output、content、category、techTags、timeline、next、gallery、pin。\n"
         "規則：\n"
         "1) 絕對不能輸出或修改 id。\n"
-        "2) 只輸出需要更新的欄位；不需要更新就不要輸出該欄位。\n"
-        "3) 多值欄位 category/techTags/timeline/next/gallery 必須是陣列（可空）。\n"
-        "3.1) content 必須是字串陣列。\n"
-        "3.1.1) 若原始敘述本身有段落（例如空行分段），請保留段落並轉成多個 content item，不要全部合併成一段。\n"
-        "3.1.2) content 只能整理專案內容相關敘述，不要包含專案清單或指令說明文字。\n"
-        "3.2) content 只能整理【專案內容】區塊，或根據更新敘述整理出的專案內容。\n"
-        "3.3) timeline 必須是物件陣列，每筆一定要有 date, phase, title；phase 必填且只能是 concept/testing/validated/expanding。\n"
-        "3.3.1) 若描述中出現口語化時間軸，例如『2026.03.05 構想』下一行接說明，請整理成 timeline。\n"
-        "3.3.2) 若 date 使用中文，例如『今天』『昨天』，請保留並交由外層程式正規化。\n"
-        "3.3.3) phase 若使用中文，例如『構想 / 測試 / 已驗證 / 延伸』，請保留語意正確，外層程式會轉成英文。\n"
-        "3.4) gallery 必須是物件陣列，每筆格式為 {\"src\":\"檔名或路徑\",\"alt\":\"\"}；不要輸出字串陣列。\n"
-        "3.5) 若描述中出現「第一步 / 下一步 / 接下來 / 先做 / 接著做」等語句，請整理為 next 陣列。\n"
-        "4) status 只能是 concept/testing/validated/expanding 四種之一。\n"
-        "5) updated 不要輸出（外層程式會在有變更時自動更新）。\n"
-        "6) pin 欄位只有在使用者明確提到「置頂」或「取消置頂」時才允許改動；若本次更新沒有此指令，請不要輸出 pin。\n"
-        "7) 若更新內容使用標記欄位（例如【摘要】、【封面】、【時間軸】等），請優先依標記內容更新。\n"
-        "8) 若更新內容沒有標記欄位，而是自然語句，請依敘述自行判斷要更新哪些欄位，但不要因資訊不足而清空原本欄位。\n"
-        "9) 若 issue 內容有提到成果檔名，合理時更新 gallery；若沒有明確成果畫面，不要自行把封面當成成果畫面。\n"
-        "10) 若 issue 有新增內容，合理時更新 content/timeline/next/category/techTags/output/status。\n"
-        "輸出務必是有效 JSON 物件。\n"
+        "2) updated 不要輸出，外層程式會自動更新。\n"
+        "3) name / cover / output / status 不要自行判斷輸出，只有標記區塊才會處理；你現在只處理剩餘自然語言。\n"
+        "4) summary 若未使用標記區塊，必要時可根據自然語言判斷輸出。\n"
+        "5) category/techTags/next 必須是字串陣列。\n"
+        "6) content 必須是字串陣列，且只整理真正屬於專案內容的敘述。\n"
+        "7) gallery 必須是物件陣列，每筆格式為 {\"src\":\"檔名或路徑\",\"alt\":\"\"}。\n"
+        "8) timeline 必須是物件陣列，每筆至少包含 date, phase, title, note。\n"
+        "9) 若 date 使用中文（今天/昨天）可保留，外層程式會正規化。\n"
+        "10) phase 若使用中文（構想/測試/已驗證/延伸）可保留，外層程式會轉英文。\n"
+        "11) 口語化時間軸解析規則：\n"
+        "11.1) 若一行同時包含日期與標題，例如『今天 測試』或『2026.03.06 構想2』，則 date = 第一段日期，title = 其餘文字。\n"
+        "11.2) 下一行若為說明，請放入 note。\n"
+        "11.3) 若有說明文字，note 不可省略。\n"
+        "12) 若出現『下一步』加清單，請整理為 next。\n"
+        "13) pin 只有在使用者明確提到「置頂」或「取消置頂」時才允許輸出。\n"
+        "14) 這次輸入給你的 issue 內容，已經移除所有明確標記區塊；請只根據剩餘自然語言判斷其他可更新欄位。\n"
+        "15) 若資訊不足，不要清空原有欄位。\n"
     )
 
     user = {
         "project_before": project_before,
         "issue": issue_text,
-        "pin_intent": pin_intent,
-        "gallery_hints": hints_gallery
+        "pin_intent": pin_intent
     }
 
     payload = {
@@ -383,113 +496,158 @@ def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_g
     if not isinstance(patch, dict):
         raise RuntimeError("Model patch is not a JSON object.")
 
-    patch.pop("id", None)
-    patch.pop("updated", None)
+    # 這些不給 AI 自行更新
+    for key in ["id", "updated", "name", "cover", "output", "status"]:
+        patch.pop(key, None)
+
     return patch
 
 
-def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict):
+def _apply_forced_ops(project_after: dict, forced_ops: dict):
+    for field, op in forced_ops.items():
+        mode = str(op.get("mode") or "ALL").upper()
+        value = op.get("value")
+
+        if field in {"name", "summary", "cover", "output", "status"}:
+            if value:
+                project_after[field] = str(value).strip()
+            continue
+
+        if field == "content":
+            incoming = _ensure_content(value)
+            if mode == "ADD":
+                project_after["content"] = _ensure_content(project_after.get("content")) + incoming
+            else:
+                project_after["content"] = incoming
+            continue
+
+        if field == "timeline":
+            incoming = _ensure_timeline(value)
+            current = _ensure_timeline(project_after.get("timeline"))
+            if mode == "ADD":
+                project_after["timeline"] = current + incoming
+            else:
+                project_after["timeline"] = incoming
+            continue
+
+        if field in {"gallery", "next", "category", "techTags"}:
+            incoming = _ensure_list_of_str(value)
+            current = _ensure_list_of_str(project_after.get(field))
+            if mode == "ADD":
+                project_after[field] = current + incoming
+            else:
+                project_after[field] = incoming
+            continue
+
+    return project_after
+
+
+def merge_project(project_before: dict, forced_ops: dict, pin_intent, ai_patch: dict):
     project_after = json.loads(json.dumps(project_before, ensure_ascii=False))
 
-    # 1) forced
-    for k in ["name", "summary", "cover", "content"]:
-        if k in forced and forced[k]:
-            if k == "content":
-                project_after["content"] = [
-                    x.rstrip() for x in str(forced[k]).split("\n\n") if x.strip()
-                ]
-            else:
-                project_after[k] = forced[k]
+    project_after = _apply_forced_ops(project_after, forced_ops)
 
-    # 2) pin（只有明確指令才改）
     if pin_intent is True:
         project_after["pin"] = True
     elif pin_intent is False:
         project_after["pin"] = False
 
-    # 3) AI patch（不得覆蓋 forced；pin 無指令不得改）
     allowed_ai = {
-        "status", "pin", "output", "content",
-        "category", "techTags", "timeline", "next", "gallery", "summary"
+        "summary", "content", "timeline", "next", "gallery", "techTags", "category", "pin"
     }
+
+    forced_fields = set(forced_ops.keys())
 
     for k, v in (ai_patch or {}).items():
         if k not in allowed_ai:
             continue
-        if k in forced:
+        if k in forced_fields:
             continue
         if k == "pin" and pin_intent is None:
             continue
-        if k in {"name", "summary", "cover", "output"} and isinstance(v, str) and not v.strip():
+        if k == "summary" and isinstance(v, str) and not v.strip():
             continue
 
         if k in {"category", "techTags", "next"}:
-            project_after[k] = _ensure_list_of_str(v)
+            current = _ensure_list_of_str(project_after.get(k))
+            incoming = _ensure_list_of_str(v)
+            project_after[k] = current + incoming
+
         elif k == "content":
-            project_after[k] = _ensure_content(v)
+            current = _ensure_content(project_after.get("content"))
+            incoming = _ensure_content(v)
+            project_after["content"] = current + incoming
+
         elif k == "timeline":
-            old_timeline = _ensure_timeline(project_after.get("timeline"))
-            new_timeline = _ensure_timeline(v)
-            project_after[k] = old_timeline + new_timeline
+            current = _ensure_timeline(project_after.get("timeline"))
+            incoming = _ensure_timeline(v)
+            project_after["timeline"] = current + incoming
+
         elif k == "gallery":
-            project_after[k] = _ensure_gallery(v)
+            current = _ensure_gallery(project_after.get("gallery"))
+            incoming = _ensure_gallery(v)
+            project_after["gallery"] = current + incoming
+
         else:
             project_after[k] = v
 
-    # status 校正（支援中文）
+    # Normalize status
     status = str(project_after.get("status") or "").strip()
     if status in PHASE_MAP:
         status = PHASE_MAP[status]
+    if status not in ALLOWED_STATUS:
+        old = str(project_before.get("status") or "").strip()
+        project_after["status"] = old if old in ALLOWED_STATUS else "concept"
+    else:
         project_after["status"] = status
 
-    if project_after.get("status") not in ALLOWED_STATUS:
-        old = project_before.get("status")
-        project_after["status"] = old if old in ALLOWED_STATUS else "concept"
+    # Normalize timeline
+    tl = _ensure_timeline(project_after.get("timeline"))
+    fixed = []
+    for it in tl:
+        phase = str(it.get("phase") or "").strip()
+        date = _normalize_date_text(it.get("date"))
+        title = str(it.get("title") or "").strip()
+        note = str(it.get("note") or "").strip()
 
-    # Normalize: timeline
-    tl = project_after.get("timeline")
-    if isinstance(tl, list):
-        fixed = []
-        for it in tl:
-            if not isinstance(it, dict):
-                continue
+        if phase in PHASE_MAP:
+            phase = PHASE_MAP[phase]
+        if not phase:
+            phase = project_after.get("status") or "concept"
 
-            phase = str(it.get("phase") or "").strip()
-            date = _normalize_date_text(it.get("date"))
+        if not title:
+            continue
 
-            if phase in PHASE_MAP:
-                phase = PHASE_MAP[phase]
+        fixed.append({
+            "date": date,
+            "phase": phase,
+            "title": title,
+            "note": note
+        })
 
-            if not phase:
-                phase = project_after.get("status") or "concept"
+    seen = set()
+    unique = []
+    for it in fixed:
+        key = (str(it.get("date") or "").strip(), str(it.get("title") or "").strip())
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(it)
 
-            it["phase"] = phase
-            it["date"] = date
-            fixed.append(it)
+    unique = sorted(unique, key=lambda x: str(x.get("date") or ""), reverse=True)
+    project_after["timeline"] = unique
 
-        seen = set()
-        unique = []
-        for it in fixed:
-            date = str(it.get("date") or "").strip()
-            title = str(it.get("title") or "").strip()
-            key = (date, title)
-            if key in seen:
-                continue
-            seen.add(key)
-            unique.append(it)
-
-        unique = sorted(unique, key=lambda x: str(x.get("date") or ""), reverse=True)
-        project_after["timeline"] = unique
-
-    # Normalize: cover path
+    # Normalize cover
     cover = str(project_after.get("cover") or "").strip()
-    if cover and not cover.startswith(("http://", "https://", "/", "./")):
+    if not cover:
+        project_after["cover"] = f"./assets/{project_after['id']}-cover.png"
+    elif not cover.startswith(("http://", "https://", "/", "./")):
         project_after["cover"] = f"./assets/{cover}"
+
     cover_basename = str(project_after.get("cover") or "").strip().split("/")[-1]
 
-    # Normalize: gallery
+    # Normalize gallery
     g = project_after.get("gallery")
-
     if isinstance(g, list) and g and isinstance(g[0], str):
         g = [{"src": str(s).strip(), "alt": ""} for s in g if str(s).strip()]
         project_after["gallery"] = g
@@ -498,18 +656,34 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
     if isinstance(g, list):
         cleaned = []
         for it in g:
+            if isinstance(it, str):
+                src = it.strip()
+                if src:
+                    cleaned.append({"src": src, "alt": ""})
+                continue
+
             if not isinstance(it, dict):
                 continue
+
             src = str(it.get("src") or "").strip()
             if not src:
                 continue
+
+            cleaned.append({
+                "src": src,
+                "alt": str(it.get("alt") or "").strip()
+            })
+
+        filtered = []
+        for it in cleaned:
+            src = str(it.get("src") or "").strip()
             if cover_basename and src.split("/")[-1] == cover_basename:
                 continue
-            cleaned.append(it)
+            filtered.append(it)
 
         seen = set()
         unique = []
-        for it in cleaned:
+        for it in filtered:
             src = str(it.get("src") or "").strip()
             if not src or src in seen:
                 continue
@@ -524,34 +698,35 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
 
         project_after["gallery"] = unique
 
-    # 最後：算 changed / updated
+    project_after["content"] = _ensure_content(project_after.get("content"))
+    project_after["category"] = _ensure_list_of_str(project_after.get("category"))
+    project_after["techTags"] = _ensure_list_of_str(project_after.get("techTags"))
+    project_after["next"] = _ensure_list_of_str(project_after.get("next"))
+
     changed = json.dumps(project_after, ensure_ascii=False, sort_keys=True) != json.dumps(
         project_before, ensure_ascii=False, sort_keys=True
     )
     if changed:
-        project_after["updated"] = today_ymd_utc()
+        project_after["updated"] = today_dash()
 
-    # id 永遠不變
     project_after["id"] = project_before["id"]
     return project_after, changed
 
 
 def sort_projects(projects: list):
-    # pin true 在前；updated 新到舊
     def key(p):
         pin = 1 if p.get("pin") else 0
         updated = str(p.get("updated") or "")
         return (pin, updated)
-
     return sorted(projects, key=key, reverse=True)
 
 
 def main():
-    block = ISSUE_BODY.strip()
-    if not block:
+    full_text = ISSUE_BODY.strip()
+    if not full_text:
         raise SystemExit("Issue body is empty.")
 
-    project_id, forced, pin_intent, hints_gallery = parse_forced_fields(block)
+    project_id, forced_ops, pin_intent, remaining_text = extract_structured_parts(full_text)
     if not project_id:
         raise SystemExit("Missing project id. Example: 專案：ai-x-web-automation")
 
@@ -560,15 +735,15 @@ def main():
     idx = find_project_index(data, project_id)
 
     if idx is None:
-        before = ensure_project_base(project_id, forced)
+        before = ensure_project_base(project_id, forced_ops)
         projects.append(before)
         idx = len(projects) - 1
     else:
         before = projects[idx]
-        # 補缺欄位（避免舊資料少欄位）
         before.setdefault("summary", "")
-        before.setdefault("cover", "")
-        before.setdefault("output", "")
+        before.setdefault("cover", f"./assets/{project_id}-cover.png")
+        before.setdefault("status", "concept")
+        before.setdefault("output", "開發中")
         before.setdefault("content", [])
         before.setdefault("category", [])
         before.setdefault("techTags", [])
@@ -584,10 +759,10 @@ def main():
         before["timeline"] = _ensure_timeline(before.get("timeline"))
         before["gallery"] = _ensure_gallery(before.get("gallery"))
 
-    issue_text = f"Issue title:\n{ISSUE_TITLE}\n\nIssue body:\n{block}\n"
+    issue_text = f"Issue title:\n{ISSUE_TITLE}\n\nIssue body:\n{remaining_text}\n"
 
-    ai_patch = call_openai_patch(before, issue_text, pin_intent, hints_gallery)
-    after, changed = merge_project(before, forced, pin_intent, ai_patch)
+    ai_patch = call_openai_patch(before, issue_text, pin_intent)
+    after, changed = merge_project(before, forced_ops, pin_intent, ai_patch)
 
     projects[idx] = after
     data["projects"] = sort_projects(projects)
