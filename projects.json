@@ -6,7 +6,7 @@
       "summary": "建立一個可透過 LINE 發送指令自動更新網站資料的機器人。",
       "cover": "./assets/line-bot-center-cover.png",
       "status": "concept",
-      "updated": "2026.03.07",
+      "updated": "2026-03-07",
       "output": "LINE 指揮中心",
       "content": [
         "這個專案是「AI × Web × Automation」的延伸構想。",
@@ -14,7 +14,8 @@
         "因此構想了一個「LINE 指揮中心」，未來只需要在 LINE 裡傳送指令，就能更新網站上的專案資料，例如新增時間軸、更新摘要或加入成果畫面。",
         "這個專案的核心概念，是把 LINE 當成新的操作入口，再透過 GitHub Actions 與 OpenAI API 解析訊息內容，最後自動更新 `projects.json` 並重新部署網站。",
         "今天開始實作，專案正式啟動。",
-        "2026.03.05 構想提出LINE指揮中心想法。"
+        "測試內容",
+        "調整code寫法"
       ],
       "category": [
         "工具",
@@ -28,34 +29,10 @@
       ],
       "timeline": [
         {
-          "date": "2026.03.05",
-          "phase": "concept",
-          "title": "構想",
-          "note": "提出LINE指揮中心想法"
-        },
-        {
           "date": "2026.03.07",
           "phase": "testing",
-          "title": "開始實作",
-          "note": "專案正式啟動"
-        },
-        {
-          "date": "2026.03.07",
-          "phase": "testing",
-          "title": "進度更新",
-          "note": "完成：\n- webhook 打通\n- 指令辨識完成\n- GitHub API 接通"
-        },
-        {
-          "date": "2026.03.07",
-          "phase": "testing",
-          "title": "進度更新",
-          "note": "完成：\n- 驗簽版上線\n- 中文指令也可用"
-        },
-        {
-          "date": "2026.03.07",
-          "phase": "concept",
-          "title": "進度更新",
-          "note": "完成：\n- 重構成 parseCommand + applyProjectUpdate"
+          "title": "測試內容",
+          "note": "調整code寫法"
         }
       ],
       "next": [
