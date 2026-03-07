@@ -3,16 +3,16 @@
     {
       "id": "line-bot-center",
       "name": "AI × LINE × Automation",
-      "summary": "建立一個可透過 LINE 發送指令自動更新網站資料的機器人。",
+      "summary": "建立可透過 LINE 更新網站資料的控制中心（line)\n\n另外補上時間記錄\n\n今天 測試\nline指令直接新增issue\n\n2026.03.06 構想2\n提出LINE指揮中心想法\n\n下一步\n- 設計 LINE webhook 接收訊息2\n- 測試 LINE 指令更新網站資料2",
       "cover": "./assets/line-bot-center-cover.png",
       "status": "concept",
       "updated": "2026-03-08",
       "output": "LINE 指揮中心",
       "content": [
         "補上時間記錄",
-        "今天",
-        "測試內容2",
-        "調整code寫法"
+        "今天 測試",
+        "line指令直接新增issue",
+        "提出LINE指揮中心想法"
       ],
       "category": [
         "工具",
@@ -36,11 +36,17 @@
           "phase": "testing",
           "title": "測試內容",
           "note": "調整code寫法"
+        },
+        {
+          "date": "2026.03.06",
+          "phase": "concept",
+          "title": "構想2",
+          "note": ""
         }
       ],
       "next": [
-        "設計 LINE webhook 接收訊息",
-        "測試 LINE 指令更新網站資料"
+        "設計 LINE webhook 接收訊息2",
+        "測試 LINE 指令更新網站資料2"
       ],
       "gallery": [],
       "pin": false
