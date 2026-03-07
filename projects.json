@@ -6,7 +6,7 @@
       "summary": "建立一個可透過 LINE 發送指令自動更新網站資料的機器人。",
       "cover": "./assets/line-bot-center-cover.png",
       "status": "concept",
-      "updated": "2026-03-07",
+      "updated": "2026.03.07",
       "output": "LINE 指揮中心",
       "content": [
         "這個專案是「AI × Web × Automation」的延伸構想。",
@@ -44,6 +44,12 @@
           "phase": "concept",
           "title": "開始實作",
           "note": "專案正式啟動"
+        },
+        {
+          "date": "2026.03.07",
+          "phase": "concept",
+          "title": "進度更新",
+          "note": "完成：\n- 驗簽版上線\n\n/更新\n完成：\n- 中文指令也可用"
         }
       ],
       "next": [
