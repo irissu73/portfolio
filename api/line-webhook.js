@@ -1,3 +1,11 @@
+import crypto from "crypto";
+
+export const config = {
+  api: {
+    bodyParser: false
+  }
+};
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({
@@ -7,7 +15,34 @@ export default async function handler(req, res) {
   }
 
   try {
-    const body = req.body;
+    const rawBody = await getRawBody(req);
+    const signature = req.headers["x-line-signature"];
+    const channelSecret = process.env.LINE_CHANNEL_SECRET;
+
+    if (!channelSecret) {
+      return res.status(500).json({
+        ok: false,
+        message: "Missing LINE_CHANNEL_SECRET"
+      });
+    }
+
+    if (!signature) {
+      return res.status(401).json({
+        ok: false,
+        message: "Missing x-line-signature"
+      });
+    }
+
+    const isValid = verifyLineSignature(rawBody, channelSecret, signature);
+
+    if (!isValid) {
+      return res.status(401).json({
+        ok: false,
+        message: "Invalid LINE signature"
+      });
+    }
+
+    const body = JSON.parse(rawBody);
     const events = body.events || [];
 
     if (!events.length) {
@@ -56,13 +91,13 @@ export default async function handler(req, res) {
 }
 
 async function handleCommand(text) {
-  const lower = text.toLowerCase();
+  const normalized = text.trim();
 
-  if (lower.startsWith("/update")) {
-    const content = text.replace(/^\/update/i, "").trim();
+  if (startsWithCommand(normalized, ["/update", "/更新"])) {
+    const content = removeCommandPrefix(normalized, ["/update", "/更新"]);
 
     if (!content) {
-      return "請在 /update 後面輸入內容";
+      return "請在 /update 或 /更新 後面輸入內容";
     }
 
     await appendTimelineToProject({
@@ -78,11 +113,11 @@ async function handleCommand(text) {
 ${content}`;
   }
 
-  if (lower.startsWith("/todo")) {
-    const content = text.replace(/^\/todo/i, "").trim();
+  if (startsWithCommand(normalized, ["/todo", "/待辦"])) {
+    const content = removeCommandPrefix(normalized, ["/todo", "/待辦"]);
 
     if (!content) {
-      return "請在 /todo 後面輸入內容";
+      return "請在 /todo 或 /待辦 後面輸入內容";
     }
 
     return `準備新增待辦到 line-bot-center
@@ -90,19 +125,37 @@ ${content}`;
 ${content}`;
   }
 
-  if (lower.startsWith("/note")) {
-    const content = text.replace(/^\/note/i, "").trim();
+  if (startsWithCommand(normalized, ["/note", "/筆記"])) {
+    const content = removeCommandPrefix(normalized, ["/note", "/筆記"]);
 
     if (!content) {
-      return "請在 /note 後面輸入內容";
+      return "請在 /note 或 /筆記 後面輸入內容";
     }
 
-    return `準備記錄筆記到 line-bot-center
+    return `已記下筆記草稿，暫未寫入專案資料
 
 ${content}`;
   }
 
   return "IRIS 控制中心已收到指令";
+}
+
+function startsWithCommand(text, commands) {
+  return commands.some((cmd) => text.toLowerCase().startsWith(cmd.toLowerCase()));
+}
+
+function removeCommandPrefix(text, commands) {
+  for (const cmd of commands) {
+    const regex = new RegExp(`^${escapeRegExp(cmd)}`, "i");
+    if (regex.test(text)) {
+      return text.replace(regex, "").trim();
+    }
+  }
+  return text.trim();
+}
+
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 async function appendTimelineToProject({ projectId, title, note }) {
@@ -134,9 +187,7 @@ async function appendTimelineToProject({ projectId, title, note }) {
   const contentBase64 = fileData.content.replace(/\n/g, "");
   const contentText = Buffer.from(contentBase64, "base64").toString("utf8");
 
-  let projects = JSON.parse(contentText);
-
-  // 如果你的 projects.json 是 { "projects": [...] } 這種格式
+  const projects = JSON.parse(contentText);
   const projectList = Array.isArray(projects) ? projects : projects.projects;
 
   if (!Array.isArray(projectList)) {
@@ -155,7 +206,6 @@ async function appendTimelineToProject({ projectId, title, note }) {
 
   const today = getTodayInTaiwan();
 
-  
   target.timeline.push({
     date: today,
     phase: target.status || "concept",
@@ -163,14 +213,7 @@ async function appendTimelineToProject({ projectId, title, note }) {
     note
   });
 
-  // 依日期排序（舊到新）
-  target.timeline.sort((a, b) => {
-    const aDate = a.date || "";
-    const bDate = b.date || "";
-    return aDate.localeCompare(bDate);
-  });
-
-  // 若有 updated 欄位，一起更新
+  target.timeline.sort((a, b) => (a.date || "").localeCompare(b.date || ""));
   target.updated = today;
 
   const newContentText = JSON.stringify(projects, null, 2);
@@ -200,14 +243,42 @@ async function appendTimelineToProject({ projectId, title, note }) {
 
 function getTodayInTaiwan() {
   const now = new Date();
-  const taiwanDate = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Taipei",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  }).format(now);
+  const taiwanNow = new Date(
+    now.toLocaleString("en-US", { timeZone: "Asia/Taipei" })
+  );
 
-  return taiwanDate;
+  const year = taiwanNow.getFullYear();
+  const month = String(taiwanNow.getMonth() + 1).padStart(2, "0");
+  const day = String(taiwanNow.getDate()).padStart(2, "0");
+
+  return `${year}.${month}.${day}`;
+}
+
+function verifyLineSignature(rawBody, channelSecret, signature) {
+  const hash = crypto
+    .createHmac("SHA256", channelSecret)
+    .update(rawBody)
+    .digest("base64");
+
+  return hash === signature;
+}
+
+function getRawBody(req) {
+  return new Promise((resolve, reject) => {
+    let data = "";
+
+    req.on("data", (chunk) => {
+      data += chunk;
+    });
+
+    req.on("end", () => {
+      resolve(data);
+    });
+
+    req.on("error", (err) => {
+      reject(err);
+    });
+  });
 }
 
 async function replyText(channelAccessToken, replyToken, text) {
