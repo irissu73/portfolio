@@ -2,7 +2,7 @@ import json
 import os
 import re
 import requests
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 OPENAI_API_KEY = (os.environ.get("OPENAI_API_KEY") or "").strip()
 ISSUE_TITLE = (os.environ.get("ISSUE_TITLE") or "").strip()
@@ -17,65 +17,55 @@ PROJECTS_PATH = "projects.json"
 # Schema（定案）
 # id (KEY，不可修改)
 # name(必填/標記)、summary(選填/標記)、cover(選填/標記)
-# status(AI), updated(AI), output(AI), content(AI)
+# status(AI), updated(系統自動), output(AI), content(AI)
 # category(選填多值/AI), techTags(選填多值/AI),
 # timeline(選填多值/AI；子欄位：date/phase/title/note),
 # next(選填多值/AI), gallery(選填多值/AI)
 # pin(AI)，但：只有寫「置頂/取消置頂」才判斷/改動
 # 規則：標記內容優先（強制更新）；否則 AI 自動判斷要不要改；updated 用本次 workflow 日期
 
-UPDATE_START = "=== UPDATE START ==="
-UPDATE_END = "=== UPDATE END ==="
-
 ALLOWED_STATUS = {"concept", "testing", "validated", "expanding"}
+
 PHASE_MAP = {
     "構想": "concept",
     "構想中": "concept",
     "準備": "concept",
     "開始準備": "concept",
     "規劃": "concept",
-
     "測試": "testing",
     "測試中": "testing",
     "驗證": "testing",
     "驗證中": "testing",
-
     "已驗證": "validated",
     "完成": "validated",
-
     "延伸": "expanding",
     "延伸中": "expanding",
 }
 
-# 用 workflow 執行時間（UTC+8台灣時間）當「推到網站的日期」
-from datetime import timedelta
+
 def today_ymd_utc() -> str:
     taiwan_time = datetime.now(timezone.utc) + timedelta(hours=8)
     return taiwan_time.strftime("%Y-%m-%d")
 
+
 def load_projects():
     with open(PROJECTS_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
+
 
 def save_projects(data):
     with open(PROJECTS_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
         f.write("\n")
 
-def extract_update_block(full_text: str) -> str:
-    i = full_text.find(UPDATE_START)
-    j = full_text.find(UPDATE_END)
-    if i == -1 or j == -1 or j <= i:
-        return ""
-    return full_text[i + len(UPDATE_START): j].strip()
 
 def _after_colon(line: str) -> str:
-    # 支援全形/半形冒號
     if "：" in line:
         return line.split("：", 1)[1].strip()
     if ":" in line:
         return line.split(":", 1)[1].strip()
     return ""
+
 
 def _ensure_list_of_str(v):
     if v is None:
@@ -86,6 +76,7 @@ def _ensure_list_of_str(v):
         s = v.strip()
         return [s] if s else []
     return [str(v).strip()] if str(v).strip() else []
+
 
 def _ensure_content(v):
     """
@@ -98,7 +89,7 @@ def _ensure_content(v):
         return []
 
     if isinstance(v, str):
-        if "UPDATE START" in v or "專案清單" in v:
+        if "專案清單" in v:
             return []
 
     def _fold(s: str) -> str:
@@ -123,6 +114,7 @@ def _ensure_content(v):
     t = _fold(v)
     return [t] if t else []
 
+
 def _normalize_date_text(s: str) -> str:
     """
     把日期文字轉成統一格式：
@@ -135,7 +127,6 @@ def _normalize_date_text(s: str) -> str:
     if not s:
         return ""
 
-    # 今天 / 昨天
     taiwan_time = datetime.now(timezone.utc) + timedelta(hours=8)
 
     if s == "今天":
@@ -143,15 +134,14 @@ def _normalize_date_text(s: str) -> str:
     if s == "昨天":
         return (taiwan_time - timedelta(days=1)).strftime("%Y.%m.%d")
 
-    # 2026-03-05 -> 2026.03.05
     if re.match(r"^\d{4}-\d{2}-\d{2}$", s):
         return s.replace("-", ".")
 
-    # 2026.03.05 保持不動
     if re.match(r"^\d{4}\.\d{2}\.\d{2}$", s):
         return s
 
     return s
+
 
 def _ensure_timeline(v):
     if v is None:
@@ -170,7 +160,6 @@ def _ensure_timeline(v):
         title = str(item.get("title") or "").strip()
         note = str(item.get("note") or "").strip()
 
-        # phase 中文自動轉英文
         if phase in PHASE_MAP:
             phase = PHASE_MAP[phase]
 
@@ -182,6 +171,7 @@ def _ensure_timeline(v):
         })
 
     return out
+
 
 def _ensure_gallery(v):
     """
@@ -201,13 +191,13 @@ def _ensure_gallery(v):
             if s:
                 out.append(s)
         elif isinstance(item, dict):
-            # 允許 src/alt 以外多欄位，先保留
             out.append(item)
     return out
 
+
 def _read_section(lines, start_idx):
     """
-    從 start_idx 下一行開始，讀到下一個【xxx】或 UPDATE_END 或檔尾。
+    從 start_idx 下一行開始，讀到下一個【xxx】或檔尾。
     回傳 (text, next_idx)
     """
     buf = []
@@ -215,9 +205,6 @@ def _read_section(lines, start_idx):
     while i < len(lines):
         ln = lines[i]
         if ln.startswith("【") and ln.endswith("】"):
-            break
-        # 有些人會把 UPDATE END 放在 block 裡
-        if UPDATE_END in ln:
             break
         buf.append(ln)
         i += 1
@@ -244,7 +231,6 @@ def parse_forced_fields(block: str):
     while i < len(lines):
         line = lines[i].strip()
 
-        # 專案 id
         if line.startswith("專案") or line.lower().startswith("id"):
             v = _after_colon(line)
             if v:
@@ -252,18 +238,17 @@ def parse_forced_fields(block: str):
             i += 1
             continue
 
-        # 置頂/取消置頂（只有出現才改）
         if "取消置頂" in line:
             pin_intent = False
             i += 1
             continue
+
         if "置頂" in line:
             pin_intent = True
             i += 1
             continue
 
-        # ✅ 新：用【區塊】方式讀取（保留換行與段落）
-        if line in ("【專案名稱】", "【name】"):
+        if line in ("【專案名稱】", "【name】", "【名稱】"):
             text, i = _read_section(lines, i)
             if text:
                 forced["name"] = text.strip()
@@ -281,14 +266,12 @@ def parse_forced_fields(block: str):
                 forced["cover"] = text.strip()
             continue
 
-        # ✅ 這就是妳要的：標記【專案內容】就直接覆寫（保留段落）
-        if line in ("【專案內容】", "【content】"):
+        if line in ("【專案內容】", "【content】", "【內容】"):
             text, i = _read_section(lines, i)
             if text:
-                forced["content"] = text  # 保留原始換行，後面 merge_project 再決定怎麼存
+                forced["content"] = text
             continue
 
-        # 成果檔名提示（不強制覆寫；交給 AI 判斷更新 gallery）
         if line.startswith("成果") or line.lower().startswith("gallery"):
             v = _after_colon(line)
             if v:
@@ -300,12 +283,14 @@ def parse_forced_fields(block: str):
 
     return project_id, forced, pin_intent, hints_gallery
 
+
 def find_project_index(data: dict, project_id: str):
     projects = data.get("projects", [])
     for i, p in enumerate(projects):
         if p.get("id") == project_id:
             return i
     return None
+
 
 def ensure_project_base(project_id: str, forced: dict):
     """
@@ -320,7 +305,6 @@ def ensure_project_base(project_id: str, forced: dict):
         "status": "concept",
         "updated": today_ymd_utc(),
         "output": "",
-        # content 最終用 list[str]
         "content": _ensure_content(ISSUE_BODY.strip() or ""),
         "category": [],
         "techTags": [],
@@ -330,6 +314,7 @@ def ensure_project_base(project_id: str, forced: dict):
         "pin": False
     }
     return base
+
 
 def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_gallery):
     """
@@ -342,11 +327,6 @@ def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_g
         "Content-Type": "application/json",
     }
 
-    pin_rule = (
-        "pin 欄位只有在使用者明確提到「置頂」或「取消置頂」時才允許改動；"
-        "若本次更新沒有此指令，請不要輸出 pin。"
-    )
-
     system = (
         "你是 projects.json 的更新器。你只能輸出「JSON物件」作為 patch（不要 markdown / 不要多餘文字）。\n"
         "定案 Schema：id(KEY不可修改)、name、summary、cover、status、updated、output、content、category、techTags、timeline、next、gallery、pin。\n"
@@ -355,11 +335,10 @@ def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_g
         "1) 絕對不能輸出或修改 id。\n"
         "2) 只輸出需要更新的欄位；不需要更新就不要輸出該欄位。\n"
         "3) 多值欄位 category/techTags/timeline/next/gallery 必須是陣列（可空）。\n"
-        "3.1) content 必須是字串陣列，但內容風格應保持自然敘述；若輸入有多行，可整理成一段或少量敘述，不要把整份指令原樣貼回。\n"
         "3.1) content 必須是字串陣列。\n"
         "3.1.1) 若原始敘述本身有段落（例如空行分段），請保留段落並轉成多個 content item，不要全部合併成一段。\n"
-        "3.1.2) content 只能整理專案內容相關敘述，不要包含 UPDATE START / UPDATE END / 專案清單等指令文字。\n"
-        "3.2) content 只能整理【專案內容】區塊，或根據更新敘述整理出的專案內容；不要包含專案清單、更新指令標題、或 UPDATE START/END 文字。\n"
+        "3.1.2) content 只能整理專案內容相關敘述，不要包含專案清單或指令說明文字。\n"
+        "3.2) content 只能整理【專案內容】區塊，或根據更新敘述整理出的專案內容。\n"
         "3.3) timeline 必須是物件陣列，每筆一定要有 date, phase, title；phase 必填且只能是 concept/testing/validated/expanding。\n"
         "3.3.1) 若描述中出現口語化時間軸，例如『2026.03.05 構想』下一行接說明，請整理成 timeline。\n"
         "3.3.2) 若 date 使用中文，例如『今天』『昨天』，請保留並交由外層程式正規化。\n"
@@ -375,12 +354,12 @@ def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_g
         "10) 若 issue 有新增內容，合理時更新 content/timeline/next/category/techTags/output/status。\n"
         "輸出務必是有效 JSON 物件。\n"
     )
-    
+
     user = {
         "project_before": project_before,
         "issue": issue_text,
-        "pin_intent": pin_intent,          # None/True/False
-        "gallery_hints": hints_gallery      # 檔名提示（不一定要全用）
+        "pin_intent": pin_intent,
+        "gallery_hints": hints_gallery
     }
 
     payload = {
@@ -404,10 +383,10 @@ def call_openai_patch(project_before: dict, issue_text: str, pin_intent, hints_g
     if not isinstance(patch, dict):
         raise RuntimeError("Model patch is not a JSON object.")
 
-    # 保護：永遠不允許 id / updated 由 AI 改
     patch.pop("id", None)
     patch.pop("updated", None)
     return patch
+
 
 def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict):
     project_after = json.loads(json.dumps(project_before, ensure_ascii=False))
@@ -416,7 +395,6 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
     for k in ["name", "summary", "cover", "content"]:
         if k in forced and forced[k]:
             if k == "content":
-                # 有標記【專案內容】時，直接保留原始段落
                 project_after["content"] = [
                     x.rstrip() for x in str(forced[k]).split("\n\n") if x.strip()
                 ]
@@ -445,7 +423,6 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
         if k in {"name", "summary", "cover", "output"} and isinstance(v, str) and not v.strip():
             continue
 
-        # 型別統一（避免 AI 回錯型態）
         if k in {"category", "techTags", "next"}:
             project_after[k] = _ensure_list_of_str(v)
         elif k == "content":
@@ -467,12 +444,9 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
         old = project_before.get("status")
         project_after["status"] = old if old in ALLOWED_STATUS else "concept"
 
-    # ----------------------------
     # Normalize: timeline
-    # ----------------------------
     tl = project_after.get("timeline")
     if isinstance(tl, list):
-        # phase 空值保底 + 中文轉英文 + 日期正規化
         fixed = []
         for it in tl:
             if not isinstance(it, dict):
@@ -491,7 +465,6 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
             it["date"] = date
             fixed.append(it)
 
-        # 去重複（date + title）
         seen = set()
         unique = []
         for it in fixed:
@@ -503,24 +476,18 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
             seen.add(key)
             unique.append(it)
 
-        # 排序：新到舊
         unique = sorted(unique, key=lambda x: str(x.get("date") or ""), reverse=True)
         project_after["timeline"] = unique
-        
-    # ----------------------------
+
     # Normalize: cover path
-    # ----------------------------
     cover = str(project_after.get("cover") or "").strip()
     if cover and not cover.startswith(("http://", "https://", "/", "./")):
         project_after["cover"] = f"./assets/{cover}"
     cover_basename = str(project_after.get("cover") or "").strip().split("/")[-1]
 
-    # ----------------------------
-    # Normalize: gallery (type -> remove cover -> dedupe -> path)
-    # ----------------------------
+    # Normalize: gallery
     g = project_after.get("gallery")
 
-    # 1) list[str] -> list[dict]
     if isinstance(g, list) and g and isinstance(g[0], str):
         g = [{"src": str(s).strip(), "alt": ""} for s in g if str(s).strip()]
         project_after["gallery"] = g
@@ -534,12 +501,10 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
             src = str(it.get("src") or "").strip()
             if not src:
                 continue
-            # 去掉跟封面同檔名
             if cover_basename and src.split("/")[-1] == cover_basename:
                 continue
             cleaned.append(it)
 
-        # 去重複（以 src）
         seen = set()
         unique = []
         for it in cleaned:
@@ -549,7 +514,6 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
             seen.add(src)
             unique.append(it)
 
-        # 補路徑：./assets/{projectId}/
         project_id = project_after.get("id")
         for it in unique:
             src = str(it.get("src") or "").strip()
@@ -558,37 +522,36 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
 
         project_after["gallery"] = unique
 
-    # ----------------------------
-    # 最後：算 changed / updated（一定要放最後）
-    # ----------------------------
-    changed = json.dumps(project_after, ensure_ascii=False, sort_keys=True) != json.dumps(project_before, ensure_ascii=False, sort_keys=True)
+    # 最後：算 changed / updated
+    changed = json.dumps(project_after, ensure_ascii=False, sort_keys=True) != json.dumps(
+        project_before, ensure_ascii=False, sort_keys=True
+    )
     if changed:
         project_after["updated"] = today_ymd_utc()
 
     # id 永遠不變
     project_after["id"] = project_before["id"]
     return project_after, changed
-    
-    
+
+
 def sort_projects(projects: list):
     # pin true 在前；updated 新到舊
     def key(p):
         pin = 1 if p.get("pin") else 0
         updated = str(p.get("updated") or "")
         return (pin, updated)
+
     return sorted(projects, key=key, reverse=True)
 
+
 def main():
-    full_text = ISSUE_BODY or ""
-    block = extract_update_block(full_text)
+    block = ISSUE_BODY.strip()
     if not block:
-        raise SystemExit(
-            f"Missing update block. Please include:\n{UPDATE_START}\n...\n{UPDATE_END}"
-        )
+        raise SystemExit("Issue body is empty.")
 
     project_id, forced, pin_intent, hints_gallery = parse_forced_fields(block)
     if not project_id:
-        raise SystemExit("Missing project id in update block. Example: 專案：ai-x-web-automation")
+        raise SystemExit("Missing project id. Example: 專案：ai-x-web-automation")
 
     data = load_projects()
     projects = data.get("projects", [])
@@ -612,7 +575,6 @@ def main():
         before.setdefault("gallery", [])
         before.setdefault("pin", False)
 
-        # content 統一型態
         before["content"] = _ensure_content(before.get("content"))
         before["category"] = _ensure_list_of_str(before.get("category"))
         before["techTags"] = _ensure_list_of_str(before.get("techTags"))
@@ -620,8 +582,8 @@ def main():
         before["timeline"] = _ensure_timeline(before.get("timeline"))
         before["gallery"] = _ensure_gallery(before.get("gallery"))
 
-    issue_text = f"Issue title:\n{ISSUE_TITLE}\n\nUpdate block:\n{block}\n"
-    
+    issue_text = f"Issue title:\n{ISSUE_TITLE}\n\nIssue body:\n{block}\n"
+
     ai_patch = call_openai_patch(before, issue_text, pin_intent, hints_gallery)
     after, changed = merge_project(before, forced, pin_intent, ai_patch)
 
@@ -630,6 +592,7 @@ def main():
 
     save_projects(data)
     print("Updated projects.json" if changed else "No changes (projects.json unchanged)")
+
 
 if __name__ == "__main__":
     main()
