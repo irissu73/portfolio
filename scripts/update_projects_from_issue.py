@@ -428,7 +428,9 @@ def merge_project(project_before: dict, forced: dict, pin_intent, ai_patch: dict
         elif k == "content":
             project_after[k] = _ensure_content(v)
         elif k == "timeline":
-            project_after[k] = _ensure_timeline(v)
+            old_timeline = _ensure_timeline(project_after.get("timeline"))
+            new_timeline = _ensure_timeline(v)
+            project_after[k] = old_timeline + new_timeline
         elif k == "gallery":
             project_after[k] = _ensure_gallery(v)
         else:
