@@ -222,49 +222,6 @@
         }
       ],
       "pin": false
-    },
-    {
-      "id": "TEST-123",
-      "name": "我是一個測試999",
-      "summary": "test摘要…",
-      "cover": "./assets/TEST-123-cover.png",
-      "status": "concept",
-      "updated": "2026.03.08",
-      "output": "開發中",
-      "content": [
-        "我是測試資料"
-      ],
-      "category": [],
-      "techTags": [],
-      "timeline": [
-        {
-          "date": "2026.03.08",
-          "phase": "concept",
-          "title": "構想",
-          "note": "專案啟動\n正式命名為TEST123"
-        },
-        {
-          "date": "2026.03.08",
-          "phase": "concept",
-          "title": "測試",
-          "note": "指令設計\n計錄…"
-        },
-        {
-          "date": "2026.03.08",
-          "phase": "concept",
-          "title": "構想",
-          "note": "專案啟動\n正式命名為TEST123"
-        },
-        {
-          "date": "2026.03.08",
-          "phase": "concept",
-          "title": "構想",
-          "note": "專案啟動\n正式命名為TEST12344"
-        }
-      ],
-      "next": [],
-      "gallery": [],
-      "pin": false
     }
   ]
 }
