@@ -6,7 +6,7 @@
       "summary": "建立可透過 LINE 更新網站資料的控制中心（line測試）",
       "cover": "./assets/line-bot-center-cover.png",
       "status": "concept",
-      "updated": "2026-03-08",
+      "updated": "2026.03.08",
       "output": "LINE 指揮中心",
       "content": [
         "補上時間記錄",
@@ -47,6 +47,12 @@
           "phase": "concept",
           "title": "構想2",
           "note": ""
+        },
+        {
+          "date": "2026.03.08",
+          "phase": "concept",
+          "title": "進度更新",
+          "note": "專案：TEST-123\n\n【專案名稱】\n我是一個測試\n【/專案名稱】\n\n\n【摘要】\ntest摘要…\n【/摘要】\n\n【專案內容】\n我是測試資料\n【/專案內容】"
         }
       ],
       "next": [
