@@ -110,9 +110,7 @@ export default async function handler(req, res) {
       // ==============================
       if (text === "/專案清單") {
         const projectsData = await readProjectsJson();
-        const projectIds = (projectsData.projects || [])
-          .map((p) => p.id)
-          .filter(Boolean);
+        const projectIds = getProjectIds(projectsData);
 
         const replyMessage = projectIds.length
           ? `目前專案清單：
@@ -129,7 +127,7 @@ ${projectIds.map((id) => `專案：${id}`).join("\n")}`
       // ==============================
       if (text.startsWith("/delete-confirm")) {
         const content = text.replace(/^\/delete-confirm/i, "").trim();
-        const projectId = extractProjectId(content);
+        const projectId = normalizeProjectId(extractProjectId(content));
 
         if (!projectId) {
           await replyText(
@@ -140,7 +138,15 @@ ${projectIds.map((id) => `專案：${id}`).join("\n")}`
           return res.status(200).json({ ok: true });
         }
 
-        const result = await deleteProject(projectId);
+        const projectsData = await readProjectsJson();
+        const projectIds = getProjectIds(projectsData);
+
+        if (!projectIds.includes(projectId)) {
+          await replyText(channelAccessToken, event.replyToken, "無此專案");
+          return res.status(200).json({ ok: true });
+        }
+
+        const result = await deleteProject(projectId, projectsData);
 
         const replyMessage = result.deleted
           ? `✅ 已刪除並完成網站自動發佈
@@ -149,11 +155,7 @@ ${projectIds.map((id) => `專案：${id}`).join("\n")}`
 
 🔎 點擊查看
 https://iris-ai-lab.vercel.app/`
-          : `無資料需變更
-
-專案：${projectId}
-
-此專案不存在`;
+          : "無此專案";
 
         await replyText(channelAccessToken, event.replyToken, replyMessage);
         return res.status(200).json({ ok: true });
@@ -164,7 +166,7 @@ https://iris-ai-lab.vercel.app/`
       // ==============================
       if (text.startsWith("/delete")) {
         const content = text.replace(/^\/delete/i, "").trim();
-        const projectId = extractProjectId(content);
+        const projectId = normalizeProjectId(extractProjectId(content));
 
         if (!projectId) {
           await replyText(
@@ -172,6 +174,14 @@ https://iris-ai-lab.vercel.app/`
             event.replyToken,
             "找不到專案 id\n請使用：\n/delete\n專案：line-bot-center"
           );
+          return res.status(200).json({ ok: true });
+        }
+
+        const projectsData = await readProjectsJson();
+        const projectIds = getProjectIds(projectsData);
+
+        if (!projectIds.includes(projectId)) {
+          await replyText(channelAccessToken, event.replyToken, "無此專案");
           return res.status(200).json({ ok: true });
         }
 
@@ -199,13 +209,13 @@ ${projectId}
           return res.status(200).json({ ok: true });
         }
 
-        const projectId = extractProjectId(content);
+        const projectId = normalizeProjectId(extractProjectId(content));
         if (!projectId) {
           await replyText(channelAccessToken, event.replyToken, "缺少專案：請加入「專案：project-id」");
           return res.status(200).json({ ok: true });
         }
 
-        const issue = await createGitHubIssueFromAi(content);
+        const issue = await createGitHubIssueFromAi(content, projectId);
 
         const replyMessage = `🤖 已建立任務，正在更新網站
 
@@ -358,7 +368,7 @@ ADD / ALL
 【/成果畫面】`;
 }
 
-async function createGitHubIssueFromAi(rawText) {
+async function createGitHubIssueFromAi(rawText, projectId) {
   const githubToken = process.env.GITHUB_TOKEN;
   const owner = process.env.GITHUB_OWNER;
   const repo = process.env.GITHUB_REPO;
@@ -367,11 +377,6 @@ async function createGitHubIssueFromAi(rawText) {
 
   if (!githubToken || !owner || !repo) {
     throw new Error("Missing GitHub environment variables");
-  }
-
-  const projectId = extractProjectId(rawText);
-  if (!projectId) {
-    throw new Error("缺少專案：請在 /ai 內容中加入「專案：project-id」");
   }
 
   const title = `${titlePrefix}_${projectId}`;
@@ -445,6 +450,16 @@ function extractProjectId(rawText) {
   }
 
   return "";
+}
+
+function normalizeProjectId(value) {
+  return String(value || "").trim();
+}
+
+function getProjectIds(projectsData) {
+  return (projectsData.projects || [])
+    .map((p) => normalizeProjectId(p.id))
+    .filter(Boolean);
 }
 
 async function readProjectsJson() {
@@ -535,7 +550,7 @@ async function updateProjectsJson(parsed) {
   return updatedProjectsData;
 }
 
-async function deleteProject(projectId) {
+async function deleteProject(projectId, projectsData = null) {
   const githubToken = process.env.GITHUB_TOKEN;
   const owner = process.env.GITHUB_OWNER;
   const repo = process.env.GITHUB_REPO;
@@ -547,36 +562,58 @@ async function deleteProject(projectId) {
 
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
 
-  const getRes = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${githubToken}`,
-      Accept: "application/vnd.github+json"
-    }
-  });
+  let data = projectsData;
+  let sha;
 
-  if (!getRes.ok) {
-    const errorText = await getRes.text();
-    throw new Error(`Failed to read projects.json: ${errorText}`);
+  if (!data) {
+    const getRes = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${githubToken}`,
+        Accept: "application/vnd.github+json"
+      }
+    });
+
+    if (!getRes.ok) {
+      const errorText = await getRes.text();
+      throw new Error(`Failed to read projects.json: ${errorText}`);
+    }
+
+    const fileData = await getRes.json();
+    sha = fileData.sha;
+    const contentBase64 = fileData.content.replace(/\n/g, "");
+    const contentText = Buffer.from(contentBase64, "base64").toString("utf8");
+    data = JSON.parse(contentText);
+  } else {
+    const getRes = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${githubToken}`,
+        Accept: "application/vnd.github+json"
+      }
+    });
+
+    if (!getRes.ok) {
+      const errorText = await getRes.text();
+      throw new Error(`Failed to read projects.json: ${errorText}`);
+    }
+
+    const fileData = await getRes.json();
+    sha = fileData.sha;
   }
 
-  const fileData = await getRes.json();
-  const sha = fileData.sha;
-  const contentBase64 = fileData.content.replace(/\n/g, "");
-  const contentText = Buffer.from(contentBase64, "base64").toString("utf8");
+  const beforeLength = (data.projects || []).length;
 
-  const projectsData = JSON.parse(contentText);
-  const beforeLength = (projectsData.projects || []).length;
+  data.projects = (data.projects || []).filter(
+    (p) => normalizeProjectId(p.id) !== projectId
+  );
 
-  projectsData.projects = (projectsData.projects || []).filter((p) => p.id !== projectId);
-
-  const afterLength = projectsData.projects.length;
+  const afterLength = data.projects.length;
   const deleted = beforeLength !== afterLength;
 
   if (!deleted) {
     return { deleted: false };
   }
 
-  const newContentText = JSON.stringify(projectsData, null, 2);
+  const newContentText = JSON.stringify(data, null, 2);
   const newContentBase64 = Buffer.from(newContentText, "utf8").toString("base64");
 
   const putRes = await fetch(url, {
