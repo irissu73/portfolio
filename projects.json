@@ -236,7 +236,20 @@
       ],
       "category": [],
       "techTags": [],
-      "timeline": [],
+      "timeline": [
+        {
+          "date": "2026.03.08",
+          "phase": "concept",
+          "title": "構想",
+          "note": "專案啟動\n正式命名為TEST123"
+        },
+        {
+          "date": "2026.03.08",
+          "phase": "concept",
+          "title": "測試",
+          "note": "指令設計\n計錄…"
+        }
+      ],
       "next": [],
       "gallery": [],
       "pin": false
