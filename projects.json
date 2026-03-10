@@ -4,6 +4,7 @@
   "id": "line-bot-center",
   "name": "AI × LINE × Automation",
   "summary": "建立可透過 LINE 更新網站資料的控制中心",
+  "output": "IRIS AI 指揮中心",
   "cover": "./assets/line-bot-center-cover.png",
   "status": "validated",
   "updated": "2026-03-10",
@@ -51,7 +52,8 @@
   ],
   "next": [
     "自然語言強化"
-  ]
+  ],
+  "pin": false
 },
     {
       "id": "web-automation",
@@ -105,6 +107,12 @@
           "phase": "validated",
           "title": "完成自動更新流程",
           "note": "成功建立「文字指令 → AI 解析 → JSON 更新 → Vercel 重新部署」的完整更新流程。"
+        },
+        {
+          "date": "2026.03.07",
+          "phase": "expanding",
+          "title": "IRIS AI 指揮中心",
+          "note": "嘗試透過 LINE 發送更新指令（後續已建新案例進行）。"
         }
       ],
       "next": [
