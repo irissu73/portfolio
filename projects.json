@@ -4,8 +4,8 @@
   "id": "line-bot-center",
   "name": "AI × LINE × Automation",
   "summary": "建立可透過 LINE 更新網站資料的控制中心",
-  "cover": "line-bot-center-cover.png",
-  "status": "Validated",
+  "cover": "./assets/line-bot-center-cover.png",
+  "status": "validated",
   "updated": "2026-03-10",
   "category": ["工具", "自動化"],
   "techTags": [
