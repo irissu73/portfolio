@@ -31,7 +31,33 @@
         "Google Apps Script（GAS）",
         "GAS time trigger"
       ],
-      "timeline": [],
+
+      "timeline": [
+  {
+    "date": "2026.03.05",
+    "phase": "concept",
+    "title": "提出構想",
+    "note": "規劃透過 LINE 群組新增提醒事項並自動發送提醒。"
+  },
+  {
+    "date": "2026.03.06",
+    "phase": "testing",
+    "title": "資料表與資料寫入",
+    "note": "定義 Google Sheets 資料結構，並完成提醒資料的新增與寫入機制。"
+  },
+  {
+    "date": "2026.03.07",
+    "phase": "testing",
+    "title": "提醒發送機制",
+    "note": "透過 Google Apps Script（GAS）與 time trigger 實作提醒發送流程。"
+  },
+  {
+    "date": "2026.03.10",
+    "phase": "testing",
+    "title": "摘要提醒",
+    "note": "加入本月、本週與今日的摘要提醒機制。"
+  }
+]
       "next": [
         "建立重覆提醒",
         "指令自然語言優化"
