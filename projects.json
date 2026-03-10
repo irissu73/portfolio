@@ -4,7 +4,9 @@
   "id": "line-bot-center",
   "name": "AI × LINE × Automation",
   "summary": "建立可透過 LINE 更新網站資料的控制中心",
-  "status": "已驗證",
+  "cover": "line-bot-center-cover.png",
+  "status": "Validated",
+  "updated": "2026-03-10",
   "category": ["工具", "自動化"],
   "techTags": [
     "LINE Messaging API",
@@ -18,31 +20,31 @@
   "timeline": [
     {
       "date": "2026-03-04",
-      "phase": "Concept",
+      "phase": "concept",
       "title": "提出構想",
       "note": "希望透過 LINE 指令更新網站案例資料，減少手動編輯 JSON 與 GitHub 操作。"
     },
     {
       "date": "2026-03-05",
-      "phase": "Testing",
+      "phase": "testing",
       "title": "串接 Webhook",
       "note": "LINE 指令可建立 GitHub Issue，作為後續 workflow 的觸發點。"
     },
     {
       "date": "2026-03-07",
-      "phase": "Testing",
+      "phase": "testing",
       "title": "AI 更新 JSON",
       "note": "workflow 會根據 Issue 內容呼叫 OpenAI，更新 projects.json 並寫回 repo。"
     },
     {
       "date": "2026-03-08",
-      "phase": "Testing",
+      "phase": "testing",
       "title": "完成指令系統",
       "note": "完成 LINE 指令與 AI 指令系統；AI 指令沿用網站既有更新規則。"
     },
     {
       "date": "2026-03-10",
-      "phase": "Validated",
+      "phase": "validated",
       "title": "投入使用",
       "note": "LINE 指令已可直接更新網站案例資料並自動發布。"
     }
