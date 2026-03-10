@@ -1,5 +1,5 @@
 // ===============================
-// IRIS ｜ AI 協作開發實驗 - main.js (schema-aligned)
+// IRIS ｜ AI 工作室 - main.js (schema-aligned)
 // Works with your current index.html ids:
 // - #status-filters
 // - #project-list
@@ -183,7 +183,7 @@ async function init() {
     allProjects = Array.isArray(data) ? data : (data.projects || []);
     if (!Array.isArray(allProjects)) allProjects = [];
 
-    if (countEl) countEl.textContent = `實驗清單（共 ${allProjects.length}）`;
+    if (countEl) countEl.textContent = `案例清單（共 ${allProjects.length}）`;
 
     renderStatusFilters();
     renderDrawerFilters();
