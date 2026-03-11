@@ -34,6 +34,87 @@
       "pin": false
     },
     {
+      "id": "line-bot-center",
+      "name": "AI × LINE × Automation",
+      "summary": "透過 LINE 發送指令，由 AI 與自動化流程協助完成網站資料更新。",
+      "output": "IRIS AI 指揮中心",
+      "cover": "./assets/line-bot-center-cover.png",
+      "status": "validated",
+      "updated": "2026-03-11",
+      "category": [
+        "工具",
+        "自動化"
+      ],
+      "techTags": [
+        "LINE Messaging API",
+        "Webhook",
+        "GitHub Actions",
+        "OpenAI API",
+        "Vercel",
+        "JSON"
+      ],
+      "content": [
+        "在開發「AI工作室」網站時，已決定盡量不再調整網站介面，而是透過 JSON 維護所有案例資料。",
+        "但每次更新內容，都需要先產出 JSON 格式，再手動編輯 GitHub 中的資料、建立 Issue、設定 label，最後重新發佈網站。雖然流程不算複雜，但操作步驟仍然偏多。",
+        "因此開始思考：能不能直接透過 LINE 發送指令，由 AI 與自動化流程協助完成更新？",
+        "於是設計了「AI 開發指揮中心」，把 LINE 當成開發控制入口，串接 GitHub、OpenAI 與網站更新流程。",
+        "當使用者在 LINE 發送指令後，系統會建立對應的 GitHub Issue，由 GitHub Actions workflow 啟動自動化處理。OpenAI 依據既有案例資料規則產生或更新 JSON，寫回 repo 後，由 Vercel 重新部署網站，使案例內容同步更新到前端頁面。",
+        "在操作設計上，AI 開發指揮中心將指令分為兩種層級：LINE 指令與 AI 指令。",
+        "LINE 指令：主要負責基本操作，例如建立、更新或查詢案例，作為與系統互動的入口。",
+        "AI 指令：沿用網站原本定義好的更新規則與格式，直接交由 AI 與自動化流程處理 JSON 資料更新。",
+        "現在只要有新的專案構想、開發進度或案例更新時，都可以直接在 LINE 發送指令；過一會再打開網站，就能看到最新內容。",
+        "真是懶人福音 🤭",
+        "在開發「AI工作室」網站時，已決定盡量不再調整網站介面，而是透過 JSON 維護所有案例資料。",
+        "但每次更新內容，都需要先產出 JSON 格式，再手動編輯 GitHub 中的資料、建立 Issue、設定 label，最後重新發佈網站。雖然流程不算複雜，但操作步驟仍然偏多。",
+        "因此開始思考：能不能直接透過 LINE 發送指令，由 AI 與自動化流程協助完成更新？",
+        "於是設計了「AI 開發指揮中心」，把 LINE 當成開發控制入口，串接 GitHub、OpenAI 與網站更新流程。",
+        "當使用者在 LINE 發送指令後，系統會建立對應的 GitHub Issue，由 GitHub Actions workflow 啟動自動化處理。OpenAI 依據既有案例資料規則產生或更新 JSON，寫回 repo 後，由 Vercel 重新部署網站，使案例內容同步更新到前端頁面。",
+        "在操作設計上，AI 開發指揮中心將指令分為兩種層級：LINE 指令與 AI 指令。",
+        "LINE 指令：主要負責基本操作，例如建立、更新或查詢案例，作為與系統互動的入口。",
+        "AI 指令：沿用網站原本定義好的更新規則與格式，直接交由 AI 與自動化流程處理 JSON 資料更新。",
+        "現在只要有新的專案構想、開發進度或案例更新時，都可以直接在 LINE 發送指令；過一會再打開網站，就能看到最新內容。",
+        "真是懶人福音 🤭"
+      ],
+      "timeline": [
+        {
+          "date": "2026.03.10",
+          "phase": "validated",
+          "title": "投入使用",
+          "note": "LINE 指令已可直接更新網站案例資料並自動發布。"
+        },
+        {
+          "date": "2026.03.08",
+          "phase": "testing",
+          "title": "完成指令系統",
+          "note": "完成 LINE 指令與 AI 指令系統；AI 指令沿用網站既有更新規則。"
+        },
+        {
+          "date": "2026.03.07",
+          "phase": "testing",
+          "title": "AI 更新 JSON",
+          "note": "workflow 會根據 Issue 內容呼叫 OpenAI，更新 projects.json 並寫回 repo。"
+        },
+        {
+          "date": "2026.03.05",
+          "phase": "testing",
+          "title": "串接 Webhook",
+          "note": "LINE 指令可建立 GitHub Issue，作為後續 workflow 的觸發點。"
+        },
+        {
+          "date": "2026.03.04",
+          "phase": "concept",
+          "title": "提出構想",
+          "note": "希望透過 LINE 指令更新網站案例資料，減少手動編輯 JSON 與 GitHub 操作。"
+        }
+      ],
+      "next": [
+        "自然語言強化",
+        "自然語言強化"
+      ],
+      "pin": false,
+      "gallery": []
+    },
+    {
       "id": "line-bot-reminder",
       "name": "AI × LINE × Reminder",
       "summary": "可在 LINE 群組新增提醒事項，並於指定時間自動發送提醒訊息。",
@@ -95,64 +176,6 @@
         "指令自然語言優化"
       ],
       "gallery": [],
-      "pin": false
-    },
-    {
-      "id": "line-bot-center",
-      "name": "AI × LINE × Automation",
-      "summary": "建立可透過 LINE 更新網站資料的控制中心",
-      "output": "IRIS AI 指揮中心",
-      "cover": "./assets/line-bot-center-cover.png",
-      "status": "validated",
-      "updated": "2026-03-10",
-      "category": [
-        "工具",
-        "自動化"
-      ],
-      "techTags": [
-        "LINE Messaging API",
-        "Webhook",
-        "GitHub Actions",
-        "OpenAI API",
-        "Vercel",
-        "JSON"
-      ],
-      "content": "在開發「AI工作室」網站時，已決定盡量不再調整網站介面，而是透過 JSON 維護所有案例資料。\n\n但每次更新內容，都需要先產出 JSON 格式，再手動編輯 GitHub 中的資料、建立 Issue、設定 label，最後重新發佈網站。雖然流程不算複雜，但操作步驟仍然偏多。\n\n因此開始思考：能不能直接透過 LINE 發送指令，由 AI 與自動化流程協助完成更新？\n\n於是設計了「AI 開發指揮中心」，把 LINE 當成開發控制入口，串接 GitHub、OpenAI 與網站更新流程。\n\n當使用者在 LINE 發送指令後，系統會建立對應的 GitHub Issue，由 GitHub Actions workflow 啟動自動化處理。OpenAI 依據既有案例資料規則產生或更新 JSON，寫回 repo 後，由 Vercel 重新部署網站，使案例內容同步更新到前端頁面。\n\n在操作設計上，AI 開發指揮中心將指令分為兩種層級：LINE 指令與 AI 指令。\n\nLINE 指令：主要負責基本操作，例如建立、更新或查詢案例，作為與系統互動的入口。\n\nAI 指令：沿用網站原本定義好的更新規則與格式，直接交由 AI 與自動化流程處理 JSON 資料更新。\n\n現在只要有新的專案構想、開發進度或案例更新時，都可以直接在 LINE 發送指令；過一會再打開網站，就能看到最新內容。\n\n真是懶人福音 🤭",
-      "timeline": [
-        {
-          "date": "2026.03.04",
-          "phase": "concept",
-          "title": "提出構想",
-          "note": "希望透過 LINE 指令更新網站案例資料，減少手動編輯 JSON 與 GitHub 操作。"
-        },
-        {
-          "date": "2026.03.05",
-          "phase": "testing",
-          "title": "串接 Webhook",
-          "note": "LINE 指令可建立 GitHub Issue，作為後續 workflow 的觸發點。"
-        },
-        {
-          "date": "2026.03.07",
-          "phase": "testing",
-          "title": "AI 更新 JSON",
-          "note": "workflow 會根據 Issue 內容呼叫 OpenAI，更新 projects.json 並寫回 repo。"
-        },
-        {
-          "date": "2026.03.08",
-          "phase": "testing",
-          "title": "完成指令系統",
-          "note": "完成 LINE 指令與 AI 指令系統；AI 指令沿用網站既有更新規則。"
-        },
-        {
-          "date": "2026.03.10",
-          "phase": "validated",
-          "title": "投入使用",
-          "note": "LINE 指令已可直接更新網站案例資料並自動發布。"
-        }
-      ],
-      "next": [
-        "自然語言強化"
-      ],
       "pin": false
     },
     {
