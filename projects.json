@@ -31,36 +31,61 @@
         "Google Apps Script（GAS）",
         "GAS time trigger"
       ],
-
       "timeline": [
-  {
-    "date": "2026.03.05",
-    "phase": "concept",
-    "title": "提出構想",
-    "note": "規劃透過 LINE 群組新增提醒事項並自動發送提醒。"
-  },
-  {
-    "date": "2026.03.06",
-    "phase": "testing",
-    "title": "資料表與資料寫入",
-    "note": "定義 Google Sheets 資料結構，並完成提醒資料的新增與寫入機制。"
-  },
-  {
-    "date": "2026.03.07",
-    "phase": "testing",
-    "title": "提醒發送機制",
-    "note": "透過 Google Apps Script（GAS）與 time trigger 實作提醒發送流程。"
-  },
-  {
-    "date": "2026.03.10",
-    "phase": "testing",
-    "title": "摘要提醒",
-    "note": "加入本月、本週與今日的摘要提醒機制。"
-  }
-],
+        {
+          "date": "2026.03.05",
+          "phase": "concept",
+          "title": "提出構想",
+          "note": "規劃透過 LINE 群組新增提醒事項並自動發送提醒。"
+        },
+        {
+          "date": "2026.03.06",
+          "phase": "testing",
+          "title": "資料表與資料寫入",
+          "note": "定義 Google Sheets 資料結構，並完成提醒資料的新增與寫入機制。"
+        },
+        {
+          "date": "2026.03.07",
+          "phase": "testing",
+          "title": "提醒發送機制",
+          "note": "透過 Google Apps Script（GAS）與 time trigger 實作提醒發送流程。"
+        },
+        {
+          "date": "2026.03.10",
+          "phase": "testing",
+          "title": "摘要提醒",
+          "note": "加入本月、本週與今日的摘要提醒機制。"
+        }
+      ],
       "next": [
         "建立重覆提醒",
         "指令自然語言優化"
+      ],
+      "gallery": [],
+      "pin": false
+    },
+    {
+      "id": "keynote-littlehq",
+      "name": "AI × Keynote",
+      "summary": "用 Keynote 做拖拉式行程板，讓孩子自己安排假日計畫。",
+      "cover": "./assets/keynote-littlehq-cover.png",
+      "status": "concept",
+      "updated": "2026-03-11",
+      "output": "今天我決定",
+      "content": [
+        "原本計畫在 LittleHQ 小總部 App 內加入「假日行程安排」功能，但尚未上架的APP每 7 天需要重新執行一次，因此與 ChatGPT 討論替代方案，改用 Keynote 製作拖拉式行程板，讓孩子可以自己安排一天的假日計畫。"
+      ],
+      "category": [
+        "生活",
+        "學習"
+      ],
+      "techTags": [
+        "Keynote"
+      ],
+      "timeline": [],
+      "next": [
+        "設計 Keynote 行程板版面",
+        "製作任務圖卡"
       ],
       "gallery": [],
       "pin": false
