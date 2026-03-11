@@ -1,6 +1,32 @@
 {
   "projects": [
     {
+      "id": "keynote-littlehq",
+      "name": "AI × Keynote",
+      "summary": "用 Keynote 做拖拉式行程板，讓孩子自己安排假日計畫。",
+      "cover": "./assets/keynote-littlehq-cover.png",
+      "status": "concept",
+      "updated": "2026-03-11",
+      "output": "今天我決定",
+      "content": [
+        "原本計畫在 LittleHQ 小總部 App 內加入「假日行程安排」功能，但尚未上架的APP每 7 天需要重新執行一次，因此與 ChatGPT 討論替代方案，改用 Keynote 製作拖拉式行程板，讓孩子可以自己安排一天的假日計畫。"
+      ],
+      "category": [
+        "生活",
+        "學習"
+      ],
+      "techTags": [
+        "Keynote"
+      ],
+      "timeline": [],
+      "next": [
+        "設計 Keynote 行程板版面",
+        "製作任務圖卡"
+      ],
+      "gallery": [],
+      "pin": false
+    },
+    {
       "id": "line-bot-reminder",
       "name": "AI × LINE × Reminder",
       "summary": "可在 LINE 群組新增提醒事項，並於指定時間自動發送提醒訊息。",
@@ -64,7 +90,6 @@
       "gallery": [],
       "pin": false
     },
-
     {
       "id": "line-bot-center",
       "name": "AI × LINE × Automation",
