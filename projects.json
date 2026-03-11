@@ -113,8 +113,14 @@
       ],
       "pin": false,
       "gallery": [
-        "01-line-bot-center.gif",
-        "02-line-bot-center.gif"
+        {
+          "src": "./assets/line-bot-center/01-line-bot-center.gif",
+          "alt": "自動新增"
+        },
+        {
+           "src": "./assets/line-bot-center/02-line-bot-center.gif",
+          "alt": "自動更新"
+        }
       ]
     },
     {
