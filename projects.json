@@ -11,10 +11,25 @@
       "content": [
         "原本計畫在 LittleHQ 小總部 App 內加入「假日行程安排」功能，但尚未上架的APP每 7 天需要重新執行一次，因此與 ChatGPT 討論替代方案，改用 Keynote 製作拖拉式行程板，讓孩子可以自己安排一天的假日計畫。"
       ],
-      "category": [],
-      "techTags": [],
-      "timeline": [],
-      "next": [],
+      "category": [
+        "生活",
+        "學習"
+      ],
+      "techTags": [
+        "Keynote"
+      ],
+      "timeline": [
+        {
+          "date": "2026.03.10",
+          "phase": "concept",
+          "title": "替代方案構想",
+          "note": "提出使用 Keynote 製作 LittleHQ 假日行程拖拉板的想法"
+        }
+      ],
+      "next": [
+        "設計 Keynote 行程板版面",
+        "製作任務圖卡"
+      ],
       "gallery": [],
       "pin": false
     },
