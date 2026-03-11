@@ -13,8 +13,18 @@
       ],
       "category": [],
       "techTags": [],
-      "timeline": [],
-      "next": [],
+      "timeline": [
+        {
+          "date": "2026.03.10",
+          "phase": "concept",
+          "title": "提出使用 Keynote 製作 LittleHQ 假日行程拖拉板的想法",
+          "note": ""
+        }
+      ],
+      "next": [
+        "設計 Keynote 行程板版面",
+        "製作任務圖卡"
+      ],
       "gallery": [],
       "pin": false
     },
