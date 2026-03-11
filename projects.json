@@ -112,7 +112,10 @@
         "自然語言強化"
       ],
       "pin": false,
-      "gallery": []
+      "gallery": [
+        "01-line-bot-center.gif",
+        "02-line-bot-center.gif"
+      ]
     },
     {
       "id": "line-bot-reminder",
