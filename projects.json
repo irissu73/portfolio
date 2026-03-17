@@ -4,7 +4,7 @@
       "id": "web-sheets",
       "name": "AI × Web × Google Sheets",
       "summary": "根據冰箱現有食材，由 AI 推薦可料理的菜色，並從 Google Sheets 食譜資料庫抓取對應內容顯示。",
-      "cover": "./assets/web-ai-sheets-cover.png",
+      "cover": "./assets/web-sheets-cover.png",
       "status": "concept",
       "updated": "2026-03-18",
       "output": "今天吃什麼？",
