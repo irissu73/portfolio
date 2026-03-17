@@ -86,26 +86,6 @@
         {
           "src": "./assets/line-stickers/05-line-stickers.jpg",
           "alt": ""
-        },
-        {
-          "src": "./assets/line-stickers/{'src': '01-line-stickers.jpg', 'alt': ''}",
-          "alt": ""
-        },
-        {
-          "src": "./assets/line-stickers/{'src': '02-line-stickers.jpg', 'alt': ''}",
-          "alt": ""
-        },
-        {
-          "src": "./assets/line-stickers/{'src': '03-line-stickers.jpg', 'alt': ''}",
-          "alt": ""
-        },
-        {
-          "src": "./assets/line-stickers/{'src': '04-line-stickers.jpg', 'alt': ''}",
-          "alt": ""
-        },
-        {
-          "src": "./assets/line-stickers/{'src': '05-line-stickers.jpg', 'alt': ''}",
-          "alt": ""
         }
       ],
       "pin": false
