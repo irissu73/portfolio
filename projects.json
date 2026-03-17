@@ -1,6 +1,41 @@
 {
   "projects": [
     {
+      "id": "web-ai-sheets",
+      "name": "AI × Web × Google Sheets",
+      "summary": "根據冰箱現有食材，由 AI 推薦可料理的菜色，並從 Google Sheets 食譜資料庫抓取對應內容顯示。",
+      "cover": "./assets/web-ai-sheets-cover.png",
+      "status": "concept",
+      "updated": "2026-03-18",
+      "output": "今天吃什麼？",
+      "content": [
+        "使用者在 Web 頁面輸入冰箱裡現有的食材，例如：雞蛋、豆腐、蕃茄。",
+        "AI 會根據輸入條件，推薦可能適合的料理，例如：\n\t•\t蕃茄豆腐炒蛋\n\t•\t蕃茄豆腐蛋花湯\n\t•\t蕃茄雞蛋豆腐烏龍麵",
+        "但 AI 不直接生成完整食譜，而是負責依食材推薦料理，再到 Google Sheets 食譜資料庫抓取對應資料並顯示。",
+        "這個專案主要驗證：\nAI + Web + 小型資料庫\n是否能快速建立一個實用的生活工具。"
+      ],
+      "category": [
+        "生活",
+        "工具"
+      ],
+      "techTags": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "OpenAI API",
+        "Google Sheets",
+        "Vercel"
+      ],
+      "timeline": [],
+      "next": [
+        "建立第一版食譜資料表",
+        "設計 Web MVP 輸入與推薦畫面",
+        "串接 OpenAI API 推薦料理"
+      ],
+      "gallery": [],
+      "pin": false
+    },
+    {
       "id": "line-stickers",
       "name": "AI × LINE Stickers",
       "summary": "使用 ChatGPT 與 AI 圖像工具生成一整套以爸爸為角色設計的 LINE 大貼圖。",
