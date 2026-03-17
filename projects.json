@@ -118,7 +118,7 @@
           "alt": "自動新增"
         },
         {
-           "src": "./assets/line-bot-center/02-line-bot-center.gif",
+          "src": "./assets/line-bot-center/02-line-bot-center.gif",
           "alt": "自動更新"
         }
       ]
@@ -352,6 +352,81 @@
           "src": "./assets/ios-app-littlehq/littlehq-screen-05.jpg",
           "alt": "家長專區"
         }
+      ],
+      "pin": false
+    },
+    {
+      "id": "line-stickers",
+      "name": "AI × LINE Stickers",
+      "summary": "使用 ChatGPT 與 AI 圖像工具生成一整套以爸爸為角色設計的 LINE 大貼圖。",
+      "cover": "./assets/line-stickers-cover.png",
+      "status": "驗證中",
+      "updated": "2026.03.17",
+      "output": "我是阿平",
+      "content": [
+        "曾經想幫兒子做一套 LINE 貼圖，但因為流程太複雜而半途放棄。",
+        "這次嘗試透過 AI協作，從角色的基礎形象生成、日常生活情境的貼圖製作，到上架相關步驟及格式調效，做出一整套40張專屬爸爸的 LINE 大貼圖。",
+        "在製作過程中遇到兩大難關：",
+        "ㄧ、連續生成時，人物臉型、服裝或表情都會出現偏差，導致看起來像不同角色。不同情境的場景與動作也容易混亂。",
+        "為保持一致的風格，需反覆調整提示詞的描述方式。經過多次嘗試後，慢慢找到讓角色保持一致的方法，最終順利產出整套風格統一的貼圖。",
+        "二、AI 生成的圖片並不能直接使用，例如文字變型、背景去除不完整、圖片的檔案大小與尺寸不符合 LINE Creators Market 的規格。",
+        "所以決定改用美圖秀秀後製文字，再進行去背，並使用 Mac 上的修圖工具調整尺寸與格式，逐張修正才讓貼圖素材符合上架要求。",
+        "經過多次修正與確認，最終完成 40 張貼圖並通過LINE Creators Market 審核，正式上架！",
+        "這套貼圖成為一份送給爸爸專屬的小禮物🎁"
+      ],
+      "category": [
+        "產品",
+        "生活"
+      ],
+      "techTags": [
+        "ChatGPT",
+        "AI 圖像生成",
+        "LINE Creators Market",
+        "PNG 透明背景處理",
+        "圖片尺寸與格式"
+      ],
+      "timeline": [
+        {
+          "date": "2026.03.17",
+          "phase": "驗證中",
+          "title": "構想中",
+          "note": "專案啟動\n研究LINE Creators Market相關申請流程，需準備的資料"
+        },
+        {
+          "date": "2026.03.17",
+          "phase": "驗證中",
+          "title": "驗證中",
+          "note": "建立主角「阿平」\n以爸爸特徵創建主角造型，並以日常事件為主題生成貼圖。"
+        },
+        {
+          "date": "2026.03.17",
+          "phase": "驗證中",
+          "title": "驗證中",
+          "note": "角色風格校準\n生成過程中角色特徵逐漸偏移，動作與畫風出現不一致，重新調整提示詞與人物設定，讓整套貼圖風格統一。"
+        },
+        {
+          "date": "2026.03.17",
+          "phase": "驗證中",
+          "title": "驗證中",
+          "note": "送審前調整確認\n上傳 40 張貼圖並逐張檢視調整。（例如：去背不完整、六隻手指…等"
+        },
+        {
+          "date": "2026.03.17",
+          "phase": "驗證中",
+          "title": "已驗證",
+          "note": "正式上架\n第一次送審即通過審核，成功完成 LINE 貼圖上架。"
+        }
+      ],
+      "next": [
+        "以自己為角色製作第二套貼圖",
+        "持續探索 AI 協作生圖的流程"
+      ],
+      "gallery": [
+        "01-line-stickers.jpg",
+        "02-line-stickers.jpg",
+        "03-line-stickers.jpg",
+        "04-line-stickers.jpg",
+        "05-line-stickers.jpg"
       ],
       "pin": false
     }
