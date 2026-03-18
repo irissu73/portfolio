@@ -7,7 +7,7 @@
       "cover": "./assets/web-sheets-cover.png",
       "status": "concept",
       "updated": "2026-03-18",
-      "output": "今天吃什麼？",
+      "output": "今天煮什麼？",
       "content": [
         "使用者在 Web 頁面輸入冰箱裡現有的食材，例如：雞蛋、豆腐、蕃茄。",
         "AI 會根據輸入條件，推薦可能適合的料理，例如：\n\t•\t蕃茄豆腐炒蛋\n\t•\t蕃茄豆腐蛋花湯\n\t•\t蕃茄雞蛋豆腐烏龍麵",
@@ -26,13 +26,31 @@
         "Google Sheets",
         "Vercel"
       ],
-      "timeline": [],
+      "timeline": [
+        {
+          "date": "2026.03.18",
+          "phase": "concept",
+          "title": "確認資料庫結構",
+          "note": "Google Sheets 食譜資料庫欄位設計"
+        },
+        {
+          "date": "2026.03.17",
+          "phase": "concept",
+          "title": "「今天煮什麼？」概念發想",
+          "note": "根據冰箱內現有食材，由AI推薦可料理菜色。確認架構與開發方向。"
+        }
+      ],
       "next": [
         "建立第一版食譜資料表",
         "設計 Web MVP 輸入與推薦畫面",
         "串接 OpenAI API 推薦料理"
       ],
-      "gallery": [],
+      "gallery": [
+        {
+          "src": "./assets/web-sheets/01-web-sheets.png",
+          "alt": ""
+        }
+      ],
       "pin": false
     },
     {
