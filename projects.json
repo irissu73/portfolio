@@ -171,7 +171,16 @@
         "設計 Keynote 行程板版面",
         "製作任務圖卡"
       ],
-      "gallery": [],
+      "gallery": [
+        {
+          "src": "./assets/keynote-littlehq/01-keynote-littlehq.jpg",
+          "alt": "主頁"
+        },
+        {
+          "src": "./assets/keynote-littlehq/02-keynote-littlehq.jpg",
+          "alt": "行程貼紙"
+        }
+      ],
       "pin": false
     },
     {
