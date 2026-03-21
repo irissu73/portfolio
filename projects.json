@@ -146,8 +146,8 @@
       "name": "AI × Keynote",
       "summary": "用 Keynote 做拖拉式行程板，讓孩子自己安排假日計畫。",
       "cover": "./assets/keynote-littlehq-cover.png",
-      "status": "concept",
-      "updated": "2026-03-11",
+      "status": "validated",
+      "updated": "2026-03-20",
       "output": "今天我決定",
       "content": [
         "原本計畫在 LittleHQ 小總部 App 內加入「假日行程安排」功能，但尚未上架的APP每 7 天需要重新執行一次，因此與 ChatGPT 討論替代方案，改用 Keynote 製作拖拉式行程板，讓孩子可以自己安排一天的假日計畫。"
@@ -161,6 +161,24 @@
       ],
       "timeline": [
         {
+          "date": "2026.03.20",
+          "phase": "validated",
+          "title": "實際讓孩子操作「行程拖拉」",
+          "note": "完成簡報樣版，讓孩子實際操作，自已選擇拖拉至行程區塊，操作過程中非常開心且認真思考要如何安排，驗證此形式具備可用性與吸引力。"
+        },
+        {
+          "date": "2026.03.19",
+          "phase": "testing",
+          "title": "行程貼紙量產",
+          "note": "確立貼紙模版規格（主角特徵、場景、比例跟大小等）解決連續生成錯亂混裝況，輸入情境後可穩定輸出合格貼紙。"
+        },
+        {
+          "date": "2026.03.13",
+          "phase": "testing",
+          "title": "完成主頁版面",
+          "note": "「今天我決定」主頁設計及版面定稿。"
+        },
+        {
           "date": "2026.03.10",
           "phase": "concept",
           "title": "替代方案構想",
@@ -168,8 +186,7 @@
         }
       ],
       "next": [
-        "設計 Keynote 行程板版面",
-        "製作任務圖卡"
+        "升級 Web 版的「今天我決定」"
       ],
       "gallery": [
         {
